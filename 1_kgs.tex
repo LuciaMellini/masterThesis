@@ -37,7 +37,7 @@ This definition contributes to a unified comprehension of knowledge graphs throu
 Knowledge graphs exhibit a complexity that surpasses that of traditional databases or ontologies, combining the beneficial properties of both to enable automated reasoning and the dynamic incorporation of information. In this context, the functionality and capabilities of knowledge graphs are deemed to be of greater significance than their possible great size.
 
 \section{Data Graphs}\label{data-graphs}
-The foundational concept of knowledge graphs is based on the transformation of data into a graph structure, resulting in what is referred to as a \term{data graph}. This methodology confers enhanced flexibility in integrating new data sources when contrasted with relational models, which necessitate predefined schemas. Although tree structures offer analogous adaptability, graph structures do not impose hierarchical constraints and permit the existence of cycles. An exploration of the various graph-structured data models that can be employed to represent such graphs is provided in~\cite{Hogan2021KGs}.
+The foundational concept of knowledge graphs is based on the transformation of data into a graph structure, resulting in what is referred to as a \term{data graph}. This methodology confers enhanced flexibility in integrating new data sources, in contrast with relational models, which necessitate predefined schemas. Although tree structures offer analogous adaptability, graph structures do not impose hierarchical constraints and permit the existence of cycles. We explore  various graph-structured data models that can be employed to represent such graphs, as listed in~\cite{Hogan2021KGs}. We then describe various enhancements and extensions of the data graph – relating to schema, identity and context – that provide additional structures for accumulating knowledge.
 
 Further formal details pertinent to the subsequent sections can be found in Appendix~\ref{app:data-graphs}.
 
@@ -93,8 +93,8 @@ A distinguishing feature of graph query languages is the incorporation of \term{
 
 Evaluation semantics for regular path queries must account for loops, which may yield infinite matching expressions. Options for management include the return of the shortest paths or those devoid of repeated nodes and edges. Alternatively, it is possible to return merely pairs of nodes linked by a matching path without detailing the entire path.
 
-\section{Schema, identity, context}\label{schema-identity-context}
-In this section we describe various enhancements and extensions of the data graph – relating to schema, identity and context – that provide additional structures for accumulating knowledge. Henceforth, we refer to a \term{data graph} as a collection of data represented as nodes and edges using one of the models discussed in~\ref{data-graphs}. We refer to a \term{knowledge graph} as a data graph potentially enhanced with representations of schema, identity, context, ontologies and/or rules. These additional representations may be embedded in the data graph, or layered above it.
+\subsection{Schema}\label{schema-identity-context}
+Henceforth, we refer to a \term{data graph} as a collection of data represented as nodes and edges using one of the models discussed in~\ref{data-graphs}. We refer to a \term{knowledge graph} as a data graph potentially enhanced with representations of schema, identity, ontologies and/or rules. These additional representations may be embedded in the data graph, or layered above it.
 
 Modeling data as graphs enables the deferral or circumvention of explicit schema definitions. Schemata can delineate high-level structures or semantic elements, leading to the categorization of \term{semantic}, \term{validating}, and \term{emergent} schemata.
 
@@ -131,7 +131,7 @@ Merging multiple knowledge graphs may introduce ambiguities, resulting in naming
 
 While HTTP IRIs facilitate global identification, they do not inherently assure persistence. \term{Persistent URL} (PURL) services provide stable identifiers that redirect to current locations, thereby ensuring that references remain valid~\cite{BernersLee2006LinkedData}\cite{Heath2011LinkedData}.
 
-Even with the utilization of IRIs, disparate knowledge graphs may employ different identifiers to refer to the same entity. To manage these cases the OWL standard for exampleencompasses the construct \texttt{owl:sameAs} to establish equivalence.
+Even with the utilization of IRIs, disparate knowledge graphs may employ different identifiers to refer to the same entity. To manage these cases the OWL standard for example encompasses the construct \texttt{owl:sameAs} to establish equivalence.
 Identifiers may not convey semantic significance. For instance, Wikidata utilizes numerical IRIs to maintain language neutrality. RDF graphs typically include additional metadata such as labels, aliases, and comments. Multilingual lexicalized knowledge graphs further facilitate object recognition across different languages~\cite{DeMelo2015Lexvo.org, MartinezRodriguez2020InformationExtractionMeetsSemanticWeb}.  
 
 In certain instances, graphs must represent unidentified objects using existential nodes (or blank nodes within RDF). Techniques such as skolemization may be employed to assign canonical labels, though some scholars advocate minimizing their application~\cite{Cyganiak2014rdf, Hogan2017CanonicalFormsIsomorphicEquivalentRDFGraphs, Longley2019RDFDatasetNormalization}.
@@ -164,15 +164,41 @@ Interpretations that fulfill a graph's requirements are designated as \term{mode
 \subsubsection{Entailment}
 A graph \term{entails} another graph if every model consistent with the former is also a model of the latter. The latter graph conveys no additional information beyond what is contained within the former.
 
-The determination of whether one graph entails another remains undecidable~\cite{Hitzler2010FoundationsSWTechnologies}\footnote{A decision problem is said to be undecidable when there does not exist an algorithm that halts on all inputs with the correct answer.}. However, practical reasoning algorithms can be developed that:
+The determination of whether one graph entails another remains undecidable\footnote{A decision problem is said to be undecidable when there does not exist an algorithm that halts on all inputs with the correct answer.}~\cite{Hitzler2010FoundationsSWTechnologies}. However, practical reasoning algorithms can be developed that:
 \begin{enumerate*}[label=(\roman*),before=\unskip{ i.e., }, itemjoin={{, }}, itemjoin*={{, or }}]
     \item\label{opt_1} halt on any input but may overlook certain entailments,
     \item\label{opt_2} consistently halt with accurate results but only accommodate restricted input ontologies,
     \item\label{opt_3} exclusively yield correct results but may never halt on certain inputs.
 \end{enumerate*}
 
-The exploration of Option \ref{opt_3} has been undertaken with the use of theorem provers~\cite{Schneider2011ReasoningOWL2Full}. Options \ref{opt_1} and \ref{opt_2} are more frequently pursued, employing rules or Description Logics. Option \ref{opt_1} is conducive to efficient reasoning, particularly in contexts where data may be incomplete. In contrast, Option \ref{opt_2} may be more suitable in domains where the omission of entailments is deemed undesirable.
+The exploration of Option \ref{opt_3} has been undertaken by using theorem provers~\cite{Schneider2011ReasoningOWL2Full}. Options \ref{opt_1} and \ref{opt_2} are more frequently pursued, employing rules or Description Logics. Option \ref{opt_1} is conducive to efficient reasoning, particularly in contexts where data may be incomplete. In contrast, option \ref{opt_2} may be more suitable in domains where the omission of entailments is deemed undesirable.
 
 \section{Inductive Information}\label{inductive-information}
 While deductive knowledge is characterised by precise logical consequences, inductive information concerns the process of generalizing patterns derived from observations to generate novel predictions. Then \term{inductive knowledge} includes both the models used to encode patterns, as well as the predictions made by those models.
 A variety of inductive methodologies are applicable to knowledge graphs. Unsupervised techniques leverage graph analytics to identify communities or clusters, as well as to discern central nodes and edges. Knowledge graph embeddings utilize self-supervision to derive low-dimensional numerical representations. The graph structure itself can also be advantageous for supervised learning approaches. Symbolic learning techniques possess the ability to derive symbolic models – i.e., logical formulae in the form of rules or axioms – from graphs in a self-supervised fashion. A discussion of supervised learning techniques applicable to knowledge graphs is presented in the subsequent chapter.
+
+\section{Biomedical Knowledge Graphs}\label{kgs:biomed}
+In biomedical research, traditional databases fail to capture the intricate relationships within molecular interactions, pharmacological properties, and clinical records~\cite{Callahan2020KBDS}\cite{Su2020NetworkEmbeddingBiomedicalbDS}. \term{Biological knowledge graphs} (\term{BKG}) overcome these limitations by structuring heterogeneous data like molecular interactions, pharmacological datasets, and clinical records, and facilitating tasks like disease modeling and personalized medicine or drug discovery~\cite{Lu2025BiomedicalKG}. We shortly review BKGs, categorizing them into domains, discussing key tasks, and  highlighting real-world applications.
+
+Despite their transformative potential, BKGs face challenges related to data integration, scalability, and interpretability. The heterogeneous nature of biomedical data, inconsistencies in terminology, and the exponential growth of biomedical knowledge make it difficult to maintain accurate and up-to-date BKGs. Scalability remains a concern, particularly in processing large-scale networks and executing complex queries efficiently. Moreover, interpretability issues persist, as users often struggle to navigate intricate network structures and understand the reasoning behind AI-driven predictions.
+
+\subsection{Domains}
+Biomedical knowledge graphs (BKGs) serve as structured frameworks that integrate and analyze complex biomedical data across multiple domains. These domains encapsulate diverse sources of knowledge, each contributing to the construction and application of BKGs in distinct yet interconnected ways. We list three primary domains, and for each we reference some BKG examples:
+\begin{description}
+    \item[Multi-omics] focusing on genomic~\cite{Jha2019genomicsKG}, transcriptomic~\cite{CavalleriEmanuele2024Aokg}, and proteomic~\cite{Zhang2022ontoprotein} data, supporting research in disease mechanisms and biological pathways.
+    \item[Pharmacology] are instrumental in modeling interactions like drug-disease and drug-target~\cite{Gonzalez2023drugmechdb}, predicting adverse drug reactions, and facilitating drug repurposing efforts~\cite{Huang2024foundationModelDrugRepurposing}.
+    \item[Medical knowledge] integrating electronic health records~\cite{Shang2021ehr} and clinical knowledge to improve diagnosis, treatment recommendations, and healthcare decision-making. Some disease specific BKGs stand out for conditions like hepatocellular carcinoma~\cite{Li2020kghc} or COVID-19~\cite{Zheng2021multiModalKGCOVID19}.
+\end{description}
+Some BKGs span multiple domains, creating comprehensive frameworks that enable cross-disciplinary insights.
+
+\subsection{Tasks \& applications}
+Beyond their structural aspects, BKGs enable four key tasks: 
+\begin{description}
+    \item[Knowledge management] involves structuring raw biomedical data~\cite{Percha2018globalNetworkBiomedicalRelationshipsDerivedText}\cite{Sang2018sematyp}, transforming disparate datasets into standardized formats, and integrating multiple sources into a unified framework~\cite{Himmelstein2017Hetionet}.
+    \item[Knowledge retrieval] leverages BKGs to enhance data visualization, statistical analysis, and knowledge enhancement though query-based information retrieval~\cite{Pan2024unifyingLLMsKGs}\cite{Soman2024biomedicalKGOptimizedPromptGenerationForLLMs}, allowing researchers and clinicians to quickly access relevant biomedical insights.
+    \item[Knowledge reasoning] encompasses inference and prediction, enabling the discovery of novel relationships, such as identifying potential drug candidates~\cite{Huang2024foundationModelDrugRepurposing} or predicting disease-drug links~\cite{li2022graphrepresentationlearningbiomedicine}.
+    \item[Knowledge interpretation] ensures the reliability of these predictions by tracing the reasoning process through logical explanations (e.g ~\cite{Jimenez2024explainableDrugRepurposing} visualises reasoning paths for drug repurposing) or assisted interpretation using AI-driven systems~\cite{ONeil2024phenomicsAssistant}.
+\end{description}
+
+The applications of BKGs extend across multiple biomedical fields. In clinical decision support, BKGs assist in diagnosing diseases, predicting health risks~\cite{Tao2020miningHealthKnowledgeHealthRiskPrediction}, and recommending personalized treatments. In drug discovery, they play a crucial role in identifying potential drug candidates, repurposing existing medications (like for COVID-19 ~\cite{Zhang2021drugRepurposingForCovid19}), and predicting adverse drug reactions~\cite{Abdelaziz2017largeScaleMiningKGDrugDrugInteractions}. Additionally, BKGs support scientific research by facilitating hypothesis generation and uncovering new research opportunities. They also enhance intelligent question-answering systems, helping to improve the accuracy and reliability of AI-driven medical chatbots~\cite{Shu2024KG-LLM}\cite{Sung2021canLMBeKnowledgeBases} and literature retrieval tools.
+

@@ -1,30 +1,44 @@
 \documentclass[12pt,a4paper]{report}
+
+% Basic packages
 \usepackage[english]{babel}
 \usepackage[margin=1.0in]{geometry}
-\usepackage[hidelinks]{hyperref}
-\usepackage{setspace}
-%\setcounter{tocdepth}{1}
-\usepackage{amsmath}
-\usepackage{mathtools}
-\usepackage{array}
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-\usepackage[inline]{enumitem}
-\usepackage{numprint}
-\usepackage[scientific-notation=true]{siunitx}
-\usepackage{xcolor}
-\usepackage{booktabs}
-\usepackage{tabularx}
-\usepackage[inline]{enumitem}
-\usepackage{import}
-\usepackage[justification=centering]{caption}
 \usepackage{graphicx, subcaption}
 \captionsetup{subrefformat=parens}
 \usepackage{url}
-\usepackage{amsthm}
-\newtheorem{definition}{Definition}
-\usepackage{tikz}
+\usepackage{import}
+
+% Math packages
+\usepackage{amsmath}
+\usepackage{mathtools}
 \usepackage{amssymb}
+\usepackage{amsthm}
+
+% Algorithm packages
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+% Table packages
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+
+% Style packages
+\usepackage{setspace}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usepackage[justification=centering]{caption}
+\usepackage[inline]{enumitem}
+
+
+% SI packages
+\usepackage{numprint}
+\usepackage[scientific-notation=true]{siunitx}
+
+% Hyperlink packages
+\usepackage[hidelinks]{hyperref}
+
+\newtheorem{definition}{Definition}
 
 \newcommand{\term}[1]{\textsl{#1}}
 
@@ -66,7 +80,6 @@
    
 \include{0_introduction}
 \include{1_kgs}
-\include{2_bkg}
 \include{3_grl}
 \include{4_hyperbolic}
 \include{5_experiments}
