@@ -1,0 +1,53 @@
+\chapter{Graph representation learning}\label{grl}
+
+\section{Graph learning problems}
+Machine learning is inherently a problem-driven discipline. We seek to build models that can learn from data in order to solve particular tasks, and machine learning models are often categorized according to the type of task they seek
+to solve: Is it a supervised task, where the goal is to predict a target output given an input datapoint? Is it an unsupervised task, where the goal is to infer
+patterns, such as clusters of points, in the data? Machine learning with graphs is no different, but the usual categories of
+supervised and unsupervised are not necessarily the most informative or useful when it comes to graphs. In this section we provide a brief overview of the most
+important and well-studied machine learning tasks on graph data. As we will see, “supervised” problems are popular with graph data, but machine learning problems on graphs often blur the boundaries between the traditional machine
+learning categories.\
+
+\subsection{Node classification}
+
+\subsection{Link prediction}
+
+\subsection{Clustering and community detection}
+
+\subsection{Graph classification, regression and clustering}
+
+\subsection{Why graph representation learning?}
+To solve the problems above there exist various ``traditional'' methods, such as the following:
+\begin{itemize}
+    \item graph statistics
+    \item kernel methods
+    \item neighbourhood overlap detection
+    \item spectral clustering and graph Laplacians
+\end{itemize}
+
+
+
+
+In the previous sections, we saw a number of traditional approaches to learning
+over graphs. We discussed how graph statistics and kernels can extract feature
+information for classiﬁcation tasks. We saw how neighborhood overlap statistics
+can provide powerful heuristics for relation prediction. And, we oﬀered a brief
+introduction to the notion of spectral clustering, which allows us to cluster nodes
+into communities in a principled manner. However, the approaches discussed in
+this chapter—and especially the node and graph-level statistics—are limited due
+to the fact that they require careful, hand-engineered statistics and measures.
+These hand-engineered features are inﬂexible—i.e., they cannot adapt through
+a learning process—and designing these features can be a time-consuming and
+expensive process. The following chapters in this book introduce alternative
+approach to learning over graphs: graph representation learning. Instead of
+extracting hand-engineered features, we will seek to learn representations that
+encode structural information about the graph.
+
+
+%% skip traditional methods
+\section{Node embeddings}
+\subsection{Neighbourhood reconstruction methods}
+\subsubsection{Limitations of shallow embeddings}
+
+\section{Graph Neural Networks}
+
