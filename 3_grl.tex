@@ -23,6 +23,34 @@ To solve the problems above there exist various ``traditional'' methods~\cite{Ha
 
 However, these approaches are limited due to the fact that they require careful, hand-engineered statistics and measures. These hand-engineered features cannot adapt through a learning process, and designing these features can be a time-consuming and expensive process. The following chapters in this book introduce alternative approach to learning over graphs: graph representation learning. Instead of extracting hand-engineered features, we will seek to learn representations that encode structural information about the graph.
 
+
+\section{Node embeddings}
+The goal of these methods is to encode nodes as low-dimensional vectors or \term{embeddings} that summarize their graph position and the structure of their local graph neighborhood. In other words, we want to project nodes into a latent space, where geometric relations in this latent space correspond to relationships in the original graph~\cite{Hoff2002latentSpaceApproachesSocialNetworkAnalysis}. In Figure~\ref{fig:nodeEmbedding} we illustrate this problem; our goal is to learn an encoder that maps nodes to a low-dimensional embedding space. These embeddings are optimized so that distances in the embedding space reflect the relative positions of the nodes in the original graph. 
+\input{figs/figNodeEmbedding}
+
+\subsection{An Encoder-Decoder framework}
+We organize our discussion of node embeddings based upon the framework of encoding and decoding graphs, closely following the perspective in~\cite{Hamilton2017RLonGraphs}. In the encoder-decoder framework, we view the graph representation learning problem as involving two key operations. 
+\begin{description}
+    \item[Encoder model] maps each node in the graph into a low-dimensional vector or embedding,
+    \item[Decoder model] takes the low-dimensional node embeddings and uses them to reconstruct
+information about each node's neighborhood in the original graph.
+\end{description}
+This idea is summarized in Figure~\ref{fig:encDecFramework}.
+In this section we focus on \term{shallow} embedding methods. The encoder can be generalized beyond the shallow embedding approach, for instance using node features or local graph structure around each node as input to generate the embedding, These generalized encoder architectures, often called graph neural networks (GNNs), are the focus of the next section.
+
+\input{figs/figEncDecFramework}
+
+\subsubsection{Encoder}
+Formally, an encoder is a function that maps nodes to vector embeddings, so in the simplest case the encoder has the following signature:
+\begin{equation}
+    \text{ENC}: \mathcal{V} \to \mathbb{R}^d
+\end{equation}
+When talking about \term{shallow} node embeddings, the encoder function is simply an embedding lookup base on the node id. So we have that
+\begin{equation}
+    \text{ENC}(v) = \mathbf{z}[v]
+\end{equation}
+where $\mathbf{z}\in \mathbb{R}^{\mathcal{V}\times d}$ is a matrix containing the embedding vectors for all the nodes and $\mathbb{Z}[v]$ denotes the row of the matrix corresponding to node $v$.
+
 \subsubsection{Limitations of shallow embeddings}
 
 \subsection{Multi-relational data and knowledge graphs}

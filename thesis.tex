@@ -1,8 +1,8 @@
 \documentclass[12pt,a4paper]{report}
-
+\usepackage[parts]{classicthesis}
+\colorlet{CTtitle}{green!40!black}
 % Basic packages
 \usepackage[english]{babel}
-\usepackage[margin=1.0in]{geometry}
 \usepackage{graphicx, subcaption}
 \captionsetup{subrefformat=parens}
 \usepackage{url}
@@ -27,16 +27,18 @@
 \usepackage{setspace}
 \usepackage{xcolor}
 \usepackage{tikz}
+\usetikzlibrary{positioning, shapes, arrows}
+
 \usepackage[justification=centering]{caption}
 \usepackage[inline]{enumitem}
-
+\renewcommand{\labelitemi}{$\circ$}
 
 % SI packages
 \usepackage{numprint}
 \usepackage[scientific-notation=true]{siunitx}
 
 % Hyperlink packages
-\usepackage[hidelinks]{hyperref}
+% \usepackage[hidelinks]{hyperref}
 
 \newtheorem{definition}{Definition}
 
@@ -79,9 +81,11 @@
 \tableofcontents
    
 \include{0_introduction}
+\part{Background}
 \include{1_kgs}
 \include{3_grl}
 \include{4_hyperbolic}
+\part{Our contribution}
 \include{5_experiments}
 \include{6_results}
 \include{7_conclusions}
@@ -90,6 +94,8 @@
 \bibliography{bibliography.bib}
 
 \appendix
+\cleardoublepage
+\part*{Appendix}
 \include{A_formal_definitions}
 
 \chapter*{Acknowledgements}
