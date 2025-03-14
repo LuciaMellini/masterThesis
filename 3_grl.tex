@@ -29,7 +29,7 @@ The goal of these methods is to encode nodes as low-dimensional vectors or \term
 We introducing the encoder-decoder framework as a way of explaining the workings of node embeddings. We then illustrate some node embedding methods; we especially focus on random walk approaches seen the techniques used s baseline during our experiments.
 
 \subsection{An Encoder-Decoder framework}
-We organize our discussion of node embeddings based upon the framework of encoding and decoding graphs, closely following the perspective in~\cite{Hamilton2017RLonGraphs}. In the encoder-decoder framework, we view the graph representation learning problem as involving two key operations. 
+We organize our discussion of node embeddings based upon the framework of encoding and decoding graphs, closely following the perspective in~\cite{Hamilton2020GraphRL}. In the encoder-decoder framework, we view the graph representation learning problem as involving two key operations. 
 \begin{description}
     \item[Encoder] maps each node in the graph into a low-dimensional vector or embedding,
     \item[Decoder] takes the low-dimensional node embeddings and uses them to reconstruct information about each node's neighborhood in the original graph.
@@ -76,7 +76,7 @@ In the following sections we describe a few representative node embedding method
 \subsection{Factorization-based approaches}
 One way of viewing the encoder-decoder idea is from the perspective of matrix factorization. Indeed, the challenge of decoding local neighborhood structure from a node's embedding is closely related to reconstructing entries in the graph adjacency matrix. More generally, we can view this task as using matrix factorization to learn a low-dimensional approximation of a node-node similarity matrix S, where $\mathbb{S}$ generalizes the adjacency matrix and captures some user-defined notion of node-node similarity (as discussed in Section~\ref{sec:decoder})~\cite{Belkin2001laplacianEigenmapsSpectralClusteringTechniquesEmbeddingClustering}\cite{Kruskal1964MultidimensionalScalingOptimizingGoodnessFitNonmetricHypothesis}.
 \subsubsection{Laplacian eigenmaps}
-One of the earliest factorization-based approaches is the \term{Laplacian eigenmaps} (\term{LE}) technique, which builds upon spectral clustering~\cite{Belkin2002LaplacianEigenmaps}. In this approach, we define the decoder based on the $L_2$-distance between the node embeddings:
+One of the earliest factorization-based approaches is the \term{Laplacian eigenmaps} (\term{LE}) technique, which builds upon spectral clustering~\cite{Belkin2001laplacianEigenmapsSpectralClusteringTechniquesEmbeddingClustering}. In this approach, we define the decoder based on the $L_2$-distance between the node embeddings:
 \begin{equation*}
     \text{DEC}(\mathbf{z}_u, \mathbf{z}_v) = \|\mathbf{z}_u - \mathbf{z}_v\|_2^2.
 \end{equation*}

@@ -1,6 +1,5 @@
 *.aux
 *.pdf
-*.bib
 *.bbl
 *.blg
 *.fdb_latexmk
