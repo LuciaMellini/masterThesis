@@ -13,6 +13,8 @@
 \usepackage{mathtools}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
 
 % Algorithm packages
 \usepackage{algorithm}
@@ -28,6 +30,9 @@
 \usepackage{xcolor}
 \usepackage{tikz}
 \usetikzlibrary{positioning, shapes, arrows}
+\usetikzlibrary{external}
+\tikzexternalize[prefix=figs/]
+
 
 \usepackage[justification=centering]{caption}
 \usepackage[inline]{enumitem}
@@ -36,8 +41,6 @@
 % SI packages
 \usepackage{numprint}
 \usepackage[scientific-notation=true]{siunitx}
-
-\newtheorem{definition}{Definition}
 
 \newcommand{\term}[1]{\textsl{#1}}
 

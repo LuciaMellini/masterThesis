@@ -1,10 +1,13 @@
 *.aux
+*.auxlock
 *.pdf
 *.bbl
 *.blg
+*.dpth
 *.fdb_latexmk
 *.fls
 *.log
+*.md5
 *.out
 *.synctex.gz
 *.toc
