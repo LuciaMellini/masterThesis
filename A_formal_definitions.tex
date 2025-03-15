@@ -134,14 +134,14 @@ Here we formalise notions relating to schemata for graphs. Though we present def
 
 \subsection{Emergent schema}\label{app:emergent-schema}
 \begin{definition}[Quotient graph]\label{def:quotient-graph}
-    Given a directed edge-labelled graph $G = (V, E, L)$, a graph $\mathcal{G} = (\mathcal{V}, \mathcal{E}, L)$ is a quotient graph of $G$ if and only if:
+    Given a directed edge-labelled graph $G = (V, E, L)$, a graph $G = (V, \mathcal{E}, L)$ is a quotient graph of $G$ if and only if:
         \begin{itemize}
-                \item $\mathcal{V}\coloneqq \sim/V$ is a partition of $V$ in terms of an equivalence relation $\sim$ without the empty set, i.e., $\mathcal{V} \subseteq (2^V \setminus \emptyset)$, $V = \bigcup_{U \in \mathcal{V}} U$, and for all $U \in \mathcal{V}$, $W \in \mathcal{V}$, it holds that $U = W$ or $U \cap W = \emptyset$; and
-                \item $\mathcal{E} = \{(U, l, W) \mid U \in \mathcal{V}, W \in \mathcal{V} \text{ and there exist } u \in U, w \in W \text{ such that } (u, l, w) \in E\}$.
+                \item $V\coloneqq \sim/V$ is a partition of $V$ in terms of an equivalence relation $\sim$ without the empty set, i.e., $V \subseteq (2^V \setminus \emptyset)$, $V = \bigcup_{U \in V} U$, and for all $U \in V$, $W \in V$, it holds that $U = W$ or $U \cap W = \emptyset$; and
+                \item $\mathcal{E} = \{(U, l, W) \mid U \in V, W \in V \text{ and there exist } u \in U, w \in W \text{ such that } (u, l, w) \in E\}$.
         \end{itemize}
 \end{definition}
 
-One might define an equivalence relation $\sim$ on nodes, where $\sim/ \mathcal{V}$ is then a partition whose parts contain all nodes with the same types. Another way to induce a quotient graph is to define the partition in a way that preserves some of the topology of the input graph. One way to formally define this idea is through simulation and bisimulation.
+One might define an equivalence relation $\sim$ on nodes, where $\sim/ V$ is then a partition whose parts contain all nodes with the same types. Another way to induce a quotient graph is to define the partition in a way that preserves some of the topology of the input graph. One way to formally define this idea is through simulation and bisimulation.
 
 \begin{definition}[Simulation]
     Given two directed edge-labelled graphs $G = (V, E, L)$ and $G' = (V', E', L')$, let $R \subseteq V \times V'$ be a relation between the nodes of $G$ and $G'$, respectively. We call $R\subset V\times V'$ a simulation on $G$ and $G'$ if, for all $(v, v') \in R$, the following holds:
