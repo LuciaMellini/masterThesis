@@ -18,7 +18,7 @@ This definition does not impose $L$ and $V$ to be disjoint, so technically any l
 This description allow for nodes to be in various relations of different types.
 
 \begin{definition}[Property graph]\label{def:property-graph}
-    A property graph is a tuple $G = (V, E, L, P, U, e, l, p)$, where
+    A property graph is defined as a tuple $G = (V, E, L, P, U, e, l, p)$, where
     \begin{itemize}
         \item $V \subseteq \textbf{Con}$ is a set of node ids,
         \item $E \subseteq \textbf{Con}$ is a set of edge ids,
@@ -134,10 +134,10 @@ Here we formalise notions relating to schemata for graphs. Though we present def
 
 \subsection{Emergent schema}\label{app:emergent-schema}
 \begin{definition}[Quotient graph]\label{def:quotient-graph}
-    Given a directed edge-labelled graph $G = (V, E, L)$, a graph $G = (V, \mathcal{E}, L)$ is a quotient graph of $G$ if and only if:
+    Given a directed edge-labelled graph $G = (V, E, L)$, a graph $G = (\mathcal{V}, \mathcal{E}, L)$ is a quotient graph of $G$ if and only if:
         \begin{itemize}
-                \item $V\coloneqq \sim/V$ is a partition of $V$ in terms of an equivalence relation $\sim$ without the empty set, i.e., $V \subseteq (2^V \setminus \emptyset)$, $V = \bigcup_{U \in V} U$, and for all $U \in V$, $W \in V$, it holds that $U = W$ or $U \cap W = \emptyset$; and
-                \item $\mathcal{E} = \{(U, l, W) \mid U \in V, W \in V \text{ and there exist } u \in U, w \in W \text{ such that } (u, l, w) \in E\}$.
+                \item $\mathcal{V}\coloneqq \sim/V$ is a partition of $V$ in terms of an equivalence relation $\sim$ without the empty set, i.e., $V \subseteq (2^V \setminus \emptyset)$, $\mathcal{V} = \bigcup_{U \in V} U$, and for all $U \in \mathcal{V}$, $W \in \mathcal{V}$, it holds that $U = W$ or $U \cap W = \emptyset$; and
+                \item $\mathcal{E} = \{(U, l, W) \mid U \in \mathcal{V}, W \in \mathcal{V} \text{ and there exist } u \in U, w \in W \text{ such that }\\ (u, l, w) \in E\}$.
         \end{itemize}
 \end{definition}
 
