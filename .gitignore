@@ -6,9 +6,45 @@
 *.dpth
 *.fdb_latexmk
 *.fls
+*.fmt
+*.lof
 *.log
+*.lot
 *.md5
 *.out
 *.synctex.gz
 *.toc
 *.xml
+*.cb
+*.cb2
+.*.lb
+
+## Intermediate documents:
+*.dvi
+*.xdv
+*-converted-to.*
+/tikz_cache
+*.bak0
+# these rules might exclude image files for figures etc.
+# *.ps
+# *.eps
+# *.pdf
+titlepage.pdf
+
+## Bibliography auxiliary files (bibtex/biblatex/biber):
+*.bbl
+*.bcf
+*.blg
+*-blx.aux
+*-blx.bib
+*.run.xml
+*.bbl-SAVE-ERROR
+*.bcf-SAVE-ERROR
+
+## Build tool auxiliary files:
+*.fdb_latexmk
+*.synctex
+*.synctex(busy)
+*.synctex.gz
+*.synctex.gz(busy)
+*.pdfsync

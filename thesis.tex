@@ -1,54 +1,13 @@
-\documentclass[a4paper]{report}
+\documentclass[a4paper]{book}
 \usepackage[parts]{classicthesis}
-\usepackage[margin=3cm]{geometry}
-% Basic packages
-\usepackage[english]{babel}
-\usepackage{graphicx, subcaption}
-\captionsetup{subrefformat=parens}
-\usepackage{url}
-\usepackage{import}
+\colorlet{CTtitle}{teal}
+\usepackage[print]{thesis}
+\usepackage{pdfpages}
 
-% Math packages
-\usepackage{amsmath}
-\usepackage{mathtools}
-\usepackage{amssymb}
-\usepackage{amsthm}
-\theoremstyle{definition}
-\newtheorem{definition}{Definition}
-
-% Algorithm packages
-\usepackage{algorithm}
-\usepackage{algpseudocode}
-
-% Table packages
-\usepackage{booktabs}
-\usepackage{tabularx}
-\usepackage{array}
-
-% Style packages
-\usepackage{setspace}
-\usepackage{xcolor}
-\usepackage{tikz}
-\usetikzlibrary{positioning, shapes, arrows}
-\usetikzlibrary{external}
-\tikzexternalize[prefix=tikz-cache/]
-
-
-\usepackage[justification=centering]{caption}
-\usepackage[inline]{enumitem}
-\renewcommand{\labelitemi}{$\circ$}
-
-% SI packages
-\usepackage{numprint}
-\usepackage[scientific-notation=true]{siunitx}
-
-\newcommand{\term}[1]{\textsl{#1}}
-
-%\usepackage{titlepage}
 
 \title{Integration of KGs and PSNs for biomedical application}
 \author{Lucia Mellini}
-% \date{Academic Year 2023/2024}
+\date{Academic Year 2023/2024}
 % \university{Università degli Studi di Milano}
 % \department{Dipartimento di Informatica ``Giovanni degli Antoni''}
 % \logo{img/unimi_logo}
@@ -56,36 +15,39 @@
 % \supervisor{Prof.\ Elena Casiraghi}
 % \cosupervisor{Prof.\ Mauricio Abel Soto Gomez}
 
-
 \begin{document}
 
+\includepdf{titlepage.pdf}
 %\maketitlepage
+
+\frontmatter
+
 
 \maketitle
 
-\setcounter{chapter}{-1}
 \tableofcontents
    
+\mainmatter
+
+\setcounter{chapter}{-1}
 \include{introduction}
-\part{Background}
+\part*{Background}
 \include{kgs}
 \include{grl}
 \include{hyperbolic}
-\part{Our contribution}
+\part*{Our contribution}
 \include{experiments}
 \include{results}
 \include{conclusions}
-
-\bibliographystyle{unsrt}
-\bibliography{bibliography.bib}
 
 \appendix
 \cleardoublepage
 \part*{Appendix}
 \include{A_formal_definitions}
 
-\chapter*{Acknowledgements}
+\bibliography{bibliography}
 
+\chapter*{Acknowledgements}
 
 
 \end{document}
