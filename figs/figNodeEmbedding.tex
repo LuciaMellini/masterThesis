@@ -1,0 +1,42 @@
+\begin{figure}
+    \centering
+    \begin{tikzpicture}[scale=1.2, every node/.style={font=\small}]
+        % Define styles
+        \tikzstyle{node}=[circle, draw, fill=white, minimum size=5pt, inner sep=1pt]
+        \tikzstyle{main_node}=[circle, draw, fill=red!50, minimum size=7pt, inner sep=1pt]
+        \tikzstyle{arrow}=[->, thick, dashed]
+
+        \node[node] (A) at (0.7,1) {};
+        \node[node] (B) at (0,0.5) {};
+        \node[node] (C) at (0.2,-0.9) {};
+        \node[node] (D) at (2,0.5) {};
+        \node[main_node, label=above:$u$] (U) at (1.2,0) {};
+        \node[main_node, label=below:$v$] (V) at (2,-0.5) {};
+        
+        % Edges in the network
+        \draw (A) -- (B) -- (C) -- (A);
+        \draw (A) -- (U);
+        \draw (U) -- (D);
+        \draw (U) -- (V);
+        \draw (D) -- (V);
+
+        % Embedding space
+        \node[ellipse, fill=black!20, minimum width=3cm, minimum height=3cm] (embedding) at (6,0) {};
+        \node[below=0.2cm of embedding] {\textbf{embedding space}};
+
+        % Embedded points
+        \node[node, fill=white, label=right:$z_u$] (zu) at (6.5,0.8) {};
+        \node[node, fill=white, label=right:$z_v$] (zv) at (6.3,-0.6) {};
+
+        % Encoding arrows
+        \draw[arrow] (U) to[out=20, in=160] node[above] {} (zu);
+        \draw[arrow] (V) to[out=-20, in=200] node[below] {} (zv);
+
+        % Labels
+        \node[below=1.6cm of U] {\textbf{original graph}};
+        \node[right=1.7cm of U] {encode nodes};
+    \end{tikzpicture}
+    \caption{Graph node encoding into embedding space}
+    \label{fig:nodeEmbedding}
+\end{figure}
+

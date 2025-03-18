@@ -1,0 +1,105 @@
+\newif\if@extras
+\DeclareOption{extras}{\@extrastrue}
+\newif\if@print
+\DeclareOption{print}{\@printtrue}
+
+\ProcessOptions\relax
+
+% MATHS
+\usepackage{amsmath,amssymb,amsthm, mathtools}
+\usepackage[capitalise]{cleveref}
+
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+
+% TYPOGRAPHY
+\renewcommand{\baselinestretch}{1.1}
+
+\usepackage{xspace}
+
+\usepackage{csquotes}
+\MakeOuterQuote{"}
+\usepackage{numprint}
+\usepackage[scientific-notation=true]{siunitx}
+
+
+
+% CUSTOM ENUMERATE
+\usepackage[inline]{enumitem}
+\renewcommand{\labelitemi}{$\circ$}
+
+% FIX UNICODE CHARACTERS
+
+
+% DISABLE WHITE PAGE NUMBERING
+\renewcommand{\cleardoublepage}{
+	\clearpage
+	\if@twoside
+		\ifodd\c@page
+		\else
+			\thispagestyle{empty}
+			\hbox{}
+			\newpage
+		\fi
+	\fi
+}
+
+% GRAPHICS
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{colortbl}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+
+\usepackage{caption}
+\usepackage{subcaption}
+\captionsetup{tableposition=bottom,figureposition=bottom,font=small,labelfont={bf}, subrefformat=parens}%,format=hang}
+
+\usepackage{tikz}
+\usetikzlibrary{positioning, shapes, arrows}
+% \usetikzlibrary{external}
+% \tikzexternalize[prefix=tikz_cache/]
+
+
+% BIBLIOGRAPHY
+\bibliographystyle{unsrt}
+
+% ADVANCED SPACING COMMANDS
+
+\newlength{\negph@wd}
+\DeclareRobustCommand{\negphantom}[1]{%
+	\ifmmode
+		\mathpalette\negph@math{#1}%
+	\else
+		\negph@do{#1}%
+	\fi
+}
+\newcommand{\negph@math}[2]{\negph@do{$\m@th#1#2$}}
+\newcommand{\negph@do}[1]{%
+	\settowidth{\negph@wd}{#1}%
+	\hspace*{-\negph@wd}%
+}
+
+\DeclareRobustCommand{\crossphantom}[2]{#1\negphantom{#1}\phantom{#2}} % write #1 but take the space of #2
+
+% spacing fixes
+\newcommand{\hspacingfix}{\hspace} % aliasing for easy lookup if needed
+% also see \linebreak
+
+
+% ALIASES
+\newcommand{\term}[1]{\textsl{#1}}
+
+
+
+\if@print
+	\hypersetup{
+		colorlinks=true,
+		citecolor=black!60,
+		linkcolor=black!80,
+		filecolor=black,
+		urlcolor=black!80
+	}
+\fi

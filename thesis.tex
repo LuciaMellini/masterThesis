@@ -1,0 +1,53 @@
+\documentclass[a4paper]{book}
+\usepackage[parts]{classicthesis}
+\colorlet{CTtitle}{teal}
+\usepackage[print]{thesis}
+\usepackage{pdfpages}
+
+
+\title{Integration of KGs and PSNs for biomedical application}
+\author{Lucia Mellini}
+\date{Academic Year 2023/2024}
+% \university{Università degli Studi di Milano}
+% \department{Dipartimento di Informatica ``Giovanni degli Antoni''}
+% \logo{img/unimi_logo}
+% \degree{Corso di Laurea Magistrale in Informatica}
+% \supervisor{Prof.\ Elena Casiraghi}
+% \cosupervisor{Prof.\ Mauricio Abel Soto Gomez}
+
+\begin{document}
+
+\includepdf{titlepage.pdf}
+%\maketitlepage
+
+\frontmatter
+
+
+\maketitle
+
+\tableofcontents
+   
+\mainmatter
+
+\setcounter{chapter}{-1}
+\include{introduction}
+\part*{Background}
+\include{kgs}
+\include{grl}
+\include{hyperbolic}
+\part*{Our contribution}
+\include{experiments}
+\include{results}
+\include{conclusions}
+
+\appendix
+\cleardoublepage
+\part*{Appendix}
+\include{A_formal_definitions}
+
+\bibliography{bibliography}
+
+\chapter*{Acknowledgements}
+
+
+\end{document}

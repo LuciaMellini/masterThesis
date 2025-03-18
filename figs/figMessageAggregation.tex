@@ -1,0 +1,75 @@
+\begin{figure}
+    
+    \begin{tikzpicture}[scale=1.2, every node/.style={font=\small}]
+        % Define styles
+        \tikzstyle{node}=[circle, draw]
+        \tikzstyle{main_node}=[circle, draw, fill=red!50, minimum size=7pt, inner sep=1pt]
+        \tikzstyle{arrow}=[->, thick, dashed]
+
+        \begin{scope}[scale=0.8]
+            \node[node, fill=yellow!30] (A) at (0.7,1) {$A$};
+            \node[node, fill=olive!30] (B) at (0,0.5) {$B$};
+            \node[node, fill=green!20] (C) at (0.2,-0.9) {$C$};
+            \node[node, fill=blue!30] (D) at (2,0.5) {$D$};
+            \node[main_node, label=above:$u$] (U) at (1.2,0) {};
+            \node[node, fill=purple!30] (E) at (2,-0.5) {$E$};
+            
+            % Edges in the network
+            \draw (A) -- (B) -- (C) -- (A);
+            \draw (A) -- (U);
+            \draw (U) -- (D);
+            \draw (U) -- (E);
+            \draw (D) -- (E);
+        \end{scope}
+        
+        \begin{scope}[xshift=7cm]
+            % Aggregation box
+            \node[main_node, label=above:$u$, right=2cm of U] (U1) {};
+            \node[rectangle, draw, fill=black!20, right=0.5cm of U1, minimum width=2cm, minimum height=1cm] (AGG) {AGGREGATE};
+            \draw[arrow] (AGG) -- (U1);
+            
+            % % Nodes on the right side of aggregation
+            
+            \node[rectangle, draw, fill=gray!50, minimum width=1cm, minimum height=0.5cm] (M1) at ([shift={(3cm,2cm)}]AGG) {};
+            \node[rectangle, draw, fill=gray!50, minimum width=1cm, minimum height=0.5cm] (M2) at ([shift={(3cm,0cm)}]AGG) {};
+            \node[rectangle, draw, fill=gray!50, minimum width=1cm, minimum height=0.5cm] (M3) at ([shift={(3cm,-2cm)}]AGG) {};
+            \node[node, fill=yellow!30, left=0.2cm of M1] (A2) {$A$};
+            \node[node, fill=blue!30, left=0.2cm of M2] (D2) {$D$};
+            \node[node, fill=purple!50, left=0.2cm of M3] (E2) {$E$};
+            
+            % Aggregated edges
+            \draw[arrow] (A2) -- (AGG);
+            \draw[arrow] (D2) -- (AGG);
+            \draw[arrow] (E2) -- (AGG);
+            \draw[arrow] (M1) -- (A2);
+            \draw[arrow] (M2) -- (D2);
+            \draw[arrow] (M3) -- (E2);
+            
+            % % Connections from merging nodes
+            
+            \node[node, fill=olive!30] (BA) at ([shift={(2cm,0.8cm)}]A2) {$B$};
+            \node[node, fill=blue!30] (DA) at ([shift={(2cm,0cm)}]A2) {$D$};
+            \node[node, fill=red!50] (UA) at ([shift={(2cm,-0.8cm)}]A2) {$u$};
+            \draw[arrow] (BA) -- (M1);
+            \draw[arrow] (DA) -- (M1);
+            \draw[arrow] (UA) -- (M1);
+
+            \node[node, fill=purple!30] (ED) at ([shift={(2cm,0.4cm)}]D2) {$E$};        
+            \node[node, fill=red!40] (UD) at ([shift={(2cm,-0.4cm)}]D2) {$u$};
+            \draw[arrow] (ED) -- (M2);
+            \draw[arrow] (UD) -- (M2);
+
+            \node[node, fill=blue!30] (DE) at ([shift={(2cm,0.4cm)}]E2) {$D$};
+            \node[node, fill=red!50] (UE) at ([shift={(2cm,-0.4cm)}]E2){$u$};
+            \draw[arrow] (DE) -- (M3);
+            \draw[arrow] (UE) -- (M3);
+            
+        \end{scope}
+        
+        % Label for input graph
+        \node[below=1.6cm of U] {\textbf{original network}};
+
+    \end{tikzpicture}
+    \caption{Message aggregation of node $u$'s neighbourhood ($\mathcal{N}(u)=\{A, D, E\}$).}
+    \label{fig:MessageAggregation}
+\end{figure}
