@@ -245,4 +245,17 @@ The message-passing update can be expressed as follows:
     \mathbf{h}_u^{(k+1)} &= \text{UPDATE}^{(k)}\left(\mathbf{h}_u^{(k)}, \text{AGGREGATE}^{(k)}(\{\mathbf{h}_v^{(k)}, \forall v \in \mathcal{N}(u)\})\right) \\
     &= \text{UPDATE}^{(k)}\left(\mathbf{h}_u^{(k)}, \mathbf{m}_{\mathcal{N}(u)}^{(k)}\right)
 \end{align*}
-where UPDATE and AGGREGATE are arbitrary differentiable functions, also complex models like neural networks
+where UPDATE and AGGREGATE are arbitrary differentiable functions, also complex models like neural networks. The message $\mathbf{m}_{\mathcal{N}(u)}^{(k)}$ is computed by aggregating the embeddings of the neighbours of $u$. The subscript indicates the current iteration, also known as a layer of the GNN.
+
+The initial embeddings (when $k=0$) are set to the input features for all the nodes, i.e., $\mathbf{h}_u^{(0)} = \mathbf{x}_u$. After running $K$ iterations of the GNN message passing, we can use the output of the final layer to define the embeddings for each node. So we have that
+\begin{equation*}
+    \mathbf{z}_u=\mathbf{h}_u^{(K)} \text{   }\forall v \in V
+\end{equation*}
+Note that since the AGGREGATE function takes sets as input, GNNs defined as above are permutation equivariant by design.
+
+The basic intuition behind the GNN message-passing framework is that at each iteration, every node aggregates information from its local neighborhood, and as these iterations progress each node embedding contains
+more and more information from further reaches of the graph. To be precise after $k$ iterations every node embedding contains information about its $k$-hop neighborhood. 
+The information coded in the resulting node embeddings is of double nature: both regarding the structure and the features in the nodes $K$-hop neighbourhoods.
+
+
+\subsubsection{Motivations and Intuitions}
