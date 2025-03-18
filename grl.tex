@@ -261,18 +261,58 @@ The information coded in the resulting node embeddings is of double nature: both
 So far we have discussed the GNN framework ina relatively abstract fashion as a series of message-passing iterations using the generic functions UPDATE and AGGREGATE (\Cref{eq:GNNupdate}). We begin by instantiating these two functions concretely to create a semplification of the ofiginal GNN models proposed by~\cite{Merkwirth2005automaticGenerationComplementaryDescriptorsMolecularGraphNetworks}\cite{scarselli2008graphNeuralNetworkModel}.
 
 The basic GNN message passing is defined as
-\begin{equation*}
+\begin{equation}\label{eq:basicGNNAGGUP}
     \mathbf{h}_u^{(k)} = \sigma\left(\mathbf{W}_\text{self}^{(k)}\mathbf{h}_u^{(k-1)} + \mathbf{W}_\text{neigh}^{(k)}\sum_{v\in\mathcal{N}(u)}\mathbf{h}_v^{(k-1)} + \mathbf{b}^{(k)}\right)
-\end{equation*}
+\end{equation}
 where $\mathbf{W}_\text{self}^{(k)}, \mathbf{W}_\text{neigh}^{(k)} \in \mathbb{R}^{d^{(k)}\times d^{(k-1)}}$ are trainable parameter matrices and $\sigma$ denotes an element-wise non-linear function (e.g. a tanh or ReLU). In general the parameters $\mathbf{W}_\text{self}, \mathbf{W}_\text{neigh}$ and $b$ can be shared across the GNN message passing iterations or trained separately for each layer.
 
-
-We can equivalently define the basic GNN through the $\text{UPDATE}$ and $\text{AGGREGATE}$ functions:
+We can equivalently define the basic GNN through the $\text{UPDATE}$ and $\text{AGGREGATE}$ functions (we omit the iteration step number):
 \begin{equation*}
-    \text{AGGREGATE}^{(k)}(\{\mathbf{h}_v^{(k)}, \forall v \in \mathcal{N}(u)\}) =
+    \text{AGGREGATE}(\{\mathbf{h}_v^{(k)}, \forall v \in \mathcal{N}(u)\}) =
     \mathbf{m}_{\mathcal{N}(u)} = \sum_{v\in\mathcal{N}(u)}\mathbf{h}_v,
 \end{equation*}
 \begin{equation*}
     \text{UPDATE}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) = \sigma(\mathbf{W}_\text{self}\mathbf{h}_u + \mathbf{W}_\text{neigh}\mathbf{m}_{\mathcal{N}(u)}).
 \end{equation*}
 
+\paragraph{self-loops}
+As a simplification of the neural message passing approach it is common to add \term{self-loops} to the input graph and omit the explicit update step. In this approach the message passing is simply defined as 
+\begin{equation*}
+    \mathbf{h}_u^{(k)} = \text{AGGREGATE}(\{\mathbf{h}_v^{(k-1)}, \forall v \in \mathcal{N}(u)\cup {u}\})
+\end{equation*}
+where the aggregation is taken over the node's neighbours as well as the node itself. Here the update function is implicitly defined though the aggergation method. Simplifying the message passing often alleviates overfitting, but it also severely limits the expressivity of the GNN, as the information comping from the node's neighbours cannot be differentiated from the information from the node itself.
+
+\subsection{Generalized Neighbourhood Aggregation}
+The basic GNN can be improved upon an generalized in various ways. Specifically there exist variations on the AGGREGATE and UPDATE functions.
+
+\subsubsection{AGGREGATE generalization}
+\paragraph{Neighbourhood Aggregation}
+The most basic aggregation operations (\Cref{eq:basicGNNAGGUP}) simply takes the sum of the neighbourhood embeddings. This approach can be unstable and highly sensitive to node degrees, since nodes with higher degrees will expectedly have a larger norm value for the sum of its neighbourhood's embeddings.
+
+One solution to this problem is to simply normalize the aggregation operation based upon the degrees of the nodes involved. The simplest approach is to just take an average rather than sum:
+
+\begin{equation*}
+    \mathbf{m}_{\mathcal{N}(u)} = \frac{\sum_{v \in \mathcal{N}(u) \mathbf{h}_v}}{|\mathcal{N}(u)|}
+\end{equation*}
+
+but researchers have also found success with other normalization factors, such as the following symmetric normalization employed by~\cite{kipf2016semi}:
+
+\begin{equation*}
+    \mathbf{m}_{\mathcal{N}(u)} = \sum_{v \in \mathcal{N}(u)}\frac{ \mathbf{h}_v}{\sqrt{|\mathcal{N}(u)||\mathcal{N}(v)|}}
+\end{equation*}
+
+that reduces the importance of a message coming from a neighbour with high degree, since it features bring losely specific information.
+
+\paragraph{Graph Convolutional Networks (GCNs)}
+The GCN model, proposed by ~\cite{kipf2016semi}, employs the symmetric-normalized aggregation as well as the self-loop update approach, resulting in a message passing function as such
+
+\begin{equation*}
+    \mathbf{h}_u^{(k)} = \sigma\left(\mathbf{W}^{(k)}\sum_{v \in \mathcal{N}(u)}\frac{ \mathbf{h}_v}{\sqrt{|\mathcal{N}(u)||\mathcal{N}(v)|}}\right)
+\end{equation*}
+
+\paragraph{Set Aggregators}
+In GNNs neighborhood aggregation must be permutation-invariant, as node neighborhoods have no inherent order. Traditional methods, such as simple summation, may limit the expressive power of GNNs. 
+
+\term{Set pooling}~\cite{zaheer2017deepSets}, applies a multi-layer perceptron (MLP) to each neighbor’s embedding before summing the results and passing them through another MLP. This method ensures universal function approximation while maintaining permutation invariance. 
+
+\term{Janossy pooling}~\cite{murphy2018janossyPooling}, takes a different approach. Instead of relying on permutation-invariant operations like summation, it applies a permutation-sensitive function, such as an LSTM~\cite{hochreiter1997LSTM}, to ordered sequences of neighbor embeddings. Since computing all possible permutations is infeasible, practical implementations either sample a subset of permutations or use a fixed canonical ordering, such as sorting nodes by degree.
