@@ -241,10 +241,10 @@ from $u$’s graph neighborhood $\mathcal{N} (u)$. This message-passing update e
 \input{figs/figMessageAggregation}
 
 The message-passing update can be expressed as follows:
-\begin{align*}
+\begin{align}\label{eq:GNNupdate}
     \mathbf{h}_u^{(k+1)} &= \text{UPDATE}^{(k)}\left(\mathbf{h}_u^{(k)}, \text{AGGREGATE}^{(k)}(\{\mathbf{h}_v^{(k)}, \forall v \in \mathcal{N}(u)\})\right) \\
     &= \text{UPDATE}^{(k)}\left(\mathbf{h}_u^{(k)}, \mathbf{m}_{\mathcal{N}(u)}^{(k)}\right)
-\end{align*}
+\end{align}
 where UPDATE and AGGREGATE are arbitrary differentiable functions, also complex models like neural networks. The message $\mathbf{m}_{\mathcal{N}(u)}^{(k)}$ is computed by aggregating the embeddings of the neighbours of $u$. The subscript indicates the current iteration, also known as a layer of the GNN.
 
 The initial embeddings (when $k=0$) are set to the input features for all the nodes, i.e., $\mathbf{h}_u^{(0)} = \mathbf{x}_u$. After running $K$ iterations of the GNN message passing, we can use the output of the final layer to define the embeddings for each node. So we have that
@@ -257,5 +257,22 @@ The basic intuition behind the GNN message-passing framework is that at each ite
 more and more information from further reaches of the graph. To be precise after $k$ iterations every node embedding contains information about its $k$-hop neighborhood. 
 The information coded in the resulting node embeddings is of double nature: both regarding the structure and the features in the nodes $K$-hop neighbourhoods.
 
+\subsubsection{The Basic GNN}
+So far we have discussed the GNN framework ina relatively abstract fashion as a series of message-passing iterations using the generic functions UPDATE and AGGREGATE (\Cref{eq:GNNupdate}). We begin by instantiating these two functions concretely to create a semplification of the ofiginal GNN models proposed by~\cite{Merkwirth2005automaticGenerationComplementaryDescriptorsMolecularGraphNetworks}\cite{scarselli2008graphNeuralNetworkModel}.
 
-\subsubsection{Motivations and Intuitions}
+The basic GNN message passing is defined as
+\begin{equation*}
+    \mathbf{h}_u^{(k)} = \sigma\left(\mathbf{W}_\text{self}^{(k)}\mathbf{h}_u^{(k-1)} + \mathbf{W}_\text{neigh}^{(k)}\sum_{v\in\mathcal{N}(u)}\mathbf{h}_v^{(k-1)} + \mathbf{b}^{(k)}\right)
+\end{equation*}
+where $\mathbf{W}_\text{self}^{(k)}, \mathbf{W}_\text{neigh}^{(k)} \in \mathbb{R}^{d^{(k)}\times d^{(k-1)}}$ are trainable parameter matrices and $\sigma$ denotes an element-wise non-linear function (e.g. a tanh or ReLU). In general the parameters $\mathbf{W}_\text{self}, \mathbf{W}_\text{neigh}$ and $b$ can be shared across the GNN message passing iterations or trained separately for each layer.
+
+
+We can equivalently define the basic GNN through the $\text{UPDATE}$ and $\text{AGGREGATE}$ functions:
+\begin{equation*}
+    \text{AGGREGATE}^{(k)}(\{\mathbf{h}_v^{(k)}, \forall v \in \mathcal{N}(u)\}) =
+    \mathbf{m}_{\mathcal{N}(u)} = \sum_{v\in\mathcal{N}(u)}\mathbf{h}_v,
+\end{equation*}
+\begin{equation*}
+    \text{UPDATE}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) = \sigma(\mathbf{W}_\text{self}\mathbf{h}_u + \mathbf{W}_\text{neigh}\mathbf{m}_{\mathcal{N}(u)}).
+\end{equation*}
+
