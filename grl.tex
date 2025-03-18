@@ -229,4 +229,22 @@ Thus, this approach takes a straightforward generalization of the dot product to
 where now $\mathbf{z}_u, \mathbf{z}_v, \mathbf{r}_\ell \in \mathbb{C}^d$ are complex-valued embeddings and $\text{Re}$ denotes the real component of a complex vector. Since we take the complex conjugate $\overline{\mathbf{z}}_v$ of the tail embedding, this approach to decoding can accommodate asymmetric relations.
 
 \section{Graph Neural Networks}\label{sec:gnn}
+The primary challenge in developing complex encoders for graph-structured data is that our usual deep learning toolbox does not apply. For example, \term{convolutional neural networks} (\term{CNNs}) are well-defined only over grid-structured inputs like images, while \term{recurrent neural networks} (\term{RNNs}) are well-defined only over sequences like text. To define a deep neural network over general graphs, we need to define a new kind of deep learning architecture.
+
+\subsection{Neural Message Passing}
+The defining feature of a GNN is that it uses a form of \term{neural message passing} in which vector messages are exchanged between nodes and updated using neural networks~\cite{Gilmer2017neuralMessagePassing}. In the next sections we detail the foundations of this neural message passing framework.
+
+\subsubsection{A Message Passing Framework}
+During each message-passing iteration in a GNN, a hidden embedding $h_u^{(k)}$ corresponding to each node $u\in V$ is updated according to information aggregated
+from $u$’s graph neighborhood $\mathcal{N} (u)$. This message-passing update exemplified in \Cref{fig:MessageAggregation} shows how the messages sent to the target node are in turn the result of information aggregation of their respective neighbourhoods. Notice that the computation graph of the GNN forms a tree structure by unfolding the neighbourhood and hte target node. In \Cref{fig:MessageAggregation} we only show a two-layer version of the message-passing model.
+
+\input{figs/figMessageAggregation}
+
+The message-passing update can be expressed as follows:
+\begin{align*}
+    \mathbf{h}_u^{(k+1)} &= \text{UPDATE}^{(k)}\left(\mathbf{h}_u^{(k)}, \text{AGGREGATE}^{(k)}(\{\mathbf{h}_v^{(k)}, \forall v \in \mathcal{N}(u)\})\right) \\
+    &= \text{UPDATE}^{(k)}\left(\mathbf{h}_u^{(k)}, \mathbf{m}_{\mathcal{N}(u)}^{(k)}\right)
+\end{align*}
+where UPDATE and AGGREGATE are arbitrary differentiable functions, also complex models like neural networks
+
 
