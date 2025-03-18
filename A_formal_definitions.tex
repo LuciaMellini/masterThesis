@@ -41,7 +41,7 @@ We formalize the notions of graph patterns for both directed edge-labelled graph
     We define a directed edge-labelled graph pattern as a tuple $Q = (V, E, L)$, where $V \subseteq \textbf{Term}$ is a set of node terms, $L \subseteq \textbf{Term}$ is a set of edge terms, and $E \subseteq V \times L \times V$ is a set of edges (triple patterns).
 \end{definition}
 
-The graph patterns for property graphs are defined analogously as in Definition~\ref{def:directed-edge-labelled-graph-pattern}, allowing variables in any position.
+The graph patterns for property graphs are defined analogously as in \Cref{def:directed-edge-labelled-graph-pattern}, allowing variables in any position.
     
 \begin{definition}[Property graph pattern]\label{def:property-graph-pattern}
     We define a property graph pattern as a tuple $Q = (V, E, L, P, U, e, l, p)$, where
@@ -79,7 +79,7 @@ We are now ready to define the evaluation of a graph pattern.
 \end{definition}
 
 \begin{definition}[Complex graph pattern evaluation]\label{def:complex-graph-pattern-evaluation}
-    Given a complex graph pattern $Q$, if $Q$ is a graph pattern, then $Q(G)$ is defined per Definition~\ref{def:evaluation-graph-pattern}. Otherwise:
+    Given a complex graph pattern $Q$, if $Q$ is a graph pattern, then $Q(G)$ is defined per \Cref{def:evaluation-graph-pattern}. Otherwise:
     \begin{itemize}
         \item $\pi_V(Q)(G) = \{\mu[V] \mid \mu \in Q(G)\}$
         \item $\sigma_R(Q)(G) = \{\mu \mid \mu \in Q(G) \text{ and } \mu \models R\}$

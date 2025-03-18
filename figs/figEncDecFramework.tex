@@ -14,15 +14,14 @@
                 \node[node] (C) at (0.2,-0.9) {};
                 \node[node] (D) at (2,0.5) {};
                 \node[main_node, label=above:$u$] (U) at (1.2,0) {};
-                \node[node] (V) at (2,-0.5) {};
+                \node[node] (E) at (2,-0.5) {};
             
             % Edges in the network
-                \draw (A) -- (B) -- (U) -- (C) -- (A);
-                \draw (B) -- (C);
-                \draw (A) -- (D);
+                \draw (A) -- (B) -- (C) -- (A);
+                \draw (A) -- (U);
                 \draw (U) -- (D);
-                \draw (U) -- (V);
-                \draw (D) -- (V);
+                \draw (U) -- (E);
+                \draw (D) -- (E);
             \end{scope}
 
             % Embedding representation
@@ -37,21 +36,16 @@
             \draw[arrow] (embedding.east) -- node[above, align=center] {decode\\ neighbourhood} (4,0);
 
             % Decoded neighborhood (smaller version) with rectangle
-            \begin{scope}[xshift=7cm,scale=0.8]
-                \node[draw, rounded corners, minimum width=2.6cm, minimum height=2cm] at (-2.1,0) {};
-                \node[node] (A2) at (-2.5,0.8) {};
-                \node[node] (B2) at (-3,0.4) {};
-                \node[node] (C2) at (-2.8,-0.7) {};
-                \node[node] (D2) at (-1.5,0.4) {};
-                \node[main_node, label=above:$u$] (U2) at (-2.1,0) {};
-                \node[node] (V2) at (-1.5,-0.4) {};
+            \begin{scope}[xshift=4cm,scale=0.8]
+                \node[draw, rounded corners, minimum width=2.3cm, minimum height=2cm] at (1.4,0.3) {};
+                \node[node] (A2) at (0.7,1) {};
+                \node[node] (D2) at (2,0.5) {};
+                \node[node] (E2) at (2,-0.5) {};
+                \node[main_node, label=above:$u$] (U2) at (1.2,0) {};
                 
-                \draw (A2) -- (B2) -- (U2) -- (C2);
-                \draw (B2) -- (C2);
-                \draw (A2) -- (D2);
+                \draw (A2) -- (U2);
                 \draw (U2) -- (D2);
-                \draw (U2) -- (V2);
-                \draw (D2) -- (V2);
+                \draw (U2) -- (E2);
             \end{scope}
     \end{tikzpicture}
     \caption{Overview of the encoder-decoder framework}

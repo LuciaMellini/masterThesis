@@ -1,5 +1,5 @@
 \newcommand{\conditiondiagram}[6]{%
-    \begin{tikzpicture}[baseline=(x.base), ->, thick]
+    \begin{tikzpicture}[scale=0.8,baseline=(x.base), ->, thick]
         % First node and edge
         \node[draw, circle] (x) at (0, 0) {\(#1\)};
         \node[draw, circle] (y) at (2, 0) {\(#2\)};
@@ -15,7 +15,8 @@
     \end{tikzpicture}
 }
 
-\begin{table}[h!]
+\begin{table}
+    \setlength{\textwidth}{0.8\textwidth}
     \centering
     \renewcommand{\arraystretch}{2}
     \begin{tabular}{lcc}
@@ -26,19 +27,19 @@
 
     \textit{Subclass} 
         & \conditiondiagram{c}{d}{\text{\footnotesize subc.\ of}}{}{}{}
-        & \conditiondiagram{x}{c}{\text{type}}{x}{d}{\text{type}} \\
+        & \conditiondiagram{x}{c}{\text{\footnotesize type}}{x}{d}{\text{\footnotesize type}} \\
         
     \textit{Subproperty} 
         & \conditiondiagram{p}{q}{\text{\footnotesize subp.\ of}}{}{}{}
-        & \conditiondiagram{x}{y}{p}{x}{y}{q} \\
+        & \conditiondiagram{x}{y}{\footnotesize p}{x}{y}{\footnotesize q} \\
     
     \textit{Domain} 
         & \conditiondiagram{p}{c}{\text{\footnotesize domain}}{}{}{}
-        & \conditiondiagram{x}{y}{p}{x}{c}{\text{type}} \\
+        & \conditiondiagram{x}{y}{\footnotesize p}{x}{c}{\text{\footnotesize type}} \\
 
     \textit{Range} 
         & \conditiondiagram{p}{c}{\text{\footnotesize range}}{}{}{}
-        & \conditiondiagram{x}{y}{p}{y}{c}{\text{type}} \\
+        & \conditiondiagram{x}{y}{\footnotesize p}{y}{c}{\text{\footnotesize type}} \\
         \bottomrule
     \end{tabular}
     \caption{Definitions for subclass, subproperty, domain, and range features in semantic schemata}

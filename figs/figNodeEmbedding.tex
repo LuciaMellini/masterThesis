@@ -14,9 +14,8 @@
         \node[main_node, label=below:$v$] (V) at (2,-0.5) {};
         
         % Edges in the network
-        \draw (A) -- (B) -- (U) -- (C) -- (A);
-        \draw (B) -- (C);
-        \draw (A) -- (D);
+        \draw (A) -- (B) -- (C) -- (A);
+        \draw (A) -- (U);
         \draw (U) -- (D);
         \draw (U) -- (V);
         \draw (D) -- (V);
@@ -34,7 +33,7 @@
         \draw[arrow] (V) to[out=-20, in=200] node[below] {} (zv);
 
         % Labels
-        \node[below=1.6cm of U] {\textbf{original network}};
+        \node[below=1.6cm of U] {\textbf{original graph}};
         \node[right=1.7cm of U] {encode nodes};
     \end{tikzpicture}
     \caption{Graph node encoding into embedding space}
