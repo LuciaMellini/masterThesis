@@ -4,7 +4,7 @@
 Machine learning is inherently a problem-driven discipline. We seek to build models that can learn from data in order to solve particular tasks, and machine learning models are often categorized according to the type of task they seek to solve: supervised or unsupervised. Learning with graphs is no different, but the usual categories of supervised and unsupervised are not necessarily the most informative or useful when it comes to graphs. In this section we provide a brief overview of the most important and well-studied machine learning tasks on graph data. As we will see machine learning problems on graphs often blur the boundaries between the traditional machine learning categories.
 
 \subsection{Node classification}
-Given a graph $G=(V,E,L)$ in \term{node classification} the goal is to predict the label associated with each node $v\in V$, when we only given the true labels on a \term{training set} of nodes $V_\text{train}\subset V$. Often one assumes that we only have label information for a small subset of nodes, but there are instances that involve many labeled nodes, like classifying the function of proteins in the interactomes of different species~\cite{Hamilton2017inductive}.
+Given a graph $G=(V,E,L)$ in \term{node classification} the goal is to predict the label associated with each node $v\in V$, when we only given the true labels on a \term{training set} of nodes $V_\text{train}\subset V$. Often one assumes that we only have label information for a small subset of nodes, but there are instances that involve many labeled nodes, like classifying the function of proteins in the interactomes of different species~\cite{Hamilton2017inductiveRepresentationLearning}.
 Even though node classification appears to be a straightforward variation of standard supervised learning, there are important differences. The nodes in a graph, in fact, are not independent and identically distributed since we are modelling an interconnected set of nodes. The key insight behind many of the most successful node classification approaches is to explicitly leverage the connections between nodes. One particularly popular idea is to exploit \term{homophily}, which is the tendency for nodes to share attributes with their neighbors in the graph~\cite{Mcpherson2001homophilyInSocialNw}. For example, people tend to form friendships with others who share the same interests or demographics. Based on the notion of homophily we can build machine learning models that try to assign similar labels to neighboring nodes in a graph~\cite{Zhou2003LearningLocalGlobalConsistency}. Beyond homophily there are also concepts such as structural equivalence~\cite{Donnat2017GraphWaveletsStructuralRoleSimilarityComplexNws}, which is the idea that nodes with similar local neighborhood structures will have similar labels, as well as \term{heterophily}, which presumes that nodes will be preferentially connected to nodes with different labels. When we build node classification models we want to exploit these concepts and model the relationships between nodes, rather than simply treating nodes as independent datapoints.
 
 \subsection{Link prediction}
@@ -147,7 +147,7 @@ In shallow embedding approaches the encoder model that maps nodes to embeddings 
 \end{itemize}
 To alleviate these limitations, shallow encoders can be replaced with more sophisticated ones that depend more generally on the structure and attributes of the graph. We discuss the most popular paradigm to define such encoders, graph neural networks (GNNs), in \Cref{sec:gnn}.
 
-\section{Embeddings for KGs}
+\section{Embeddings for KGs}\label{sec:embeddingsKGs}
 We continue our focus on shallow embedding methods, but now we shift our attention to knowledge graphs, in particular to directed edge-labelled graphs.
 
 \paragraph{Knowledge graph completion}
@@ -229,7 +229,9 @@ Thus, this approach takes a straightforward generalization of the dot product to
 where now $\mathbf{z}_u, \mathbf{z}_v, \mathbf{r}_\ell \in \mathbb{C}^d$ are complex-valued embeddings and $\text{Re}$ denotes the real component of a complex vector. Since we take the complex conjugate $\overline{\mathbf{z}}_v$ of the tail embedding, this approach to decoding can accommodate asymmetric relations.
 
 \section{Graph Neural Networks}\label{sec:gnn}
-The primary challenge in developing complex encoders for graph-structured data is that our usual deep learning toolbox does not apply. For example, \term{convolutional neural networks} (\term{CNNs}) are well-defined only over grid-structured inputs like images, while \term{recurrent neural networks} (\term{RNNs}) are well-defined only over sequences like text. To define a deep neural network over general graphs, we need to define a new kind of deep learning architecture.
+The primary challenge in developing complex encoders for graph-structured data is that our usual deep learning toolbox does not apply. For example, \term{convolutional neural networks} (\term{CNNs}) are well-defined only over grid-structured inputs like images, while \term{recurrent neural networks} (\term{RNNs}) are well-defined only over sequences like text. 
+
+The concepts and architectures described in the following sections can be extended for multi-relational graphs, similarly those presented in \Cref{sec:embeddingsKGs}.
 
 \subsection{Neural Message Passing}
 The defining feature of a GNN is that it uses a form of \term{neural message passing} in which vector messages are exchanged between nodes and updated using neural networks~\cite{Gilmer2017neuralMessagePassing}. In the next sections we detail the foundations of this neural message passing framework.
@@ -271,9 +273,9 @@ We can equivalently define the basic GNN through the $\text{UPDATE}$ and $\text{
     \text{AGGREGATE}(\{\mathbf{h}_v^{(k)}, \forall v \in \mathcal{N}(u)\}) =
     \mathbf{m}_{\mathcal{N}(u)} = \sum_{v\in\mathcal{N}(u)}\mathbf{h}_v,
 \end{equation*}
-\begin{equation*}
+\begin{equation}\label{eq:updateBase}
     \text{UPDATE}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) = \sigma(\mathbf{W}_\text{self}\mathbf{h}_u + \mathbf{W}_\text{neigh}\mathbf{m}_{\mathcal{N}(u)}).
-\end{equation*}
+\end{equation}
 
 \paragraph{self-loops}
 As a simplification of the neural message passing approach it is common to add \term{self-loops} to the input graph and omit the explicit update step. In this approach the message passing is simply defined as 
@@ -330,3 +332,49 @@ There exist various attention models from the deep learning literature. In addit
 
 Adding attention is a useful strategy for increasing the representational capacity of a GNN model, especially in cases where you have prior knowledge to indicate that some neighbors might be more informative than others. 
 
+\subsection{UPDATE generalization}
+
+\subsubsection{Concatenation and Skip-Connections} 
+A core issue of GNN is over-smoothing,that occurs when node-specific information becomes ``washed out'' or ``lost'' after several iterations of GNN message passing. Intuitively, we can expect over-smoothing in cases where the information being aggregated from the node neighbors during message passing begins to dominate the updated node representations. In these cases, the updated node representations (i.e., the $\mathbf{h}_u^{(k+1)}$ vectors) will depend too strongly on the incoming message aggregated from the neighbors (i.e., the $\mathbf{m}_{\mathcal{N}(u)}$ vectors) at the expense of the node representations from the previous layers (i.e., the $\mathbf{h}_u^{(k)}$ vectors). A natural way to alleviate this issue is to use vector concatenations or skip connections, which try to directly preserve information from previous rounds of message passing during the update step.
+
+One fundamental skip-connection approach involves concatenation to retain node-level information:
+\begin{equation*}
+\text{UPDATE}_{\text{concat}}(\mathbf{h}_u, \mathbf{m}_\mathcal{N}(u)) = [\text{UPDATE}_{\text{base}}(\mathbf{h}_u, \mathbf{m}_\mathcal{N}(u)) \oplus \mathbf{h}_u]
+\end{equation*}
+where $\mathbf{h}_u$ represents the node’s prior representation, and $\mathbf{m}_\mathcal{N}(u)$ denotes the aggregated message from neighbors and $\text{UPDATE}_{\text{base}}$ refers to the update function defined in \Cref{eq:updateBase}. This method, introduced in the \textit{GraphSAGE} framework~\cite{Hamilton2017inductiveRepresentationLearning}, aims to disentangle neighborhood and node-specific information.
+
+An alternative skip-connection method utilizes linear interpolation~\cite{Pham2017columnNetworksCollectiveClassification}:
+\begin{equation*}
+\text{UPDATE}_{\text{interpolate}}(\mathbf{h}_u, \mathbf{m}_\mathcal{N}(u)) = \alpha_1 \circ \text{UPDATE}_{\text{base}}(\mathbf{h}_u, \mathbf{m}_\mathcal{N}(u)) + (1 - \alpha_1) \circ \mathbf{h}_u
+\end{equation*}
+where $\circ$ stands for componentwise multiplication and $ \alpha_1 \in [0,1]^d $ is a gating vector that may be learned via an auxiliary GNN~\cite{Pham2017columnNetworksCollectiveClassification}, a multi-layer perceptron (MLP), or direct optimization.
+
+These techniques mitigate over-smoothing and enhance numerical stability in GNN training. They are particularly beneficial for node classification tasks in moderately deep GNN architectures (2-5 layers) and perform well in homophilic settings, where node labels correlate with local neighborhood features.
+
+\subsubsection{Gated Updates}
+One way of viewing the GNN message passing algorithm is that the aggregation function is receiving an \term{observation} from the neighbours, which is then used to update the \term{hidden state} of each node. In this view inspired by \term{recurrent neural networks} (\term{RNN}), one can apply methods used to update the hidden state of RNN architectures based on observations. For instance, one of the earliest of these GNN architectures defines the update function as
+
+\begin{equation*}
+    \mathbf{h}_u^{(k)} = \text{GRU}(\mathbf{h}_u^{(k-1)}, \mathbf{m}_{\mathcal{N}(u)}^{(k)})
+\end{equation*}
+
+where GRU denotes the update equation of the \term{gated recurrent unit} cell~\cite{Cho2014learningPhraseRepresentations}. Alternatively one could use updates base on LSTM architecture~\cite{selsam2018LearningSATSolverSingleBitSupervision}, or any update function defined for RNNs.
+
+\subsubsection{Jumping Knowledge Connections}
+Until now we have assumed that the node representations used in a downstream task are those outputted by hte final layer of the GNN. To improve the quality of the final node representations one can leverage the representations at each layer of message passing, so that the final node representations are as follows:
+\begin{equation*}
+    \mathbf{z}_u = f_\text{JK}(\mathbf{h}_u^{(0)} \oplus \mathbf{h}_u^{(1)} \oplus ... \oplus \mathbf{h}_u^{(K)}),
+\end{equation*}
+where $f_\text{JK}$ is an arbitrary differentiable function. This strategy is known as \term{jumping knowledge} (\term{JK}) \term{connections}~\cite{xu2018RepresentationLearningGraphsJumpingKnowledgeNetworks}.
+
+
+\subsection{Generalized Message Passing}
+Until now we have focused on GNN message passing that operates at the node level. The message passing approach can be generalized to leverage edge and graph-level information. In the more general approach~\cite{battaglia2018relationalInductiveBiases} the following equations define each iteration of message passing:
+\begin{align*}
+\label\mathbf{h}^{(k)}_{(u,v)} &= \text{UPDATE}_\text{edge}(\mathbf{h}^{(k-1)}_{(u,v)}, \mathbf{h}^{(k-1)}_u, \mathbf{h}^{(k-1)}_v, \mathbf{h}^{(k-1)}_G)\\
+\mathbf{m}_{\mathcal{N}(u)} &= \text{AGGREGATE}_\text{node}(\{\mathbf{h}^{(k)}_{(u,v)}, \forall v \in \mathcal{N}(u)\})\\
+\mathbf{h}^{(k)}_u &= \text{UPDATE}_\text{node}(\mathbf{h}^{(k-1)}_u, \mathbf{m}_{\mathcal{N}(u)}, \mathbf{h}^{(k-1)}_G)\\
+\mathbf{h}^{(k)}_G &= \text{UPDATE}_\text{graph}(\mathbf{h}^{(k-1)}_G, \{\mathbf{h}^{(k)}_u, \forall u \in V\}, \{\mathbf{h}^{(k)}_{(u,v)}, \forall (u,v) \in E\})
+\end{align*}
+
+The key innovation in this generalized message passing framework is that during message passing we generate hidden embeddings $\mathbf{h}^{(k)}_{(u,v)}$ for each edge in the graph, as well as an embedding $\mathbf{h}^{(k)}_G$ corresponding to the entire graph. The quantities are updated in the order in which the respective equations are listed above. All of the individual update and aggregation operations in such a generalized message-passing framework can be implemented using the techniques discussed in this section.
