@@ -282,10 +282,9 @@ As a simplification of the neural message passing approach it is common to add \
 \end{equation*}
 where the aggregation is taken over the node's neighbours as well as the node itself. Here the update function is implicitly defined though the aggergation method. Simplifying the message passing often alleviates overfitting, but it also severely limits the expressivity of the GNN, as the information comping from the node's neighbours cannot be differentiated from the information from the node itself.
 
-\subsection{Generalized Neighbourhood Aggregation}
 The basic GNN can be improved upon an generalized in various ways. Specifically there exist variations on the AGGREGATE and UPDATE functions.
 
-\subsubsection{AGGREGATE generalization}
+\subsection{AGGREGATE generalization}
 \paragraph{Neighbourhood Aggregation}
 The most basic aggregation operations (\Cref{eq:basicGNNAGGUP}) simply takes the sum of the neighbourhood embeddings. This approach can be unstable and highly sensitive to node degrees, since nodes with higher degrees will expectedly have a larger norm value for the sum of its neighbourhood's embeddings.
 
@@ -303,16 +302,31 @@ but researchers have also found success with other normalization factors, such a
 
 that reduces the importance of a message coming from a neighbour with high degree, since it features bring losely specific information.
 
-\paragraph{Graph Convolutional Networks (GCNs)}
+\subsubsection{Graph Convolutional Networks (GCNs)}
 The GCN model, proposed by ~\cite{kipf2016semi}, employs the symmetric-normalized aggregation as well as the self-loop update approach, resulting in a message passing function as such
 
 \begin{equation*}
     \mathbf{h}_u^{(k)} = \sigma\left(\mathbf{W}^{(k)}\sum_{v \in \mathcal{N}(u)}\frac{ \mathbf{h}_v}{\sqrt{|\mathcal{N}(u)||\mathcal{N}(v)|}}\right)
 \end{equation*}
 
-\paragraph{Set Aggregators}
-In GNNs neighborhood aggregation must be permutation-invariant, as node neighborhoods have no inherent order. Traditional methods, such as simple summation, may limit the expressive power of GNNs. 
+\subsubsection{Set Aggregators}
+In GNNs the neighborhood aggregation process must be permutation-invariant, as node neighborhoods have no inherent order. Traditional methods, such as simple summation, may limit the expressive power of GNNs. 
 
-\term{Set pooling}~\cite{zaheer2017deepSets}, applies a multi-layer perceptron (MLP) to each neighbor’s embedding before summing the results and passing them through another MLP. This method ensures universal function approximation while maintaining permutation invariance. 
+\paragraph{Set pooling}~\cite{zaheer2017deepSets}, applies a multi-layer perceptron (MLP) to each neighbor’s embedding before summing the results and passing them through another MLP. This method ensures universal function approximation while maintaining permutation invariance. 
 
-\term{Janossy pooling}~\cite{murphy2018janossyPooling}, takes a different approach. Instead of relying on permutation-invariant operations like summation, it applies a permutation-sensitive function, such as an LSTM~\cite{hochreiter1997LSTM}, to ordered sequences of neighbor embeddings. Since computing all possible permutations is infeasible, practical implementations either sample a subset of permutations or use a fixed canonical ordering, such as sorting nodes by degree.
+\paragraph{Janossy pooling}~\cite{murphy2018janossyPooling}, takes a different approach. Instead of relying on permutation-invariant operations like summation, it applies a permutation-sensitive function, such as an LSTM~\cite{hochreiter1997LSTM}, to ordered sequences of neighbor embeddings. Since computing all possible permutations is infeasible, practical implementations either sample a subset of permutations or use a fixed canonical ordering, such as sorting nodes by degree.
+
+\subsubsection{Neighbourhood Attention}
+The basic idea behind applying \term{attention}~\cite{Vaswani2017attentionIsAllYouNeed} is to assign an attention weight or importance to each neighbour, which is used to weigh this neighbour's influence during the aggregation step. The first GNN model to apply this style of attention, called \term{Graph Attention Network} (\term{GAT})~\cite{Velivckovic2017graphAttentionNetworks} uses attention weights to define a weighted sum of the neighbours:
+\begin{equation*}
+    \mathbf{m}_{\mathcal{N}(u)} = \sum_{v\in\mathcal{N}(u)} \alpha_{u,v}\mathbf{h}_v
+\end{equation*}
+where $\alpha_{u,v}$ denotes the attention on neighbor $v \in \mathcal{N}(u)$ when we are aggregating information at node $u$. In the original GAT paper the attention weights are defined as 
+\begin{equation*}
+    \alpha_{u,v} = \frac{\exp(\mathbf{a}^\top[\mathbf{W}\mathbf{h}_u \oplus \mathbf{W}\mathbf{h}_v])}{\sum_{v'\in\mathcal{N}(u)} \exp(\mathbf{a}^\top[\mathbf{W}\mathbf{h}_u \oplus \mathbf{W}\mathbf{h}_{v'}])}
+\end{equation*}
+where $\mathbf{a}$ is a learnable attention vector, $\oplus$ denotes concatenation, and $\mathbf{W}$ is a trainable weight matrix.
+There exist various attention models from the deep learning literature. In addition, it is possible to add multiple attention ``heads'' in the style of the popular \term{transformer} architecture~\cite{Vaswani2017attentionIsAllYouNeed}. In this approach one computes $R$ distinct attention weights $\alpha_{u,v,r}$ using independently parameterized attention layers. The message aggregated using the different attention weights are then transformed and combined in the aggregation step.
+
+Adding attention is a useful strategy for increasing the representational capacity of a GNN model, especially in cases where you have prior knowledge to indicate that some neighbors might be more informative than others. 
+
