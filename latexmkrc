@@ -1,4 +1,4 @@
 mkdir('tikz_cache');
-$lualatex = 'lualatex -shell-escape -file-line-error';
-$pdf_mode = 4;
+$pdflatex = 'pdflatex -interaction=nonstopmode -shell-escape';
+$pdf_mode = 1;
 $bibtex = 'bibtex';
