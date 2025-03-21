@@ -1,6 +1,7 @@
 \chapter{Graph Representation Learning}\label{grl}
+Here we give an insight on some techniques used to learn the underlying structure of graphs. Specifically, in \Cref{sec:graphLearningProblems} we introduce the main machine learning tasks involving graph data. In \Cref{sec:shallowEmbeddings} we delve into node embeddings, a fundamental concept in graph representation learning and we show how these embeddings can be adapted for knowledge graphs in \Cref{sec:embeddingsKGs}. Finally we discuss more recent methods that allow to transpose the learned representation to new nodes (\Cref{sec:gnn}).
 
-\section{Graph Learning Problems}
+\section{Graph Learning Problems}\label{sec:graphLearningProblems}
 Machine learning is fundamentally a problem-driven discipline focused on developing models that learn from data to address specific tasks. These machine learning models typically depend the type of task they aim to solve: supervised or unsupervised. This principle is equally applicable to learning with graphs; however, the conventional distinctions of supervised and unsupervised learning may not always provide the most informative or useful framework when dealing with graph data. In this section, we provide a concise overview of machine learning tasks involving graph data. As will be illustrated, machine learning challenges concerning graphs frequently blur the lines between traditional machine learning categories.
 
 \subsection{Node Classification}
