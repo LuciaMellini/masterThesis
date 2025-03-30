@@ -1,0 +1,24 @@
+\tikzset{level 1/.style={sibling angle=60,level distance=32mm}}
+\tikzset{level 2/.style={sibling angle=35,level distance=16mm}}
+\tikzset{level 3/.style={sibling angle=20,level distance=8mm}}
+\tikzset{every node/.style={circle, fill=black, inner sep=0pt, color=black}}
+\tikzset{edge from parent/.style={segment angle=10,draw}}
+
+
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+    [grow cyclic, scale=0.35]
+    \node {} 
+    child  foreach \A in {1,1,1,1,1,1}{  
+    node{} 
+        child foreach \B in {2,2,2}{ 
+        node {} 
+            child foreach \C in {3,3,3}{
+            node {} }
+        }
+    };
+    \end{tikzpicture}
+    \caption{Volume growth in trees.}
+    \label{fig:radialTree}
+\end{figure}

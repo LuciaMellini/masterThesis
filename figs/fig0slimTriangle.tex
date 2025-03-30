@@ -1,0 +1,29 @@
+\begin{figure}
+    \centering
+    \begin{tikzpicture}
+        \node at (0,-1) [circle, draw, fill=black, inner sep=1pt] (z) {};
+        \node at (0,-1.7) [circle, draw, fill=black, inner sep=1pt] (a) {};
+        \node at (0,-2.4) [circle, draw, fill=black, inner sep=1pt] (b) {};
+        \node at (-0.7,-3) [circle, draw, fill=black, inner sep=1pt]  (x) {};
+        \node at (0.7,-3) [circle, draw, fill=black, inner sep=1pt] (c) {};
+        \node at (1.4,-3.6) [circle, draw, fill=black, inner sep=1pt] (y) {};
+
+        \draw[thick] (z) -- (a);
+        \draw[thick] (a) -- (b);
+        \draw[thick] (b) -- (x);
+        \draw[thick] (b) -- (c);
+        \draw[thick] (c) -- (y);
+
+        \draw [decorate,decoration={brace,amplitude=8pt,mirror}] (b) -- (z) node[midway,xshift=10pt,right]{\footnotesize $\langle x,y\rangle_z$};
+
+
+        \node[left=0.1cm of z] {$z$};
+        \node[left=0.1cm of x] {$x$};
+        \node[right=0.1cm of y] {$y$};
+        
+
+    \end{tikzpicture}
+    \caption{Interpretation of the Gromov product in a simple tree.}
+    \label{fig:slimTriangle}
+\end{figure}
+

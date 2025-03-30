@@ -1,19 +1,20 @@
 \begin{figure}
     \centering
-    \begin{subfigure}{0.2\textwidth}
+    \begin{subfigure}{0.3\textwidth}
         \centering
-        \begin{tikzpicture}[scale=0.5]
+        \begin{tikzpicture}[scale=0.6]
             \begin{axis}[
                     view={30}{30},
                     axis lines=none,
                     colormap/viridis,
-                    samples=60,
+                    samples=30,
                     domain=-1:1,
                     y domain=-2*pi:2*pi
             ]
             \addplot3[
-                    surf,
-                    shader=interp,
+                surf,
+                shader=interp,
+                opacity=.6,
                     z buffer=sort
             ] ({0.2+cosh(x)*cos(deg(y))},
             {0.2+cosh(x)*sin(deg(y))},
@@ -23,16 +24,16 @@
         \caption{Negative curvature}
      \end{subfigure}
      \hfill
-     \begin{subfigure}{0.2\textwidth}
+     \begin{subfigure}{0.3\textwidth}
         \centering
-        \begin{tikzpicture}[scale=0.5]
+        \begin{tikzpicture}[scale=0.6]
             \begin{axis}[
                     view={30}{30},
                     axis lines=none,
                     colormap/viridis,
                     samples=20,
                     domain=0:2*pi,
-                    y domain=-1.5:1.5
+                    y domain=-2*pi:2*pi
             ]
             \addplot3[
                     surf,
@@ -46,9 +47,9 @@
         \caption{Zero curvature.}
      \end{subfigure}
      \hfill
-     \begin{subfigure}{0.2\textwidth}
+     \begin{subfigure}{0.3\textwidth}
         \centering
-        \begin{tikzpicture}[scale=0.5]
+        \begin{tikzpicture}[scale=0.6]
             \begin{axis}[
                     view={30}{0},
                     axis lines=none,
@@ -69,6 +70,6 @@
         \end{tikzpicture}
         \caption{Positive curvature}     
     \end{subfigure}
-    \label{fig:spaceCurvatures}\
     \caption{Surfaces with various curvatures.}
+    \label{fig:spaceCurvatures}
 \end{figure}

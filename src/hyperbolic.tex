@@ -1,28 +1,36 @@
 \chapter{Hyperbolic geometry}\label{hyperbolic}
-We introduce hyperbolic spaces by putting them in contrast with the Euclidean space we are more accustomed to~\cite{Iversen1992hyperbolicGeometry}.
-A simple set of axioms for a plane geometry can be presented in the framework of metric spaces. By a \term{line} in a metric space $X$ we intend the image of the real number line., expressed though a distance preserving map $\gamma: \mathbb{R}\to X$.
-The three axiom of plane geometry are listed below.
-\begin{description}
-    \item[Incidence axiom]  Through two distinct points in $X$ there passes a unique line. The space $X$ has at least one point.
-    \item[Reflection axiom] The complement of a given line in $X$ has two connected components. There exists an isometry $\sigma$ of $X$ which fixes the points of the line but interchanges the two connected components of its complement.
-    \item[Parallel axiom] Through a given point $P$ outside a given line $\ell$ there passes a unique line which does not intersect $\ell$. 
-\end{description}
+We introduce hyperbolic spaces by putting them in contrast with the Euclidean space we are more accustomed to.
 
-It is possible to obtain internally consistent models of geometries which obey to all axioms except for the parallel axiom. One way to do this might be to insist that any two lines intersect. This gives rise to so called \term{Elliptic Geometry}. Another way of obtaining a non-Euclidean geometry is to state that the line through point $P$ that does not meet $\ell$ is not unique. This determines \term{Hyperbolic Geometry}, in which the parallel axiom is replaced by the following.
+In 300 BC Euclid wrote his \textit{Elements}, consisting of thirteen books (translated in~\cite{Fitzpatrick2008euclidElementsGeometry}). In the first book he spoke about five postulates which form the basis of geometry. A literal translation of these the postulates (with the exception of the fifth) is: (Let is have been postulated)
+\begin{enumerate}
+    \item To draw a straight line from any point to any point.
+    \item To produce a finite straight line continuously in a straight line.
+    \item To describe a circle with any center and distance.
+    \item That all right angles are equal to another.
+    \item (Parallel Postulate) Through a point outside of an infinitely long line there is only one infinitely long line that does not cut the first line.
+\end{enumerate}
 
-\begin{definition}(Hyperbolic parallel axiom)
+This Parallel Postulate is known as Playfair’s postulate, the most used alternative for Euclid’s real fifth postulate. The original fifth postulate states:
+\begin{quote}
+    That, if a straight line on two (other) straight lines makes the interior angles on the same side less than two right angles, the two straight lines, if produced indefinitely, meet on that side on which the angles are less than the two right angles.
+\end{quote}
+
+
+It is possible to obtain internally consistent models of geometries which obey to all postulates except for the parallel postulate. One way to do this might be to insist that any two lines intersect. This gives rise to so called \term{Elliptic Geometry}. Another way of obtaining a non-Euclidean geometry is to state that the line through point $P$ that does not meet $\ell$ is not unique. This determines \term{Hyperbolic Geometry}, in which the parallel postulate is replaced by the following.
+
+\begin{definition}(Hyperbolic parallel postulate)
     Given any line $\ell$ and a point $P$ not on $\ell$, there are at least two lines though $P$ that do not meet $\ell$. In other words there least two lines through $P$ that are parallel to $\ell$.
 \end{definition}
 
 There exist five equivalent models of hyperbolic spaces\footnote{The possible models of hyperbolic spaces are the following: the Poincaré ball, the Poincaré half-ball, the Klein disk, the hyperboloid model and the upper half-space model.}. In this chapter we concentrate on a model of hyperbolic geometry called the Poincaré ball, that represents the infinite hyperbolic space in a finite ball, and is therefore very useful for visualizations. More in depth discussion on hyperbolic geometry can be found in~\cite{Anderson2006hyperbolicGeometry}\cite{Ramsay2013introductionHyperbolicGeometry}. Before delving into this model we briefly introduce Reimanninan manifolds, which are the mathematical framework for hyperbolic spaces.
 
 \section{Reimannian manifolds}
-Simply put, a manifold is a space that essentially looks like the flat Euclidean space $\mathbb{R}^d$ locally. A Riemannian manifold is a mathematical space that generalizes the concept of curved surfaces and higher-dimensional spaces, allowing us to define distances, angles, and curvature in a smooth way. 
+Simply put, a manifold is a topological space that locally resembles Euclidean space near each point. More precisely, ad $d$-manifold  is a topological space with the property that each point has a neighborhood that resembles an open subset of $d$-dimensional Euclidean space. A Riemannian manifold is a mathematical space that generalizes the concept of curved surfaces and higher-dimensional spaces, allowing us to define distances, angles, and curvature in a smooth way. 
 
 \begin{definition} (Reimannian manifold)
-Given a smooth manifold $M$, a Riemannian metric is a smooth function that smoothly assigns to each $p \in M$ an inner product on the tangent space:
+Given a smooth manifold $M$, a Riemannian metric is a smooth function that assigns to each $p \in M$ an inner product on the tangent space:
 \begin{equation*}
-    g_p: T_pM \times T_pM \to \mathbb{R}.
+    g_p: T_pM \times T_pM \to \R.
 \end{equation*}
     A Reimannian manifold is a pair $(M,g)$ where $M$ is a smooth manifold and $g$ is a Riemannian metric.
 \end{definition}
@@ -31,51 +39,142 @@ A smooth manifold is such when functions and coordinate changes are infinitely d
 
 For more details on foundations of manifolds refer to the Appendix in~\cite{Chami2021representationLearningAlgorithmsHyperbolicSpaces}, or~\cite{doCarmo1992riemannianGeometry}\cite{Lee2003smooth}.
 
+
+\section{Distance function and geodesics}
+\input{figs/figSpaceCurvatures.tex}
+In negative curvature spaces, the space bends like a saddle and triangle angles sum to less than $\pi$. We show a section of a hyperbolic paraboloid (described by function $z=x^2-y^2$) in \Cref{fig:hyperbolicSpace}.
+
+\input{figs/figHyperbolicSpace}
+
+We first introduce some useful quantities for our discussion.
+
+\begin{definition}(Minkowski inner product) \label{def:minkowskiInnerProduct}
+    Given two vectors $x,y \in \R^d$, their Minkowski inner product is defined as:
+    \begin{equation*}
+        \langle x, y \rangle_\Lcal = -x_0y_0+\sum_{i=1}^d x_iy_i
+    \end{equation*}    
+\end{definition}
+
+\begin{definition}(Minkowski norm) \label{def:minkowskiNorm}
+    Given a vector $x \in \R^d$, its Minkowski norm is defined as:
+    \begin{equation*}
+        \|x\|_\Lcal = \sqrt{\langle x, x \rangle_\Lcal}.
+    \end{equation*}
+\end{definition}
+
+For each point $p$ in a hyperbolic space $\Hy^d$, the tangent space at $p$, $T_p\Hy^d$ is a $d$-dimensional vector space containing all possible directions of paths leaving from $p$. Formally the tangent space to point $p$ is described as:
+\begin{align*}
+    T_p\Hy^d &= \left\{(v_0,v) \in \R^{d+1} : v_0 = \frac{v \cdot p}{\sqrt{1 + \|p\|^2_2}}\right\}\\
+        &= \left\{u\in \R^{d+1} : \langle u, p \rangle_\Lcal = 0\right\}
+\end{align*}
+
+An important concept in Euclidean geometry is that of straight lines, which are shortest paths between points. We can generalize this concept to manifolds by seeking curves with minimal length, called \term{geodesics}. A geodesic is a curve $\gamma(t)=(\gamma(t)^1, \dots, \gamma(t)^d)$ in a manifold $M$ connecting points $p,q\in M$ with minimum length. In Euclidean space geodesics are of the form 
+\begin{equation}
+    \gamma(t) = t\cdot x + y \text{ for } x,y\in \R^d
+\end{equation}
+
+Which are straight lines in $\R^d$. In the case of hyperbolic spaces these length-minimizing curves have a different form. Let $p\in\Hy^n$ and $v\in T_p\Hy^n$, assuming $\langle v,v\rangle_\Lcal $. The unique geodesic $\gamma_{p,v}(\cdot)$ such that $\gamma_{p,v}(0)=p$ and $\dot{\gamma}_{p,v}(0)=v$ is given by:
+
+\begin{equation*}
+    \gamma_{p,v}(t) = \cosh(t)p + \sinh(t)v.
+\end{equation*}
+
+The corresponding intrinsic\footnote{An intrinsic distance refers to the shortest path between two points measured \emph{within} a given space or surface, rather than through an external surrounding space.} distance between two points $p,q\in\Hy^d$ can be computed as:
+
+\begin{equation*}
+    d_\Hy(p, q) = \text{arcosh}(-\langle p, q \rangle_\Lcal)
+\end{equation*}
+
+\subsection{Exponential and logarithmic maps}
+For each point $x$ in a Riemannian manifold, the tangent space at $x$, $T_x$ is a $d$-dimensional vector space containing all possible directions of paths leaving from $x$. The tangent space maps to the manifold via the exponential map, and conversely, the logarithmic map translates the point on the manifold to the tangent space. Because the tangent space has a linear structure, we will rely on these maps to leverage some of the tools of Euclidean geometry for hyperbolic methods, such as optimization or neural network operations.
+In the case of hyperbolic spaces, given $p \in \Hy^n$ and a tangent vector $v \in T_p\Hy^n$, the exponential map $\exp_p: T_p\Hy^n \to \Hy^n$ assigns to $v$ the point $\exp_p(v) := \gamma(1)$, where $\gamma$ is the unique geodesic satisfying $\gamma(0) = p$ and $\dot{\gamma}(0) = v$. The logarithmic map is the reverse map that maps back to the tangent space at $p$ such that $\log_p(\exp_p(v)) = v$. In yperbolic spaces these operations form a bijection between the entire hyperbolic space and the tangent space at a point.
+
+
+\begin{align*}
+    \exp_p(v) &= \cosh(\|v\|_\Lcal)p + \sinh(\|v\|_\Lcal) \frac{v}{\|v\|_\Lcal}\\
+    \log_p(y) &= d_{\Lcal}(p,y)\frac{y + \langle p,y \rangle_{\Lcal}p}{\|y + \langle p,y \rangle_{\Lcal}p\|_{\Lcal}}
+\end{align*}
+
+
+
 \section{Poincaré ball model}
 The points in Poincaré's version of hyperbolic geometry consist of the points in the unit ball in $d$ dimensions
 \begin{equation*}
-    \mathbb{B}^d = \{x \in \mathbb{R}^d: \|x\|^2_2 < 1\}
+    \B^d = \{x \in \R^d: \|x\|^2_2 < 1\}
 \end{equation*}
 
-
-\subsection{Distance function and geodesics}
 When the unit ball is endowed with the family of inner products
 \begin{equation*}
     g_p = \left(\frac{2}{1-\|p\|^2_2}\right)^2\mathbb{I}_d,
 \end{equation*}
-the pair $(\mathbb{B}^d,g)$ forms a Riemannian manifold of constant negative curvature $-1$, where curvature measures the deviation from flat Euclidean geometry 
-\input{figs/figSpaceCurvatures.tex}. In negative curvature spaces, the space bends like a saddle and triangle angles sum to less than $\pi$. We show a section of a hyperbolic paraboloid (described by function $z=x^2-y^2$) in \Cref{fig:hyperbolicSpace}.
+the pair $(\B^d,g)$ forms a Riemannian manifold of constant negative curvature, where curvature measures the deviation from flat Euclidean geometry.
 
-\input{figs/figHyperbolicSpace}
-
-The induced distance between two points $(a,b)$ in $\mathbb{B}^d$ can be computed as
+The induced distance between two points $(a,b)$ in $\B^d$ can be computed as
 \begin{equation*}
-    d_{\mathbb{B}}(a,b) = \text{arcosh}\left(1 + 2\frac{\|a-b\|^2_2}{(1-\|a\|^2_2)(1-\|b\|^2_2)}\right).
+    d_\B(p,q) = \text{arcosh}\left(1 + 2\frac{\|p-q\|^2_2}{(1-\|p\|^2_2)(1-\|q\|^2_2)}\right).
 \end{equation*}
-If $a = o$, the origin of the hyperbolic space, the distance function has the simple expression:
+If $p = o$, the origin of the hyperbolic space, the distance function has the simple expression:
 \begin{equation*}
-    d_o(x) := d(o, x) = 2\tanh^{-1}(\|x\|_2).
+    d_o(q) := d(o, q) = 2\tanh^{-1}(\|q\|_2).
 \end{equation*}
 
 
-An important concept in Euclidean geometry is that of straight lines, which are shortest paths between points. We can generalize this concept to manifolds by seeking curves with minimal length, called \term{geodesics}. The distance function induces two types of geodesics: straight lines that go through the origin and segments of circles perpendicular to the boundary of the ball (\Cref{fig:hyperbolicGeodesics}).
-% Further, we can see from the distance formula that (Euclidean) norm-preserving transformations
-% such as reﬂections, rotations centered at the origin and inversions are isometries of the hyperbolic
-% space. We will extensively use these isometries throughout our work, especially inversions that map
-% a reference point to the origin of the space.
+\input{figs/figHyperboloidToPoincareBall}
 
-%\input{figs/figHyperbolicGeodesics}
+The Poincaré ball model of hyperbolic space is isomorphic\footnote{An \term{isomorphism} is a bijective mapping between two structures that preserves their operations, relationships and properties.} to the hyperboloid model (\Cref{fig:hyperboloidToPoincareBall}), and the stereographic projection\footnote{The stereographic projection is a mapping that projects a sphere onto a plane, preserving shapes locally.}
+\begin{equation*}
+    (x_0, x_1, \ldots, x_n) \mapsto \left(\frac{x_1}{1+x_0}, \ldots, \frac{x_n}{1+x_0}\right)
+\end{equation*}
 
-\subsection{Exponential and logarithmic maps}
-For each point $p$ in a Riemannian manifold, the tangent space at $p$, $T_p$ is a $d$-dimensional vector space containing all possible directions of paths leaving from $p$. The tangent space maps to the manifold via the exponential map, and conversely, the logarithmic map translates the point on the manifold to the tangent space. In particular, we have closed-form expressions for these maps in the Poincaré ball when the reference point is the origin:
+is an isometry between $\Hy^n$ and the Poincaré model $\B^n$. Its inverse map is given by
 \begin{equation*}
-    \exp_o(v) = \tanh(\|v\|) \frac{v}{\|v\|}
+    (y_1, \ldots, y_n) \mapsto \left(\frac{1 + \sum_i y_i^2}{1 - \sum_i y_i^2}, \frac{2y_1}{1 - \sum_i y_i^2}, \ldots, \frac{2y_n}{1 - \sum_i y_i^2}\right)
 \end{equation*}
-\begin{equation*}
-    \log_o(y) = \text{arctanh}(\|y\|) \frac{y}{\|y\|}
-\end{equation*}
-Because the tangent space has a linear structure, we will rely on these maps to leverage some of the tools of Euclidean geometry for hyperbolic methods, such as optimization or neural network operations.
+This yields geodesics that are either straight lines that go through the origin of the ball, or segments of circles that are perpendicular to the boundary of the ball (\Cref{fig:hyperbolicGeodesics}).
+
+
+\input{figs/figHyperbolicGeodesics}
+
 
 \section{Hyperbolic spaces and trees}
+We now discuss the connections between tree metrics and hyperbolic spaces, that motivate the use of hyperbolic spaces to represent hierarchical data, as discussed in \Cref{hyp_rl}. We explore this relation theoretically and more intuitively.
+
+\subsection{Hyperbolic metrics}
+Theoretical studies have showed that many real-world networks exhibit hierarchical structures with underlying hyperbolic geometry~\cite{Krioukov2010HyperbolicGeometryComplexNetworks}\cite{Papadopoulos2012popularityVSSimilarityGrowingNetworks}. To identify these tree-like structures we turn to the formal notion of Gromov $\delta$-hyperbolicity~\cite{gromov1987hyperbolic}\cite{adcock2013tree}\cite{chen2013hyperbolicity}.
+
+We define the Gromov product~\cite{gromov1987hyperbolic} which can be used to define $\delta$-hyperbolic spaces. The Gromov product is a measure of how close two points are to each other relative to a third point.  
+
+\begin{definition}[Gromov product]
+    In any metric space $(X,d)$, the Gromov product of two points $x,y\in X$ with respect to a third point $z\in X$ is defined as:
+    \begin{equation*}
+        (x,y)_z = \frac{1}{2}\left(d(x,z) + d(y,z) - d(x,y)\right).
+    \end{equation*}
+\end{definition}
+
+\begin{definition}[$\delta$-hyperbolicity, four-point condition]
+    A metric space $(X,d)$ is $\delta$-hyperbolic if there exists $\delta\geq0$ such that for all $x,y,z,w\in X$
+    \begin{equation*}
+        \langle x,y\rangle_z \geq \min\{\langle x,w\rangle_z, \langle y, w\rangle_z\} - \delta.
+    \end{equation*}
+\end{definition}
+
+\begin{definition}[Tree metric]
+    A metric space $(X,d)$ is a tree metric is there exists a tree $T=(X,E_T)$ with edge lengths such that for $u,v\in V$ it holds that $d(u,v)=d_T(u,v)$.
+\end{definition}
+
+\input{figs/fig0slimTriangle}
+\input{figs/figslimTriangles}
+One can show that metric trees are $0$-hyperbolic. Let $(X,d)$ be a metric tree, then $\langle x, y\rangle_z$ is the number of edges in $T=(X,E_T)$ between the node $z$ and the common parent for $x$ and $y$ furthest from $z$ (\Cref{fig:slimTriangle}). It follows that for $x,y,w\in X$ it holds that $\langle x,y\rangle_z \geq \min\{\langle x,w\rangle_z, \langle y, w\rangle_z\}$. Therefore, metric spaces with smaller $\delta$ will be close to a tree metric. One can show that the Euclidean space is not $\delta$-hyperbolic, whilst hyperbolic spaces are $\log 3$-hyperbolic in the sense of Gromov. This can be noticed by observing triangles in a Euclidean, a hyperbolic and a tree metric (\Cref{fig:triangles}). Indeed we see that the lower $\delta$-hyperbolicity the metric space has, the distance between two vertices increasingly approaches the distance to the center of the triangle.
+
+
+\subsection{Exponential volume growth}
+An intuitive property of hyperbolic spaces which illustrates their connections to trees is the exponential volume growth. Trees can be thought of as the discrete approximation of some underlying hyperbolic spaces, where geodesics resemble shortest paths in discrete trees. One can the define a notion of volume in trees as the number of nodes contained within some bounded distance (the radius) to the root of the tree. This volume grows exponentially as we increase the radius, as shown in \Cref{fig:radialTree}.
+
+\input{figs/figRadialTree.tex}
+
+In Euclidean space the volume of balls grows polynomially with the radius, making it less suitable to represent exponentially growing graphs like trees. More concretely, because the growth is not as fast as that of the graph, the Euclidean space quickly becomes too crowded, resulting in geodesics intersecting each other.
+
+
+
 
 

@@ -1,0 +1,53 @@
+\begin{figure}
+    \begin{subfigure}{0.25\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node at (0,1) [circle, draw, fill=black, inner sep=0.5pt] (z) {};
+            \node at (-0.866,-0.5) [circle, draw, fill=black, inner sep=0.5pt]  (x) {};
+            \node at (0.866,-0.5) [circle, draw, fill=black, inner sep=0.5pt] (y){};
+
+            
+            \draw (z) -- (x);
+            \draw (y) -- (x);
+            \draw (z) -- (y);
+
+            \clip (0,0) circle (1);
+        \end{tikzpicture}
+        \caption{In a Euclidean space.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.25\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node at (0,1) [circle, draw, fill=black, inner sep=0.5pt] (z) {};
+            \node at (-0.866,-0.5) [circle, draw, fill=black, inner sep=0.5pt] (x) {};
+            \node at (0.866,-0.5) [circle, draw, fill=black, inner sep=0.5pt] (y) {};
+                        
+            \clip (0,0) circle (1);
+            \hgline{90}{-30}{black};
+            \hgline{-150}{-30}{black};
+            \hgline{210}{90}{black};
+
+        \end{tikzpicture}
+        \caption{In a hyperbolic space.}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.25\textwidth}
+        \centering
+        \begin{tikzpicture}
+            \node at (0,1) [circle, draw, fill=black, inner sep=0.5pt] (z) {};
+            \node at (0,0.2) [circle, draw, fill=black, inner sep=0.01pt] (b) {};           
+            \node at (-0.866,-0.5) [circle, draw, fill=black, inner sep=0.5pt]  (x) {};
+            \node at (0.866,-0.5) [circle, draw, fill=black, inner sep=0.5pt] (y){};
+            
+            \draw (z) -- (b);
+            \draw (b) -- (x);
+            \draw (b) -- (y);
+
+            \clip (0,0) circle (1);
+        \end{tikzpicture}
+        \caption{In a tree space.}
+    \end{subfigure}
+    \caption{Triangles in various metric spaces.}
+    \label{fig:triangles}
+\end{figure}

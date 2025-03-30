@@ -331,13 +331,13 @@ A straightforward technique to alleviate this involves preserving information fr
 
 One fundamental approach employing skip connections involves concatenation to retain node information:
 \begin{equation*}
-\text{UPDATE}_{\text{concat}}(\mathbf{h}_u, \mathbf{m}_\mathcal{N}(u)) = [\text{UPDATE}_{\text{base}}(\mathbf{h}_u, \mathbf{m}_\mathcal{N}(u)) \oplus \mathbf{h}_u]
+\text{UPDATE}_{\text{concat}}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) = [\text{UPDATE}_{\text{base}}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) \oplus \mathbf{h}_u]
 \end{equation*}
-where $ \mathbf{h}_u $ denotes the node’s prior representation, while $ \mathbf{m}_\mathcal{N}(u) $ stands for the aggregated message from neighbours, and $ \text{UPDATE}_{\text{base}} $ refers to the update function specified in \Cref{eq:updateBase}. This method, introduced in the \textit{GraphSAGE} framework~\cite{Hamilton2017inductiveRepresentationLearning}, aims to detach neighbourhood and node-specific information.
+where $ \mathbf{h}_u $ denotes the node’s prior representation, while $ \mathbf{m}_{\mathcal{N}(u)}$ stands for the aggregated message from neighbours, and $ \text{UPDATE}_{\text{base}} $ refers to the update function specified in \Cref{eq:updateBase}. This method, introduced in the \textit{GraphSAGE} framework~\cite{Hamilton2017inductiveRepresentationLearning}, aims to detach neighbourhood and node-specific information.
 
 An alternative skip connection method employs linear interpolation~\cite{Pham2017columnNetworksCollectiveClassification}:
 \begin{equation*}
-\text{UPDATE}_{\text{interp}}(\mathbf{h}_u, \mathbf{m}_\mathcal{N}(u)) = \alpha_1 \circ \text{UPDATE}_{\text{base}}(\mathbf{h}_u, \mathbf{m}_\mathcal{N}(u)) + (1 - \alpha_1) \circ \mathbf{h}_u.
+\text{UPDATE}_{\text{interp}}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) = \alpha_1 \circ \text{UPDATE}_{\text{base}}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) + (1 - \alpha_1) \circ \mathbf{h}_u.
 \end{equation*}
 In this formulation, $ \circ $ denotes component-wise multiplication, and $ \alpha_1 \in [0,1]^d $ is a gating vector that may be learned via an auxiliary GNN~\cite{Pham2017columnNetworksCollectiveClassification}, a multi-layer perceptron (MLP), or through direct optimization.
 
