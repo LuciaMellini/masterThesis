@@ -2,10 +2,12 @@
 \usepackage[parts]{classicthesis}
 \colorlet{CTtitle}{black}
 \usepackage{thesis}
-\tikzifexternalizing{}{\usepackage{pdfpages}}
 
 \usetikzlibrary{external}
 \tikzexternalize[prefix=tikz_cache/]
+\tikzifexternalizing{}{\usepackage{pdfpages}}
+
+
 
 \title{Integration of KGs and PSNs for biomedical application}
 \author{Lucia Mellini}
