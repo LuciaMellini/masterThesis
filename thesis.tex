@@ -1,8 +1,10 @@
-\documentclass[11pt, a4paper, twoside, openright, dottedtoc]{book}
+\documentclass[a4paper, dottedtoc]{book}
 \usepackage[parts]{classicthesis}
-\colorlet{CTtitle}{teal}
-\usepackage[print]{thesis}
-\usepackage{pdfpages}
+\colorlet{CTtitle}{black}
+\usepackage{thesis}
+\tikzifexternalizing{}{\usepackage{pdfpages}}
+
+
 
 \title{Integration of KGs and PSNs for biomedical application}
 \author{Lucia Mellini}
@@ -17,33 +19,31 @@
 \begin{document}
 
 
-\includepdf{titlepage.pdf}
-%\maketitlepage
-
-\frontmatter
+\tikzifexternalizing{}{\includepdf{titlepage.pdf}}
 
 
 \maketitle
 
+
+
 \tableofcontents
    
-\mainmatter
 
 \setcounter{chapter}{-1}
 \include{src/introduction}
-\part*{Background}
+\part*{\large Background}
 \include{src/kgs}
 \include{src/grl}
 \include{src/hyperbolic}
 \include{src/hyperbolicRL}
-\part*{Our contribution}
+\part*{\large Our contribution}
 \include{src/experiments}
 \include{src/results}
 \include{src/conclusions}
 
 \appendix
 \cleardoublepage
-\part*{Appendix}
+\part*{\large Appendix}
 \include{src/A_formal_definitions}
 
 \bibliography{bibliography}

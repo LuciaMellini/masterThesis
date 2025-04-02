@@ -1,14 +1,13 @@
-\newif\if@print
-\DeclareOption{print}{\@printtrue}
-
-\ProcessOptions\relax
-
 % MATHS
 \usepackage{mathtools, amsmath,amssymb,amsthm}
 \usepackage[capitalise]{cleveref}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
+
+\theoremstyle{plain}
+\newtheorem{proposition}{Proposition}
+\newtheorem*{postulate}{Postulate}
 
 
 % TYPOGRAPHY
@@ -21,9 +20,9 @@
 \usepackage{numprint}
 \usepackage[exponent-mode = scientific]{siunitx}
 
-
 \usepackage{geometry}
-%\geometry{bindingoffset=2cm}
+% \setlength{\marginparwidth}{0pt}
+\geometry{bindingoffset=2cm}
 
 
 % CUSTOM ENUMERATE
@@ -52,15 +51,12 @@
 \usepackage{tabularx}
 \usepackage{array}
 
-\usepackage{caption}
 \usepackage{subcaption}
-\captionsetup{tableposition=bottom,figureposition=bottom,font=small,labelfont={bf}, subrefformat=parens}%,format=hang}
-
-\usepackage{pgfplots}
-\pgfplotsset{compat=1.18}
 
 % Load externalization library
 \usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
 \usetikzlibrary{positioning, shapes, arrows, trees}
 \newcommand{\hgline}[3]{
 \pgfmathsetmacro{\thetaone}{#1}
@@ -76,9 +72,10 @@
     \draw[#3] (\theta:\distance) circle (\R);
 \fi
 }
-% \usetikzlibrary{external}
-% \tikzexternalize[prefix=tikz_cache/]
 
+\usepackage{shellesc}  % Ensures system calls work
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz_cache/]  % Creates a cache folder for images
 
 % BIBLIOGRAPHY
 \bibliographystyle{unsrt}
@@ -114,13 +111,10 @@
 \newcommand{\Lcal}{\mathcal{L}}
 
 
-
-\if@print
-	\hypersetup{
-		colorlinks=true,
-		citecolor=black!60,
-		linkcolor=black!80,
-		filecolor=black,
-		urlcolor=black!80
-	}
-\fi
+\hypersetup{
+	colorlinks=true,
+	citecolor=black!60,
+	linkcolor=black!80,
+	filecolor=black,
+	urlcolor=black!80
+}
