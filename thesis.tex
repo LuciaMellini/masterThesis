@@ -4,7 +4,8 @@
 \usepackage{thesis}
 \tikzifexternalizing{}{\usepackage{pdfpages}}
 
-
+\usetikzlibrary{external}
+\tikzexternalize[prefix=tikz_cache/]
 
 \title{Integration of KGs and PSNs for biomedical application}
 \author{Lucia Mellini}
