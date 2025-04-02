@@ -1,51 +1,43 @@
 \begin{table}[h]
     \centering
-    \begin{tabular}{lccc}        
-        \toprule
-        \textbf{Embedding size} & \textbf{Loss} & \textbf{ROC\_AUC} & \textbf{AP score} \\
-        \midrule
-        4 & 1.2305 & 0.9118 & 0.9106 \\
-        8 & 0.9730 & 0.9442 & 0.9584 \\
-        16 & 0.8388 & 0.9479 & 0.9615 \\
-        32 & 0.8666 & 0.9527 & 0.9647 \\
-        64 & 0.8539 & 0.9484 & 0.9637 \\
-        100 & 0.6406 & 0.9573 & 0.9604 \\
-        \bottomrule
-    \end{tabular}
-    \caption{Performance of HCGN on \textit{Subclassof} edges - node type \textit{Disease}}
-\end{table}
-
-\begin{table}[h]
-    \centering
-    \begin{tabular}{lccc}        
-        \toprule
-        \textbf{Embedding size} & \textbf{Loss} & \textbf{ROC\_AUC} & \textbf{AP score} \\
-        \midrule
-        4 & 2.3959 & 0.7459 & 0.6906 \\
-        8 & 1.3602 & 0.8838 & 0.8751 \\
-        16 & 1.0282 & 0.9193 & 0.9119 \\
-        32 & 1.0209 & 0.9317 & 0.9307 \\
-        64 & 1.3956 & 0.8922 & 0.9109 \\
-        100 & 1.0364 & 0.9232 & 0.9159 \\
-        \bottomrule
-    \end{tabular}
-    \caption{Performance of HCGN on \textit{Subclassof} edges - node type \textit{Genomic feature}}
-\end{table}
-
-\begin{table}[h]
-    \centering
-    % \begin{subtable}[t]{\textwidth}
-    %     \centering
-    %     \begin{tabular}{lccc}        
-    %         \toprule
-    %         \textbf{Embedding size} & \textbf{Loss} & \textbf{ROC\_AUC} & \textbf{AP score} \\
-    %         \midrule
-    %         \bottomrule
-    %     \end{tabular}
-    %     \caption{Full $G$}
-    % \end{subtable}
     
-    % \vspace{1em}
+    \begin{subtable}[t]{\textwidth}
+        \centering
+        \begin{tabular}{lccc}        
+            \toprule
+            \textbf{Embedding size} & \textbf{Loss} & \textbf{ROC\_AUC} & \textbf{AP score} \\
+            \midrule
+            4 & 1.2305 & 0.9118 & 0.9106 \\
+            8 & 0.9730 & 0.9442 & 0.9584 \\
+            16 & 0.8388 & 0.9479 & 0.9615 \\
+            32 & 0.8666 & 0.9527 & 0.9647 \\
+            64 & 0.8539 & 0.9484 & 0.9637 \\
+            100 & 0.6406 & 0.9573 & 0.9604 \\
+            \bottomrule
+        \end{tabular}
+        \caption{Node type \textit{Disease}}
+    \end{subtable}
+    
+    \vspace{1em}
+    
+    \begin{subtable}[t]{\textwidth}
+        \centering
+        \begin{tabular}{lccc}        
+            \toprule
+            \textbf{Embedding size} & \textbf{Loss} & \textbf{ROC\_AUC} & \textbf{AP score} \\
+            \midrule
+            4 & 2.3959 & 0.7459 & 0.6906 \\
+            8 & 1.3602 & 0.8838 & 0.8751 \\
+            16 & 1.0282 & 0.9193 & 0.9119 \\
+            32 & 1.0209 & 0.9317 & 0.9307 \\
+            64 & 1.3956 & 0.8922 & 0.9109 \\
+            100 & 1.0364 & 0.9232 & 0.9159 \\
+            \bottomrule
+        \end{tabular}
+        \caption{Node type \textit{Genomic feature}}
+    \end{subtable}
+    
+    \vspace{1em}
     
     \begin{subtable}[t]{\textwidth}
         \centering
@@ -58,7 +50,7 @@
             16 & 0.5206 & 0.9758 & 0.9777 \\
             \bottomrule
         \end{tabular}
-        \caption{Connected component $G0$}
+        \caption{Node type \textit{GO} - Connected component $G0$}
     \end{subtable}
     
     \vspace{1em}
@@ -72,29 +64,29 @@
             4 & 1.3611 & 0.9300 & 0.9354 \\
             8 & 1.0874 & 0.9363 & 0.9494 \\
             16 & 1.0650 & 0.9358 & 0.9531 \\
-
             \bottomrule
         \end{tabular}
-        \caption{Connected component $G1$}
+        \caption{Node type \textit{GO} - Connected component $G1$}
     \end{subtable}
-    \caption{Performance of HCGN on \textit{Subclassof} edges - node type \textit{GO}}
+    
+    \vspace{1em}
+    
+    \begin{subtable}[t]{\textwidth}
+        \centering
+        \begin{tabular}{lccc}        
+            \toprule
+            \textbf{Embedding size} & \textbf{Loss} & \textbf{ROC\_AUC} & \textbf{AP score} \\
+            \midrule
+            4 & 1.4855 & 0.9240 & 0.9460 \\
+            8 & 1.3125 & 0.9334 & 0.9572 \\
+            16 & 1.1390 & 0.9359 & 0.9594 \\
+            32 & 0.9025 & 0.9382 & 0.9610 \\
+            64 & 0.6700 & 0.9452 & 0.9633 \\
+            100 & 0.6079 & 0.9573 & 0.9688 \\
+            \bottomrule
+        \end{tabular}
+        \caption{Node type \textit{Phenotype}}
+    \end{subtable}
+    
+    \caption{Performance of HCGN on \textit{Subclassof} edges across different node types}
 \end{table}
-
-\begin{table}[h]
-    \centering
-    \begin{tabular}{lccc}        
-        \toprule
-        \textbf{Embedding size} & \textbf{Loss} & \textbf{ROC\_AUC} & \textbf{AP score} \\
-        \midrule
-        4 & 1.4855 & 0.9240 & 0.9460 \\
-        8 & 1.3125 & 0.9334 & 0.9572 \\
-        16 & 1.1390 & 0.9359 & 0.9594 \\
-        32 & 0.9025 & 0.9382 & 0.9610 \\
-        64 & 0.6700 & 0.9452 & 0.9633 \\
-        100 & 0.6079 & 0.9573 & 0.9688 \\
-        \bottomrule
-    \end{tabular}
-    \caption{Performance of HCGN on \textit{Subclassof} edges - node type \textit{Phenotype}}
-\end{table}
-
-
