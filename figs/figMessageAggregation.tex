@@ -30,12 +30,12 @@
             
             % % Nodes on the right side of aggregation
             
-            \node[rectangle, draw, fill=gray!50, minimum width=1cm, minimum height=0.5cm] (M1) at ([shift={(3cm,2cm)}]AGG) {};
-            \node[rectangle, draw, fill=gray!50, minimum width=1cm, minimum height=0.5cm] (M2) at ([shift={(3cm,0cm)}]AGG) {};
-            \node[rectangle, draw, fill=gray!50, minimum width=1cm, minimum height=0.5cm] (M3) at ([shift={(3cm,-2cm)}]AGG) {};
-            \node[node, fill=yellow!30, left=0.2cm of M1] (A2) {$A$};
-            \node[node, fill=blue!30, left=0.2cm of M2] (D2) {$D$};
-            \node[node, fill=purple!50, left=0.2cm of M3] (E2) {$E$};
+            \node[rectangle, draw, fill=gray!50, minimum width=1cm, minimum height=0.5cm] (M1) at ([shift={(3.5cm,2cm)}]AGG) {};
+            \node[rectangle, draw, fill=gray!50, minimum width=1cm, minimum height=0.5cm] (M2) at ([shift={(3.5cm,0cm)}]AGG) {};
+            \node[rectangle, draw, fill=gray!50, minimum width=1cm, minimum height=0.5cm] (M3) at ([shift={(3.5cm,-2cm)}]AGG) {};
+            \node[node, fill=yellow!30, left=0.3cm of M1] (A2) {$A$};
+            \node[node, fill=blue!30, left=0.3cm of M2] (D2) {$D$};
+            \node[node, fill=purple!50, left=0.3cm of M3] (E2) {$E$};
             
             % Aggregated edges
             \draw[arrow] (A2) -- (AGG);
@@ -47,20 +47,20 @@
             
             % % Connections from merging nodes
             
-            \node[node, fill=olive!30] (BA) at ([shift={(2cm,0.8cm)}]A2) {$B$};
-            \node[node, fill=blue!30] (DA) at ([shift={(2cm,0cm)}]A2) {$D$};
-            \node[node, fill=red!50] (UA) at ([shift={(2cm,-0.8cm)}]A2) {$u$};
+            \node[node, fill=olive!30] (BA) at ([shift={(2.5cm,0.8cm)}]A2) {$B$};
+            \node[node, fill=blue!30] (DA) at ([shift={(2.5cm,0cm)}]A2) {$D$};
+            \node[node, fill=red!50] (UA) at ([shift={(2.5cm,-0.8cm)}]A2) {$u$};
             \draw[arrow] (BA) -- (M1);
             \draw[arrow] (DA) -- (M1);
             \draw[arrow] (UA) -- (M1);
 
-            \node[node, fill=purple!30] (ED) at ([shift={(2cm,0.4cm)}]D2) {$E$};        
-            \node[node, fill=red!40] (UD) at ([shift={(2cm,-0.4cm)}]D2) {$u$};
+            \node[node, fill=purple!30] (ED) at ([shift={(2.5cm,0.4cm)}]D2) {$E$};        
+            \node[node, fill=red!50] (UD) at ([shift={(2.5cm,-0.4cm)}]D2) {$u$};
             \draw[arrow] (ED) -- (M2);
             \draw[arrow] (UD) -- (M2);
 
-            \node[node, fill=blue!30] (DE) at ([shift={(2cm,0.4cm)}]E2) {$D$};
-            \node[node, fill=red!50] (UE) at ([shift={(2cm,-0.4cm)}]E2){$u$};
+            \node[node, fill=blue!30] (DE) at ([shift={(2.5cm,0.4cm)}]E2) {$D$};
+            \node[node, fill=red!50] (UE) at ([shift={(2.5cm,-0.4cm)}]E2){$u$};
             \draw[arrow] (DE) -- (M3);
             \draw[arrow] (UE) -- (M3);
             

@@ -1,19 +1,22 @@
-\newcommand{\conditiondiagram}[6]{%
+\newcommand{\conditiondiagram}[6]{
+    \tikzset{external/export next=true}
     \begin{tikzpicture}[scale=0.8,baseline=(x.base), ->, thick]
-        % First node and edge
-        \node[draw, circle] (x) at (0, 0) {\(#1\)};
-        \node[draw, circle] (y) at (2, 0) {\(#2\)};
-        \draw (x) -- node[above] {\(#3\)} (y);
+            % First node and edge
+            \node[draw, circle] (x) at (0, 0) {#1};
+            \node[draw, circle] (y) at (2, 0) {#2};
+            \draw (x) -- node[above] {#3} (y);
 
-        % Optional implication arrow and second relationship
-        \ifx#4\empty\else
-            \node at (3, 0) {\(\implies\)};
-            \node[draw, circle] (x2) at (4, 0) {\(#4\)};
-            \node[draw, circle] (y2) at (6, 0) {\(#5\)};
-            \draw (x2) -- node[above] {\(#6\)} (y2);
-        \fi
-    \end{tikzpicture}
+            % Optional implication arrow and second relationship
+            \ifx#4\empty\else
+                    \node at (3, 0) {$\implies$};
+                    \node[draw, circle] (x2) at (4, 0) {#4};
+                    \node[draw, circle] (y2) at (6, 0) {#5};
+                    \draw (x2) -- node[above] {#6} (y2);
+            \fi
+        \end{tikzpicture}
 }
+
+
 
 \begin{table}
     \setlength{\textwidth}{0.8\textwidth}
@@ -26,20 +29,20 @@
     \midrule
 
     \textit{Subclass} 
-        & \conditiondiagram{c}{d}{\text{\footnotesize subc.\ of}}{}{}{}
-        & \conditiondiagram{x}{c}{\text{\footnotesize type}}{x}{d}{\text{\footnotesize type}} \\
+        & \conditiondiagram{$c$}{$d$}{\footnotesize subc.of}{}{}{}
+        & \conditiondiagram{$x$}{$c$}{\footnotesize type}{$x$}{$d$}{\footnotesize type} \\
         
     \textit{Subproperty} 
-        & \conditiondiagram{p}{q}{\text{\footnotesize subp.\ of}}{}{}{}
-        & \conditiondiagram{x}{y}{\footnotesize p}{x}{y}{\footnotesize q} \\
+        & \conditiondiagram{$p$}{$q$}{\footnotesize subp.of}{}{}{}
+        & \conditiondiagram{$x$}{$y$}{\footnotesize p}{$x$}{$y$}{\footnotesize q} \\
     
     \textit{Domain} 
-        & \conditiondiagram{p}{c}{\text{\footnotesize domain}}{}{}{}
-        & \conditiondiagram{x}{y}{\footnotesize p}{x}{c}{\text{\footnotesize type}} \\
+        & \conditiondiagram{$p$}{$c$}{\footnotesize domain}{}{}{}
+        & \conditiondiagram{$x$}{$y$}{\footnotesize p}{$x$}{$c$}{\footnotesize type} \\
 
     \textit{Range} 
-        & \conditiondiagram{p}{c}{\text{\footnotesize range}}{}{}{}
-        & \conditiondiagram{x}{y}{\footnotesize p}{y}{c}{\text{\footnotesize type}} \\
+        & \conditiondiagram{$p$}{$c$}{\footnotesize range}{}{}{}
+        & \conditiondiagram{$x$}{$y$}{\footnotesize p}{$y$}{$c$}{\footnotesize type} \\
         \bottomrule
     \end{tabular}
     \caption{Definitions for subclass, subproperty, domain, and range features in semantic schemata}
