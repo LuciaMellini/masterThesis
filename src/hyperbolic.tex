@@ -50,10 +50,11 @@ For more details on foundations of manifolds refer to the Appendix in~\cite{Cham
 
 
 \section{Hyperbolic spaces}
-Building on the concept of manifolds we analyze how distances and straight lines morph in hyperbolic spaces. In practice it would not be possible to work directly on hyperbolic spaces. Hence, we introduce some ways to operate on hyperbolic spaces and help in their representation.
+Building on the concept of manifolds we analyze how distances and straight lines morph in hyperbolic spaces. In practice it would not be possible to work directly on hyperbolic spaces. Hence, we introduce some ways to operate on hyperbolic spaces and help in their representation. Hyperbolic spaces of constant curvature are difficult to envisage because they cannot be
+isometrically embedded into any Euclidean space. The reason is, informally, that the former are ``larger'' and have more ``space'' than the latter.
 \begin{description}
     \item[Exponential and logarithmic maps] In \Cref{sec:expLogMaps} we provide a mapping between hyperbolic spaces and their Euclidean tangent planes. Because the tangent space has a linear structure, we will rely on these maps to leverage some of the tools of Euclidean geometry for hyperbolic methods, such as optimization or neural network operations.
-    \item[Poicaré ball] There exist five equivalent models of hyperbolic spaces\footnote{The possible models of hyperbolic spaces are the following: the Poincaré ball, the Poincaré half-ball, the Klein disk, the hyperboloid model and the upper half-space model.}. In \Cref{sec:poincareBall} we focus on a model of hyperbolic geometry called the Poincaré ball, that represents the infinite hyperbolic space in a finite ball, and is therefore very useful for visualizations.
+    \item[Poicaré ball] Because of the fundamental difficulties in representing spaces of constant negative curvature as subsets of Euclidean spaces, there are many equivalent models of hyperbolic spaces\footnote{The possible models of hyperbolic spaces are the following: the Poincaré ball, the Poincaré half-ball, the Klein disk, the hyperboloid model and the upper half-space model.}. Each model emphasizes different aspects of hyperbolic geometry, but no model simultaneously represents all of its properties. In \Cref{sec:poincareBall} we focus on a model of hyperbolic geometry called the Poincaré ball, that represents the infinite hyperbolic space in a finite ball, and is therefore very useful for visualizations. 
 \end{description}
 
 More in depth discussion on hyperbolic geometry can be found in~\cite{Anderson2006hyperbolicGeometry}\cite{Ramsay2013introductionHyperbolicGeometry}.
@@ -116,10 +117,12 @@ When dealing with hyperbolic spaces, given $p \in \Hy^d$ and a tangent vector $v
 \end{align*}
 
 \subsection{Poincaré ball model}\label{sec:poincareBall}
-Poincaré's representation of hyperbolic geometry is based on the points in the unit ball in $d$ dimensions, formally described as
+Poincaré's representation of hyperbolic geometry is based on the points in the unit ball (or disk) in $d$ dimensions, formally described as
 \begin{equation*}
     \B^d = \{x \in \R^d: \|x\|^2_2 < 1\}.
 \end{equation*}
+The boundary of the disk is not a part of the hyperbolic plane it represents, but represents its infinitely remote points, called \term{boundary at infinity}.
+
 When the unit ball is endowed with the family of inner products
 \begin{equation*}
     g_p = \left(\frac{2}{1-\|p\|^2_2}\right)^2\mathbb{I}_d,
