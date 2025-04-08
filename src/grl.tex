@@ -260,10 +260,10 @@ The core intuition behind the GNN message-passing framework is that, at each ite
 Until now we have discussed the GNN framework rather abstractly as a series of message-passing iterations governed by the generic functions UPDATE and AGGREGATE (\Cref{eq:GNNupdate}). 
 
 A simplification of the original GNN models proposed by~\cite{Merkwirth2005automaticGenerationComplementaryDescriptorsMolecularGraphNetworks}\cite{scarselli2008graphNeuralNetworkModel} is expressed as:
-\begin{equation}\label{eq:basicGNNAGGUP}
+\begin{equation}\label{eq:basicGNN}
     \mathbf{h}_u^{(k)} = \sigma\left(\mathbf{W}_\text{self}^{(k)}\mathbf{h}_u^{(k-1)} + \mathbf{W}_\text{neigh}^{(k)}\sum_{v\in\mathcal{N}(u)}\mathbf{h}_v^{(k-1)} + \mathbf{b}^{(k)}\right)
 \end{equation}
-where $ \mathbf{W}_\text{self}^{(k)}, \mathbf{W}_\text{neigh}^{(k)} \in \mathbb{R}^{d^{(k)}\times d^{(k-1)}} $ are learnable parameter matrices, and $ \sigma $ represents an element-wise non-linear activation function (e.g., a tanh or ReLU). Generally, the parameters $ \mathbf{W}_\text{self}, \mathbf{W}_\text{neigh} $, and $ b $ can be shared across GNN message-passing iterations or may be trained separately for each layer.
+where $ \mathbf{W}_\text{self}^{(k)}, \mathbf{W}_\text{neigh}^{(k)} \in \mathbb{R}^{d^{(k)}\times d^{(k-1)}} $ are learnable parameter matrices, and $ \sigma $ represents an element-wise non-linear activation function (e.g., a tanh or ReLU). Generally, the parameters $ \mathbf{W}_\text{self}, \mathbf{W}_\text{neigh} $, and $\mathbf{b}$ can be shared across GNN message-passing iterations or may be trained separately for each layer. From here on we will be omitting the bias term $\mathbf{b}$ for notational simplicity.
 
 We can equivalently depict the basic GNN by defining UPDATE and AGGREGATE functions:
 \begin{equation*}
@@ -274,6 +274,14 @@ We can equivalently depict the basic GNN by defining UPDATE and AGGREGATE functi
     \text{UPDATE}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) = \sigma(\mathbf{W}_\text{self}\mathbf{h}_u + \mathbf{W}_\text{neigh}\mathbf{m}_{\mathcal{N}(u)}).
 \end{equation}
 
+Many GNN models can be defined succinctly using so called graph-level equations. In the case of basic GNNs, the definition in \Cref{eq:basicGNN} can be expressed as a graph-level equation as follows:
+
+\begin{equation}\label{eq:basicGNNgraphlevel}
+    \mathbf{H}^{(k)} = \sigma\left(\mathbf{A}\mathbf{H}^{(k-1)}\mathbf{W}_\text{neigh}^{(k)} + \mathbf{H}^{(k-1)}\mathbf{W}_\text{self}^{(k)}\right)
+\end{equation}
+where $\mathbf{H}^{(k)} \in \mathbb{R}^{|V| \times d}$ denotes the matrix of node representations at layer $k$ in the GNN (with each node corresponding to a row in the matrix), and $\mathbf{A}$ is the graph adjacency matrix. While this graph-level representation is not easily applicable to all GNN models—such as the attention-based models we discuss below—it is often more succinct and also highlights how many GNNs can be efficiently implemented using a small number of sparse matrix operations.
+
+
 \paragraph{Self-Loops}
 As a simplification of the neural message passing framework, it is customary to incorporate \term{self-loops} into the input graph while omitting the explicit update step. In this setup, the message passing is merely defined as:
 \begin{equation}\label{eq:selfLoop}
@@ -281,11 +289,17 @@ As a simplification of the neural message passing framework, it is customary to 
 \end{equation}
 where the aggregation considers both the node's neighbours and the node itself. Herein, the update function is implicitly defined through the aggregation method. Simplifying message passing often alleviates overfitting but could severely restrict the expressiveness of the GNN, as the information from the node's neighbours cannot be differentiated from the node's inherent information.
 
-The basic GNN can be enhanced and generalized in multiple ways through variations of the AGGREGATE and UPDATE functions.
+In the case of the basic GNN adding self-loops is equivalent to sharing parameters between $\mathbf{W}_\text{self}$ and $\mathbf{W}_\text{neigh}$ matrices, so the graph-level updates is given by:
+\begin{equation}\label{eq:basicGNNgraphlevelselfLoop}
+    \mathbf{H}^{(k)} = \sigma\left((\mathbf{A} + \mathbf{I})\mathbf{H}^{(k-1)}\mathbf{W}^{(k)}\right).
+\end{equation}
+
 
 \subsection{AGGREGATE Generalization}
+The basic GNN can be enhanced and generalized in multiple ways through variations of the AGGREGATE and UPDATE functions.
+
 \paragraph{neighbourhood Aggregation}
-The most basic aggregation operations (\Cref{eq:basicGNNAGGUP}) merely compute the sum of the neighbourhood embeddings. This approach can prove unstable and highly sensitive to node degrees, with nodes possessing higher degrees expected to yield greater values in the components of their embeddings.
+The most basic aggregation operations (\Cref{eq:basicGNN}) merely compute the sum of the neighbourhood embeddings. This approach can prove unstable and highly sensitive to node degrees, with nodes possessing higher degrees expected to yield greater values in the components of their embeddings.
 
 A potential solution is to normalize the aggregation process according to the degrees of the nodes involved. The simplest method is to compute an average instead of a sum:
 \begin{equation*}
