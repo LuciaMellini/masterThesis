@@ -291,7 +291,7 @@ where the aggregation considers both the node's neighbours and the node itself. 
 
 In the case of the basic GNN adding self-loops is equivalent to sharing parameters between $\mathbf{W}_\text{self}$ and $\mathbf{W}_\text{neigh}$ matrices, so the graph-level updates is given by:
 \begin{equation}\label{eq:basicGNNgraphlevelselfLoop}
-    \mathbf{H}^{(k)} = \sigma\left((\mathbf{A} + \mathbf{I})\mathbf{H}^{(k-1)}\mathbf{W}^{(k)}\right).
+    \mathbf{H}^{(k)} = \sigma\left(\left(\mathbf{A} + \mathbb{I}_{|V|}\right)\mathbf{H}^{(k-1)}\mathbf{W}^{(k)}\right).
 \end{equation}
 
 

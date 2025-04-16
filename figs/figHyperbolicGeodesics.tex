@@ -1,14 +1,43 @@
-
 \begin{figure}
-    \centering
-    \begin{tikzpicture}[scale=1.8]
-        \draw (0,0) circle (1);
-        \clip (0,0) circle (1);
-        \hgline{30}{-30}{black!70}
-        \hgline{180}{270}{blue!20}
-        \hgline{30}{120}{black!70}
-        \hgline{0}{180}{red!50}
-    \end{tikzpicture}
-    \caption{Geodesics in the Poincaré ball model.}
-    \label{fig:hyperbolicGeodesics}
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}[scale=1.7]
+            \draw (0,0) circle (1);
+            \clip (0,0) circle (1);
+            \hgline{30}{-30}{black!70}
+            \hgline{180}{270}{blue!20}
+            \hgline{30}{120}{black!70}
+            \hgline{0}{180}{red!50}
+        \end{tikzpicture}
+        \caption{Poincaré ball model.}
+        \label{fig:poincareBall}
+    \end{subfigure}%
+    \hfill
+    \begin{subfigure}{0.48\textwidth}
+        \centering
+        \begin{tikzpicture}
+        \begin{axis}[
+            view={30}{10},
+            colormap name=custom,
+            shader=interp,
+            axis lines=none,
+            xmin=-3, xmax=3,
+            ymin=-3, ymax=3,
+            zmin=0, zmax=5,
+        ]
+        \addplot3[
+            surf,
+            domain=-2.8:2.8,
+            y domain=-2.8:2.8,
+            samples=20,
+            z buffer=sort,
+            opacity=0.7
+        ] {sqrt(x^2 + y^2 + 1)};
+        \end{axis}
+        \end{tikzpicture}   
+        \caption{Hyperboloid model.}
+        \label{fig:hyperboloid}
+    \end{subfigure}
+    \caption{Models of hyperbolic space.}
+    \label{fig:hyperbolicmodels}
 \end{figure}

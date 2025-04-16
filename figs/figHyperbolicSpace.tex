@@ -2,10 +2,9 @@
     \centering
     \begin{tikzpicture}
         \begin{axis}[
-            view={160}{70},
-            colormap/viridis,
-            shader=interp,
-            axis lines=none,
+            view={160}{70},            
+            axis lines=none,            
+            colormap name = custom,
             xmin=-2, xmax=2,
             ymin=-2, ymax=2,
             zmin=-2, zmax=2,
@@ -14,10 +13,12 @@
         % Plot the hyperbolic paraboloid
         \addplot3[
             surf,
+            shader=interp,        
+            colormap name=custom,
             domain=-1.7:1.7,
             domain y=-2:1.5,
             samples=30,
-            opacity=0.8,
+            opacity=0.9,
         ] {x^2 - y^2};
         
         % Define vertices of the triangle (lying on the surface)
@@ -35,7 +36,7 @@
             domain=-1:1,
         ] ( 
             {x},                % x(x) = -1 → 1
-            {-1},               % y(x) = -1 (consxanx)
+            {-1},               % y(x) = -1 (constant)
             {x^2 - 1}         % z(x) = x(t)^2 - y(t)^2 = t^2 - 1
         );
         
@@ -67,9 +68,8 @@
             {(1 - x)^2 - (-1 + 2*x)^2}  % z(x) = x(t)^2 - y(t)^2
         );
         \end{axis}
-        \end{tikzpicture}
-
-    % \includegraphics[width=0.3\textwidth]{figs/Hyperbolic_triangle.png}    
+    \end{tikzpicture}
+   
     \caption{Section of a hyperbolic space.}
     \label{fig:hyperbolicSpace}
 \end{figure}

@@ -48,6 +48,7 @@
 \usepackage{xcolor}
 \usepackage{colortbl}
 \usepackage{booktabs}
+\usepackage{multirow}
 \usepackage{tabularx}
 \usepackage{array}
 \usepackage{xurl}
@@ -57,6 +58,7 @@
 % Load externalization library
 \usepackage{tikz}
 \usepackage{pgfplots}
+\usepgfplotslibrary{colormaps}
 \pgfplotsset{compat=1.18}
 \usetikzlibrary{positioning, shapes, arrows, trees}
 \newcommand{\hgline}[3]{
@@ -72,6 +74,9 @@
     \pgfmathsetmacro{\distance}{sqrt(1+\R^2)}
     \draw[#3] (\theta:\distance) circle (\R);
 \fi
+}
+\pgfplotsset{
+	colormap={custom}{rgb255(0cm)= (144, 171, 220); rgb255(0.5cm)= (143,170,215); rgb255(1cm)= (89,137,165); rgb255(1.5cm)= (46,106,148); rgb255(2cm)= (18,71,119)}
 }
 
 \usepackage{shellesc}  % Ensures system calls work
@@ -110,6 +115,7 @@
 \newcommand{\Hy}{\mathbb{H}}
 \newcommand{\B}{\mathbb{B}}
 \newcommand{\Lcal}{\mathcal{L}}
+\newcommand{\Mcal}{\mathcal{M}}
 
 
 \hypersetup{
