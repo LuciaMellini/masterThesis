@@ -1,1 +1,35 @@
 \chapter{Hyperbolic representation learning}\label{hrl}
+We now combine the notions discusses in \Cref{grl} and \Cref{hyperbolic} to learn representations of hyperbolic spaces. We initially look at how shallow embeddings have been implemented in hyperbolic space. 
+
+\section{Poincaré embeddings for hierarchical learning}
+We analyze an approach for learning hierarchical representations of data by embedding them into a hyperbolic space in a shallow manner~\cite{nickel2017poincare}. This technique is based on the assumption that there exists a latent hierarchy in which the data can be organized. Nevertheless, there is no direct access to information about the hierarchy, such as ordered input pairs. Thus the task of inferring the hierarchical relationships is fully unsupervised. 
+
+\paragraph{Model choice}
+Seen the nature of the task and the considerations brought out in \Cref{sec:hyperbolicAndTrees} it is useful the data into hyperbolic space. The Poincaré ball model is favoured since it is well-suited for gradient-based optimization. Also, using the ball in $d$-dimensions allows to learn multiple latent hierarchies that co-exist in a dataset. 
+
+As seen in \Cref{eq:poincareDistance} the distance within the Poincaré ball changes smoothly with respect to the location of $p$ and $q$. This locality property of the Poincaré distance is key for finding continuous embeddings of hierarchies. For instance, by placing the root node of a tree at the origin of the Poincaré ball $\B^d$ it would have a relatively small distance to all other nodes as its Euclidean norm is zero. On the other hand, leaf nodes can be placed close to the boundary of the Poincaré ball as the distance grows very fast between points with a norm close to one. Furthermore, \Cref{eq:poincareDistance} is symmetric and the hierarchical organization of the space is solely determined by the distance of points to the origin. Due to this self-organizing property, \Cref{eq:poincareDistance} is applicable in an unsupervised setting where the hierarchical order of objects is not specified in advance. 
+
+\paragraph{Optimization}
+We assume we are given a problem-specific loss function $\mathcal{L}$ which encourages semantically similar objects to be close in the embedding space according to their Poincaré distance. Since the Poincaré ball has a Reimannian manifold structure, we can minimize the loss using Stochastic Reimannian Gradient Descent (RSGD) (or other Reimannian optimization methods). The usual update on gradient $w$ at time $t$ is replaced with the following update rule:
+
+\begin{equation}
+    w_{t+1} = \exp_{w_t}(-\eta_t\nabla_R\mathcal{L}).
+\end{equation}
+Here $\exp_{w_t}$ stands for the exponential map\footnote{When the exponential map is not easy to compute one can use a retraction. This map $R_w:T_w\Mcal\to\Mcal$ is a first-order approximation of the exponential such that $d(exp_w(v), R_w(v))=\|v\|_2+O(\|v\|^2_2)$} at point $w_t$ towards $\mathbb{B}^d$, $\eta_t$ denotes the learning rate at time $t$, and $\nabla_R \mathcal{L} \in T_{w}\mathbb{B}^d$ denotes the Riemannian gradient of $\mathcal{L}$, where $T_{w}\mathbb{B}^d$ denotes the tangent space of a point $w \in \mathbb{B}^d$.  
+
+\section{Hyperbolic Graph Neural Networks (HGNN)}
+As we discussed in \Cref{sec:gnn}, a graph neural network comprises a series of basic operations, like message passing on a set of nodes in a given space. While such operations are well-understood in Euclidean space, their counterparts in non-Euclidean space are non-trivial. We generalize the notion of a graph neural network so that the architecture operates on Reimannian manifolds, called \term{Hyperbolic Graph Neural Network} (\term{HGNN})~\cite{liu2019hyperbolic}. Since the tangent space of a point on Reimannian manifolds always is Euclidean---or a subset of Euclidean space---functions with trainable parameters can be defined on the tangent space using the exponential and logarithmic maps (\Cref{sec:expLogMaps}). Taking as baseline the update for a basic GNN with self-loops (recall \Cref{eq:basicGNNgraphlevelselfLoop}), in a HGNN the information propagates for each node $u \in V$ as follows:
+
+\begin{equation}\label{eq:HGNNgraphlevel}
+    \mathbf{h}^{(k)}_u = \sigma\left(\exp_p\left(\sum_{v\in\mathcal{N}(u)}\left(\mathbf{A} + \mathbb{I}_{|V|}\right)\mathbf{W}^{(k)}\log_p\left(\mathbf{h}^{(k-1)}_v)\right)\right)\right).
+\end{equation}
+
+At layer $k$ we map each node representation $\mathbf{h}^{(k)}_v\in \Mcal$ ($v\in\mathcal{N}(u)$) to the tangent space of a chosen point $p\in \Mcal$ using the logarithmic map $\log_p(\cdot)$. As in \Cref{eq:basicGNNgraphlevelselfLoop} $A$ is the graph adjacency matrix and $\mathbf{W}^{(k)}$ are the trainable parameters of the layer. The exponential map $\exp_p(\cdot)$ is then used to map the linearly transformed tangent vector back to the manifold. The exponential map is applied before the activation function $\sigma$ to avoid the logarithmic and exponential maps cancelling out between steps. 
+
+\paragraph{Activation functions}
+When applying the non-linear activation function on a manifold $\Mcal$ we need to assure that it is manifold preserving such that $\sigma: \Mcal\to\Mcal$. In the case of the Poincaré ball model it is sufficient to employ pointwise non-linearities which are norm decreasing, so that $|\sigma(x)|\leq |x|$. This is true for ReLU and LeakyReLU, for which $\|\sigma(\mathbf{x})\|\leq \|\mathbf{x}\|$, ensuring that $\sigma: \B\to \B$. For other hyperbolic models it would be sufficient to use the stereographic projection in \Cref{eq:stereographicProjection} and its inverse, detailed in \Cref{eq:inverseStereographicProjection}.
+
+\paragraph{Inputs}
+The input features of neural networks are typically in Euclidean case, thus we first map them into the Reimannian manifolds. Specifically the points in Euclidean space are mapped onto the hyperbolic space $\exp_p(\cdot)$, where $p$ is the origin of the manifold. Subsequently the point on the hyperbolic space is projected onto the chosen model.
+
+
