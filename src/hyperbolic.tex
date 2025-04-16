@@ -33,37 +33,42 @@ Spaces in non-Euclidean geometries can be classified according to their curvatur
 \subsection{Reimannian manifolds}
 A Riemannian manifold is a mathematical space that generalizes the concept of curved surfaces and higher-dimensional spaces, allowing us to define distances, angles, and curvature in a smooth way. 
 
-
 \begin{definition} (Reimannian manifold)
-Given a smooth manifold $M$, a Riemannian metric is a smooth function that assigns to each $p \in M$ an inner product on the tangent space $T_pM$:
+Given a smooth manifold $\Mcal$, a Riemannian metric is a smooth function that assigns to each $p \in \Mcal$ an inner product on the tangent space $T_p\Mcal$:
 \begin{equation*}
-    g_p: T_pM \times T_pM \to \R.
+    g_p: T_p\Mcal \times T_p\Mcal \to \R.
 \end{equation*}
-    A Reimannian manifold is a pair $(M,g)$ where $M$ is a smooth manifold and $g$ is a Riemannian metric.
+    A Reimannian manifold is a pair $(\Mcal,g)$ where $\Mcal$ is a smooth manifold and $g$ is a Riemannian metric.
 \end{definition}
 
 Simply put, a \term{manifold} is a topological space\footnote{A \term{topological space} is a set of points, along with a topology, an additional structure which can be defined as a set of neighbourhoods for each point that satisfy some axioms formalizing the concept of closeness.} that locally resembles Euclidean space near each point. More precisely, a $d$-manifold  is a topological space with the property that each point has a neighborhood that resembles an open subset of $d$-dimensional Euclidean space. 
 
-A \term{smooth manifold} is such when functions and coordinate changes along the manifold are infinitely differentiable. The associated metric entails that at each point $p$ lengths and angles are measured differently.
+A \term{smooth manifold} is such when functions and coordinate changes along the manifold are infinitely differentiable. The associated metric entails that at each point $p$ lengths and angles are measured differently. 
+
+\paragraph{Distance function and geodesics} An important concept in Euclidean geometry, arising from Euclid's first postulate (\Cref{sec:parallelPostulate}), is that of straight lines, which are shortest paths between points. We can generalize this concept to manifolds by seeking curves with minimal length, called \term{geodesics}. A geodesic is a curve $\gamma(t)=(\gamma(t)^1, \dots, \gamma(t)^d)$ in a manifold $\Mcal$ connecting points $p,q\in \Mcal$ with minimum length. 
+
+In Euclidean space geodesics are straight lines in $\R^d$ and for given parameters $a,b\in \R^d$ they have the form 
+\begin{equation}
+    \gamma(t) = t\cdot a + b.
+\end{equation}
+
+\paragraph{Exponential and logarithmic maps} We would like to associate the points in a manifold to those on a tangent Euclidean space. The tangent space maps to the manifold via an exponential map, and conversely, a logarithmic map translates a point on the manifold to the tangent space. We will see an example of these maps in the following section.
 
 For more details on foundations of manifolds refer to the Appendix in~\cite{Chami2021representationLearningAlgorithmsHyperbolicSpaces}, or~\cite{doCarmo1992riemannianGeometry}\cite{Lee2003smooth}.
 
 
 \section{Hyperbolic spaces}
-Building on the concept of manifolds we analyze how distances and straight lines morph in hyperbolic spaces. In practice it would not be possible to work directly on hyperbolic spaces. Hence, we introduce some ways to operate on hyperbolic spaces and help in their representation. Hyperbolic spaces of constant curvature are difficult to envisage because they cannot be
-isometrically embedded into any Euclidean space. The reason is, informally, that the former are ``larger'' and have more ``space'' than the latter.
-\begin{description}
-    \item[Exponential and logarithmic maps] In \Cref{sec:expLogMaps} we provide a mapping between hyperbolic spaces and their Euclidean tangent planes. Because the tangent space has a linear structure, we will rely on these maps to leverage some of the tools of Euclidean geometry for hyperbolic methods, such as optimization or neural network operations.
-    \item[Poicaré ball] Because of the fundamental difficulties in representing spaces of constant negative curvature as subsets of Euclidean spaces, there are many equivalent models of hyperbolic spaces\footnote{The possible models of hyperbolic spaces are the following: the Poincaré ball, the Poincaré half-ball, the Klein disk, the hyperboloid model and the upper half-space model.}. Each model emphasizes different aspects of hyperbolic geometry, but no model simultaneously represents all of its properties. In \Cref{sec:poincareBall} we focus on a model of hyperbolic geometry called the Poincaré ball, that represents the infinite hyperbolic space in a finite ball, and is therefore very useful for visualizations. 
-\end{description}
+Building on the concept of manifolds we analyze how distances and straight lines morph in hyperbolic spaces. In fact, in negative curvature spaces, the space bends like a saddle and triangle angles sum to less than $\pi$. As an example we show a section of a hyperbolic paraboloid (described by function $z=x^2-y^2$) in \Cref{fig:hyperbolicSpace}. In practice it would not be possible to work directly on hyperbolic spaces. Hence, we introduce some ways to operate on hyperbolic spaces and help in their representation. Hyperbolic spaces of constant curvature are difficult to envisage because they cannot be isometrically embedded into any Euclidean space. The reason is, informally, that the former are ``larger'' and have more ``space'' than the latter.  
+
+Because of the fundamental difficulties in representing spaces of constant negative curvature as subsets of Euclidean spaces, there are many equivalent models of hyperbolic spaces\footnote{The possible models of hyperbolic spaces are the following: the Poincaré ball, the Poincaré half-ball, the Klein ball, the hyperboloid model and the upper half-space model.}. Each model emphasizes different aspects of hyperbolic geometry, but no model simultaneously represents all of its properties. In \Cref{sec:hyperboloidModel} we introduce the hyperboloid model as it is useful for computation due to relatively simple formulas for geodesics a. We then focus on Poincaré ball model in \Cref{sec:poincareBall}, that represents the infinite hyperbolic space in a finite ball, and is therefore very useful for visualizations. We then show the relation between these two models (\Cref{sec:isometry}).
+
+For both the models we show how distances are measured and how minimum-length lines are defined. We also put in evidence the respective exponential and logarithmic maps that relate the points on the models to to tangent spaces which are vector spaces that are isomorphic to $\R^d$. In \Cref{hrl} we will use these maps to leverage some of the tools of Euclidean geometry in which standard operations like addition and multiplication are defined for hyperbolic methods, such as optimization or neural network operations.
 
 More in depth discussion on hyperbolic geometry can be found in~\cite{Anderson2006hyperbolicGeometry}\cite{Ramsay2013introductionHyperbolicGeometry}.
 
-\subsection{Distance function and geodesics}
-In negative curvature spaces, the space bends like a saddle and triangle angles sum to less than $\pi$. We show a section of a hyperbolic paraboloid (described by function $z=x^2-y^2$) in \Cref{fig:hyperbolicSpace}.
-
 \input{figs/figHyperbolicSpace}
 
+\subsection{Hyperboloid model}\label{sec:hyperboloidModel}
 We first introduce some useful quantities for our discussion.
 
 \begin{definition}(Minkowski inner product) \label{def:minkowskiInnerProduct}
@@ -80,36 +85,40 @@ We first introduce some useful quantities for our discussion.
     \end{equation*}
 \end{definition}
 
-For each point $p$ in a hyperbolic space $\Hy^d$ the tangent space at $p$---$T_p\Hy^d$---is a $d$-dimensional vector space containing all possible directions of paths leaving from $p$. Formally the tangent space to point $p$ is described as:
+We can now define the hyperboloid model of hyperbolic space.
+\begin{definition}[Hyperbolic model]
+    We denote $\Hy^{d,K}$ as the hyperboloid manifold in $d$ dimension with constant negative curvature $\frac{1}{K}$ with $K>0$ as
+    \begin{equation*}
+        \Hy^{d,K} = \left\{x \in \R^{d+1} : \langle x, x \rangle_\Lcal = -1, x_0 > 0\right\}
+    \end{equation*}
+\end{definition}
+
+From hereon we refer to a hyperboloid model with negative curvature $-1$ ($\Hy^{d,1}$), that we simply indicate with $\Hy^d$. In two dimensions the hyperboloid can be visualized as a surface in $\R^3$ which corresponds to the upper sheet of a two sheet hyperboloid of revolution (\Cref{fig:hyperboloid}).
+
+\input{figs/figHyperbolicGeodesics}
+
+For each point $p$ in a hyperboloid $\Hy^d$ the tangent space at $p$---$T_p\Hy^d$---is a $d$-dimensional vector space containing all possible directions of paths leaving from $p$. Formally the tangent space to point $p$ is described as:
 \begin{align*}
     T_p\Hy^d 
     &= \left\{u\in \R^{d+1} : \langle u, p \rangle_\Lcal = 0\right\} \\
     &= \left\{(v_0,v) \in \R^{d+1} : v_0 = \frac{v \cdot p}{\sqrt{1 + \|p\|^2_2}}\right\}
 \end{align*}
 
-An important concept in Euclidean geometry, arising from Euclid's first postulate (\Cref{sec:parallelPostulate}), is that of straight lines, which are shortest paths between points. We can generalize this concept to manifolds by seeking curves with minimal length, called \term{geodesics}. A geodesic is a curve $\gamma(t)=(\gamma(t)^1, \dots, \gamma(t)^d)$ in a manifold $M$ connecting points $p,q\in M$ with minimum length. 
-
-In Euclidean space geodesics are straight lines in $\R^d$ and for given parameters $a,b\in \R^d$ they have the form 
-\begin{equation}
-    \gamma(t) = t\cdot a + b
-\end{equation}
-which . 
-
-In the case of hyperbolic spaces these length-minimizing curves have a different mathematical expression. Let $p\in\Hy^d$ and $v\in T_p\Hy^d$, assuming $\langle v,v\rangle_\Lcal $. The unique geodesic $\gamma_{p,v}(\cdot)$ such that $\gamma_{p,v}(0)=p$ and $\dot{\gamma}_{p,v}(0)=v$ is given by:
+\paragraph{Distance function and geodesics}
+Let $p\in\Hy^d$ and $v\in T_p\Hy^d$, assuming $\langle v,v\rangle_\Lcal $ = 1. In the hyperboloid model the unique geodesic $\gamma_{p,v}(\cdot)$ such that $\gamma_{p,v}(0)=p$ and $\dot{\gamma}_{p,v}(0)=v$ is given by:
 
 \begin{equation*}
     \gamma_{p,v}(t) = \cosh(t)p + \sinh(t)v.
 \end{equation*}
-The corresponding intrinsic distance\footnote{An \term{intrinsic distance} refers to the shortest path between two points measured \emph{within} a given space or surface, rather than through an external surrounding space.}  between two points $p,q\in\Hy^d$ can be computed as:
+
+The corresponding intrinsic distance\footnote{An \term{intrinsic distance} refers to the shortest path between two points measured \emph{within} a given space or surface, rather than through an external surrounding space.} between two points $p,q\in\Hy^d$ can be computed as:
 
 \begin{equation*}
     d_\Hy(p, q) = \text{arcosh}(-\langle p, q \rangle_\Lcal).
 \end{equation*}
 
-\subsection{Exponential and logarithmic maps}\label{sec:expLogMaps}
-We would like to associate the points in a manifold to those on a tangent Euclidean space. The tangent space maps to the manifold via an exponential map, and conversely, a logarithmic map translates a point on the manifold to the tangent space. 
-
-When dealing with hyperbolic spaces, given $p \in \Hy^d$ and a tangent vector $v \in T_p\Hy^d$, the exponential map $\exp_p: T_p\Hy^d \to \Hy^d$ assigns to $v$ the point $\exp_p(v) := \gamma(1)$, where $\gamma$ is the unique geodesic satisfying $\gamma(0) = p$ and $\dot{\gamma}(0) = v$. The logarithmic map reverses back to the tangent space at $p$ such that $\log_p(\exp_p(v)) = v$. In hyperbolic spaces these operations form a bijection between the entire hyperbolic space and the tangent space at a point. The analytic expressions for the exponential and logarithmic maps are given below.
+\paragraph{Exponential and logarithmic maps}
+When dealing with the hyperboloid model, given $p \in \Hy^d$ and a tangent vector $v \in T_p\Hy^d$, the exponential map $\exp_p: T_p\Hy^d \to \Hy^d$ assigns to $v$ the point $\exp_p(v) := \gamma(1)$, where $\gamma$ is the unique geodesic satisfying $\gamma(0) = p$ and $\dot{\gamma}(0) = v$. The logarithmic map $\log_p: \Hy^d \to T_pHy^d$ reverses back to the tangent space at $p$ such that $\log_p(\exp_p(v)) = v$. In hyperbolic spaces these operations form a bijection between the entire hyperbolic space and the tangent space at a point. The analytic expressions for the exponential and logarithmic maps are given below.
 
 \begin{align*}
     \exp_p(v) &= \cosh(\|v\|_\Lcal)p + \sinh(\|v\|_\Lcal) \frac{v}{\|v\|_\Lcal}\\
@@ -117,41 +126,81 @@ When dealing with hyperbolic spaces, given $p \in \Hy^d$ and a tangent vector $v
 \end{align*}
 
 \subsection{Poincaré ball model}\label{sec:poincareBall}
-Poincaré's representation of hyperbolic geometry is based on the points in the unit ball (or disk) in $d$ dimensions, formally described as
+Poincaré's representation of hyperbolic geometry is based on the points in the unit ball in $d$ dimensions, formally described as
 \begin{equation*}
     \B^d = \{x \in \R^d: \|x\|^2_2 < 1\}.
 \end{equation*}
-The boundary of the disk is not a part of the hyperbolic plane it represents, but represents its infinitely remote points, called \term{boundary at infinity}.
+The boundary of the ball is not a part of the hyperbolic plane it represents, but represents its infinitely remote points, called \term{boundary at infinity}.
 
+We now use the mathematical framework called \term{gyrovector spaces}~\cite{ungar2022gyrovectorSpaceHyperbolicGeometry}\cite{Ungar1999HyperbolicPythagoreanTheoremPoincareDiscModel} to describe elementary operations such as additions and scalar multiplications in the Poincaré ball model in analogy with Euclidean geometry.
+
+Vector addition is not well-defined in the hyperbolic space, since adding two points in the Poincaré ball might result in a point outside the ball. Instead, Möbius addition provides an analogue to Euclidean addition for hyperbolic space. We define the Möbius addition in the Poincaré ball model.
+
+\begin{definition}[Möbius addition]
+    Given two points $p,q\in\B^d$, the Möbius addition is defined as:
+    \begin{equation*}
+        p \oplus q = \frac{(1 +  2\langle p,q\rangle_2 + \|q\|^2_2)}{(1 + 2\langle p,q\rangle_2 + \|p\|^2_2\|q\|^2_2)}.
+    \end{equation*}
+    
+\end{definition}
+
+In contrast to Euclidean addition, it is neither commutative nor associative. However, it provides an analogue through the lens of the parallel transport concept. Given two points $x,y$ and a tangent vector $v$ in $T_x$, there is a unique tangent vector in $T_y$ which creates the same angle as $v$ with the direction of the geodesic connecting $x$ and $y$. This is called the \term{parallel transport} $P_{x\to y} (v)$ of $v$ along the geodesic from $x$ to $y$. In Euclidean geometry parallel transport is the standard Euclidean addition. Analagously, the Möbius addition satisfies the following property:
+\begin{equation*}
+    p\oplus q=\exp_{x}(P_{o\to x}(\log_o(q))).
+\end{equation*}
+
+Similarly, the Möbius scalar multiplication provides a way to scale points on a manifold by a scalar. In the case of the Poincaré ball it is defined as follows.
+
+\begin{definition}[Möbius scalar multiplication]
+    Given a point $p\in\B^d$ and a scalar $\alpha\in\R$, the Möbius scalar multiplication is defined as:
+    \begin{equation*}
+        \alpha \otimes p = \tanh({\alpha \tanh^{-1}(\|p\|_2)})\frac{p}{\|p\|^2_2}.
+    \end{equation*}
+\end{definition}
+
+\paragraph{Distance function and geodesics}
 When the unit ball is endowed with the family of inner products
 \begin{equation*}
     g_p = \left(\frac{2}{1-\|p\|^2_2}\right)^2\mathbb{I}_d,
 \end{equation*}
-the pair $(\B^d,g)$ forms a Riemannian manifold of constant negative curvature. The induced distance between two points $p,q$ in $\B^d$ can be computed as
+the pair $(\B^d,g)$ forms a Riemannian manifold of constant negative curvature. The induced distance between two points $p,q$ in $\B^d$ can be found through
+\begin{align}\label{eq:poincareDistance}
+    d_\B(p,q) &= \text{arcosh}\left(1 + 2\frac{\|p-q\|^2_2}{(1-\|p\|^2_2)(1-\|q\|^2_2)}\right)\\
+              &= 2\text{arctanh}(\|-p\oplus q\|).
+\end{align}
+
+This yields geodesics that are either straight lines that go through the origin of the ball, or segments of circles that are perpendicular to the boundary of the ball as shown in \Cref{fig:hyperbolicmodels}. Using Möbius addition and scalar multiplication we can determine the geodesic between two points $p,q\in\B^d$ as follows:
 \begin{equation*}
-    d_\B(p,q) = \text{arcosh}\left(1 + 2\frac{\|p-q\|^2_2}{(1-\|p\|^2_2)(1-\|q\|^2_2)}\right).
+    \gamma_{p,q}(t) = p\oplus (-p \oplus y) \otimes t.
 \end{equation*}
 
+\paragraph{Exponential and logarithmic maps}
+Like for the hyperboloid model there exist analytical expressions that define the exponential and logarithmic maps in a given point $p$ lying on $\B^d$ and on the tangent space in that point $T_p\B^d$. 
+
+\begin{align*}
+    \exp_p(v) &= p \oplus \left(\tanh\left(\frac{\lambda_p\|v\|_2}{2}\right)\frac{v}{\|v\|_2}\right) \\
+    \log_p(y) &= \frac{2}{\lambda_p}\text{arctan}(\|-p \oplus y\|_2)\frac{-p \oplus y}{\|-p \oplus y\|_2}
+\end{align*}
+
+where $\lambda_p$ is a curvature-dependent conformal factor at $p$.
 
 \input{figs/figHyperboloidToPoincareBall}
 
-The Poincaré ball model of hyperbolic space is isomorphic\footnote{An \term{isomorphism} is a bijective mapping between two structures that preserves their operations, relationships and properties.} to the hyperboloid model (\Cref{fig:hyperboloidToPoincareBall}), and the stereographic projection\footnote{The \term{stereographic projection} is a mapping that projects a sphere onto a plane, preserving shapes locally.}
-\begin{equation*}
-    (x_0, x_1, \ldots, x_n) \mapsto \left(\frac{x_1}{1+x_0}, \ldots, \frac{x_n}{1+x_0}\right)
-\end{equation*}
-is an isometry between $\Hy^d$ and the Poincaré bell $\B^d$. Its inverse map is given by
-\begin{equation*}
-    (y_1, \ldots, y_n) \mapsto \left(\frac{1 + \sum_i y_i^2}{1 - \sum_i y_i^2}, \frac{2y_1}{1 - \sum_i y_i^2}, \ldots, \frac{2y_n}{1 - \sum_i y_i^2}\right).
-\end{equation*}
-This yields geodesics that are either straight lines that go through the origin of the ball, or segments of circles that are perpendicular to the boundary of the ball as shown in \Cref{fig:hyperbolicGeodesics}.
+\subsection{Isometry between hyperboloid and Poincaré ball}\label{sec:isometry}
+The Poincaré ball model of hyperbolic space is isomorphic\footnote{An \term{isomorphism} is a bijective mapping between two structures that preserves their operations, relationships and properties.} to the hyperboloid model, as show in \Cref{fig:hyperboloidToPoincareBall}. The stereographic projection\footnote{The \term{stereographic projection} is a mapping that projects a sphere (space) onto a plane, preserving shapes locally.}
+\begin{equation}\label{eq:stereographicProjection}
+    (x_0, x_1, \ldots, x_d) \mapsto \left(\frac{x_1, \ldots, {x_d}}{1+x_0}\right)
+\end{equation}
+is an isometry between $\Hy^{d}$ and the Poincaré ball $\B^{d+1}$. Its inverse map is given by
+\begin{equation}\label{eq:inverseStereographicProjection}
+    (y_1, \ldots, y_d) \mapsto \left(\frac{1 + \|y\|^2, 2y_1, \ldots, 2y_d}{1 - \|y\|^2}\right).
+\end{equation}
 
-\input{figs/figHyperbolicGeodesics}
-
-\section{Connections between hyperbolic spaces and trees}
-We now discuss the connections between hyperbolic spaces and tree-like structures, that motivate the use of hyperbolic spaces to represent hierarchical data, as we will discuss in \Cref{hrl}. We explore this relation theoretically by correlating hyperbolic metrics and tree metrics (\Cref{sec:hyperbolicTreeMetrics}), and more intuitively looking at the structure of trees (\Cref{sec:expGrowth}).
+\section{Connections between hyperbolic spaces and trees}\label{sec:hyperbolicAndTrees}
+We now discuss the connections between hyperbolic spaces and tree-like structures, that motivate the use of hyperbolic spaces to represent hierarchical data, as we will discuss in \Cref{hrl}. Various studies have shown that many real-world networks exhibit hierarchical structures with underlying hyperbolic geometry~\cite{Krioukov2010HyperbolicGeometryComplexNetworks}\cite{Papadopoulos2012popularityVSSimilarityGrowingNetworks}. We explore this relation theoretically by correlating hyperbolic metrics and tree metrics (\Cref{sec:hyperbolicTreeMetrics}), and more intuitively looking at the structure of trees (\Cref{sec:expGrowth}).
 
 \subsection{Hyperbolic and tree metrics}\label{sec:hyperbolicTreeMetrics}
-Theoretical studies have shown that many real-world networks exhibit hierarchical structures with underlying hyperbolic geometry~\cite{Krioukov2010HyperbolicGeometryComplexNetworks}\cite{Papadopoulos2012popularityVSSimilarityGrowingNetworks}. To identify these tree-like structures we turn to notion of Gromov $\delta$-hyperbolicity~\cite{gromov1987hyperbolic}\cite{adcock2013tree}\cite{chen2013hyperbolicity}. To define $\delta$-hyperbolic spaces we introduce the Gromov product~\cite{gromov1987hyperbolic}. This quantity measures how close two points are to each other relative to a third point.  
+To identify tree-like structures we turn to notion of Gromov $\delta$-hyperbolicity~\cite{gromov1987hyperbolic}\cite{adcock2013tree}\cite{chen2013hyperbolicity}. To define $\delta$-hyperbolic spaces we introduce the Gromov product~\cite{gromov1987hyperbolic}. This quantity measures how close two points are to each other relative to a third point.  
 
 \begin{definition}[Gromov product]
     In any metric space $(X,d)$, the Gromov product of two points $x,y\in X$ with respect to a third point $z\in X$ is defined as:
@@ -181,9 +230,9 @@ One can show that metric trees are $0$-hyperbolic. Let $(X,d)$ be a metric tree,
 There are important properties such as quasi-isometries between $\delta$-hyperbolic spaces and tree metric spaces. We formalize that any finite set of points in a $\delta$-hyperbolic space can be embedded in a tree metric with bounded distortion~\cite{gromov1987hyperbolic}.
 
 \begin{proposition}[Tree-likeliness of hyperbolic space]
-    There is a constant $C_n =\delta \cdot O(n)$ such that for any set of points $x_1, x_2, \dots,x_n$ in a $\delta$-hyperbolic space $(M,d_M)$ can be embedded via $f:M \to T$ into a tree metric $(T,d_T)$ such that:
+    There is a constant $C_n =\delta \cdot O(n)$ such that for any set of points $x_1, x_2, \dots,x_n$ in a $\delta$-hyperbolic space $(\Mcal,d_\Mcal)$ can be embedded via $f:\Mcal \to T$ into a tree metric $(T,d_T)$ such that:
     \begin{equation*}
-        d_M(x_i, x_j)\leq d_T(f(x_i), f(x_j)) \leq d_M(x_i, x_j) + C_n.
+        d_\Mcal(x_i, x_j)\leq d_T(f(x_i), f(x_j)) \leq d_\Mcal(x_i, x_j) + C_n.
     \end{equation*}
 \end{proposition}
 
@@ -202,9 +251,6 @@ As we have concluded in the previous section, trees can be thought of as the dis
 
 In Euclidean space the volume of balls grows polynomially with the radius, making it less suitable to represent exponentially growing graphs like trees. More concretely, because the growth is not as fast as that of the graph, the Euclidean space quickly becomes too crowded, resulting in geodesics intersecting each other.
 
-In contrast, $\delta$-hyperbolic spaces, and in particular hyperbolic spaces, have exponential growth, which yields more room to fit complex hierarchies and makes these spaces ideal candidates to embed trees while accommodating for their exponential volume growth. 
+In contrast, $\delta$-hyperbolic spaces, and in particular hyperbolic spaces, have exponential growth. For instance, in a two dimensional hyperbolic space with constant curvature $K = -1$, the length of a circle is given as $2\pi \sinh r$ while the area of a ball is given as $2\pi(\cosh r - 1)$. Since $\sinh r = \frac{1}{2} (e^r - e^{-r})$ and $\cosh r = \frac{1}{2} (e^r + e^{-r})$, both disc area and circle length grow exponentially with $r$. 
 
-
-
-
-
+This feature yields more room to fit complex hierarchies and makes these spaces ideal candidates to embed trees while accommodating for their exponential volume growth. 
