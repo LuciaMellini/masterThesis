@@ -65,7 +65,7 @@ The first step of HGCN is to map the input features to the hyperboloid manifold 
 \subsection{Feature transform in hyperbolic space}
 The feature transform used in the message-passing step described in \Cref{eq:featureTransform} is used to map the embedding space of one layer to the one in the next layer. We recall that the feature transform step in Euclidean space is defined as:
 \begin{equation*}
-    \mathbf{x}_u^{(k)} = \mathbf{W}_\text{self}^{(k)}\mathbf{h}_u^{(\ell-1)} + \mathbf{b}^{(k)}
+    \mathbf{x}_u^{(k)} = \mathbf{W}_\text{self}^{(k)}\mathbf{h}_u^{(\ell-1)} + \mathbf{b}^{(k)}.
 \end{equation*}
 
 Since there is no notion of vector space structure in hyperbolic space one can leverage the exponential and logarithmic maps outlined in Equations~\ref{eq:expk_hyperboloid} and \ref{eq:logk_hyperboloid} to perform Euclidean transformations on the tangent space $\mathcal{T}_\mathbf{o}\Hy^{d,\kappa}$. 
