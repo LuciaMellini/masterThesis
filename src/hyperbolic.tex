@@ -34,9 +34,9 @@ Spaces in non-Euclidean geometries can be classified according to their curvatur
 A Riemannian manifold is a mathematical space that generalizes the concept of curved surfaces and higher-dimensional spaces, allowing us to define distances, angles, and curvature in a smooth way. 
 
 \begin{definition} (Reimannian manifold)
-Given a smooth manifold $\Mcal$, a Riemannian metric is a smooth function that assigns to each $p \in \Mcal$ an inner product on the tangent space $T_p\Mcal$:
+Given a smooth manifold $\Mcal$, a Riemannian metric is a smooth function that assigns to each $p \in \Mcal$ an inner product on the tangent space $\mathcal{T}_p\Mcal$:
 \begin{equation*}
-    g_p: T_p\Mcal \times T_p\Mcal \to \R.
+    g_p: \mathcal{T}_p\Mcal \times \mathcal{T}_athcal{T}_athcal{T}_athcal{T}_p\Mcal \to \R.
 \end{equation*}
     A Reimannian manifold is a pair $(\Mcal,g)$ where $\Mcal$ is a smooth manifold and $g$ is a Riemannian metric.
 \end{definition}
@@ -87,25 +87,25 @@ We first introduce some useful quantities for our discussion.
 
 We can now define the hyperboloid model of hyperbolic space.
 \begin{definition}[Hyperbolic model]
-    We denote $\Hy^{d,K}$ as the hyperboloid manifold in $d$ dimension with constant negative curvature $\frac{1}{K}$ with $K>0$ as
+    We denote $\Hy^{d,\kappa}$ as the hyperboloid manifold in $d$ dimension with constant negative curvature $\frac{1}{\kappa}$ with $\kappa>0$ as
     \begin{equation*}
-        \Hy^{d,K} = \left\{x \in \R^{d+1} : \langle x, x \rangle_\Lcal = -1, x_0 > 0\right\}
+        \Hy^{d,\kappa} = \left\{x \in \R^{d+1} : \langle x, x \rangle_\Lcal = -\kappa, x_0 > 0\right\}
     \end{equation*}
 \end{definition}
 
-From hereon we refer to a hyperboloid model with negative curvature $-1$ ($\Hy^{d,1}$), that we simply indicate with $\Hy^d$. In two dimensions the hyperboloid can be visualized as a surface in $\R^3$ which corresponds to the upper sheet of a two sheet hyperboloid of revolution (\Cref{fig:hyperboloid}).
-
 \input{figs/figHyperbolicGeodesics}
 
-For each point $p$ in a hyperboloid $\Hy^d$ the tangent space at $p$---$T_p\Hy^d$---is a $d$-dimensional vector space containing all possible directions of paths leaving from $p$. Formally the tangent space to point $p$ is described as:
+For each point $p$ in a hyperboloid $\Hy^{d,\kappa}$ the tangent space at $p$---$\mathcal{T}_athcal{T}_p\Hy$---is a $d$-dimensional vector space containing all possible directions of paths leaving from $p$. Formally the tangent space to point $p$ is described as:
 \begin{align*}
-    T_p\Hy^d 
+    \mathcal{T}_athcal{T}_athcal{T}_p\Hy^{d,\kappa} 
     &= \left\{u\in \R^{d+1} : \langle u, p \rangle_\Lcal = 0\right\} \\
-    &= \left\{(v_0,v) \in \R^{d+1} : v_0 = \frac{v \cdot p}{\sqrt{1 + \|p\|^2_2}}\right\}
+    &= \left\{(v_0,v) \in \R^{d+1} : v_0 = \frac{v \cdot p}{\sqrt{\kappa(1 + \|p\|^2_2)}}\right\}
 \end{align*}
 
+From hereon we refer to a hyperboloid model with negative curvature $1$ ($\Hy^{d,1}$), that we simply indicate with $\Hy^d$. In two dimensions the hyperboloid can be visualized as a surface in $\R^3$ which corresponds to the upper sheet of a two sheet hyperboloid of revolution (\Cref{fig:hyperboloid}).
+
 \paragraph{Distance function and geodesics}
-Let $p\in\Hy^d$ and $v\in T_p\Hy^d$, assuming $\langle v,v\rangle_\Lcal $ = 1. In the hyperboloid model the unique geodesic $\gamma_{p,v}(\cdot)$ such that $\gamma_{p,v}(0)=p$ and $\dot{\gamma}_{p,v}(0)=v$ is given by:
+Let $p\in\Hy^d$ and $v\in \mathcal{T}_athcal{T}_p\Hy^d$, assuming $\langle v,v\rangle_\Lcal $ = 1. In the hyperboloid model the unique geodesic $\gamma_{p,v}(\cdot)$ such that $\gamma_{p,v}(0)=p$ and $\dot{\gamma}_{p,v}(0)=v$ is given by:
 
 \begin{equation*}
     \gamma_{p,v}(t) = \cosh(t)p + \sinh(t)v.
@@ -113,17 +113,17 @@ Let $p\in\Hy^d$ and $v\in T_p\Hy^d$, assuming $\langle v,v\rangle_\Lcal $ = 1. I
 
 The corresponding intrinsic distance\footnote{An \term{intrinsic distance} refers to the shortest path between two points measured \emph{within} a given space or surface, rather than through an external surrounding space.} between two points $p,q\in\Hy^d$ can be computed as:
 
-\begin{equation*}
-    d_\Hy(p, q) = \text{arcosh}(-\langle p, q \rangle_\Lcal).
-\end{equation*}
+\begin{equation}\label{eq:distance_hyperboloid}
+    d_{\Hy^d}(p, q) = \text{arcosh}(-\langle p, q \rangle_\Lcal).
+\end{equation}
 
 \paragraph{Exponential and logarithmic maps}
-When dealing with the hyperboloid model, given $p \in \Hy^d$ and a tangent vector $v \in T_p\Hy^d$, the exponential map $\exp_p: T_p\Hy^d \to \Hy^d$ assigns to $v$ the point $\exp_p(v) := \gamma(1)$, where $\gamma$ is the unique geodesic satisfying $\gamma(0) = p$ and $\dot{\gamma}(0) = v$. The logarithmic map $\log_p: \Hy^d \to T_pHy^d$ reverses back to the tangent space at $p$ such that $\log_p(\exp_p(v)) = v$. In hyperbolic spaces these operations form a bijection between the entire hyperbolic space and the tangent space at a point. The analytic expressions for the exponential and logarithmic maps are given below.
+When dealing with the hyperboloid model, given $p \in \Hy^d$ and a tangent vector $v \in \mathcal{T}_p\Hy^d$, the exponential map $\exp_p: \mathcal{T}_p\Hy^d \to \Hy^d$ assigns to $v$ the point $\exp_p(v) := \gamma(1)$, where $\gamma$ is the unique geodesic satisfying $\gamma(0) = p$ and $\dot{\gamma}(0) = v$. The logarithmic map $\log_p: \Hy^d \to \mathcal{T}_pHy^d$ reverses back to the tangent space at $p$ such that $\log_p(\exp_p(v)) = v$. In hyperbolic spaces these operations form a bijection between the entire hyperbolic space and the tangent space at a point. The analytic expressions for the exponential and logarithmic maps are given below, under the assumption that $v\neq 0$.
 
-\begin{align*}
-    \exp_p(v) &= \cosh(\|v\|_\Lcal)p + \sinh(\|v\|_\Lcal) \frac{v}{\|v\|_\Lcal}\\
-    \log_p(y) &= d_{\Lcal}(p,y)\frac{y + \langle p,y \rangle_{\Lcal}p}{\|y + \langle p,y \rangle_{\Lcal}p\|_{\Lcal}}
-\end{align*}
+\begin{align}
+    \exp_p(v) &= \cosh(\|v\|_\Lcal)p + \sinh(\|v\|_\Lcal) \frac{v}{\|v\|_\Lcal} \label{eq:log_hyperboloid}\\
+    \log_p(y) &= d_{\Lcal}(p,y)\frac{y + \langle p,y \rangle_{\Lcal}p}{\|y + \langle p,y \rangle_{\Lcal}p\|_{\Lcal}} \label{eq:exp_hyperboloid}
+\end{align}
 
 \subsection{Poincaré ball model}\label{sec:poincareBall}
 Poincaré's representation of hyperbolic geometry is based on the points in the unit ball in $d$ dimensions, formally described as
@@ -144,7 +144,7 @@ Vector addition is not well-defined in the hyperbolic space, since adding two po
     
 \end{definition}
 
-In contrast to Euclidean addition, it is neither commutative nor associative. However, it provides an analogue through the lens of the parallel transport concept. Given two points $x,y$ and a tangent vector $v$ in $T_x$, there is a unique tangent vector in $T_y$ which creates the same angle as $v$ with the direction of the geodesic connecting $x$ and $y$. This is called the \term{parallel transport} $P_{x\to y} (v)$ of $v$ along the geodesic from $x$ to $y$. In Euclidean geometry parallel transport is the standard Euclidean addition. Analagously, the Möbius addition satisfies the following property:
+In contrast to Euclidean addition, it is neither commutative nor associative. However, it provides an analogue through the lens of the parallel transport concept. Given two points $x,y$ and a tangent vector $v$ in $\mathcal{T}_x$, there is a unique tangent vector in $\mathcal{T}_y$ which creates the same angle as $v$ with the direction of the geodesic connecting $x$ and $y$. This is called the \term{parallel transport} $P_{x\to y} (v)$ of $v$ along the geodesic from $x$ to $y$. In Euclidean geometry parallel transport is the standard Euclidean addition. Analagously, the Möbius addition satisfies the following property:
 \begin{equation*}
     p\oplus q=\exp_{x}(P_{o\to x}(\log_o(q))).
 \end{equation*}
@@ -174,13 +174,13 @@ This yields geodesics that are either straight lines that go through the origin 
     \gamma_{p,q}(t) = p\oplus (-p \oplus y) \otimes t.
 \end{equation*}
 
-\paragraph{Exponential and logarithmic maps}
-Like for the hyperboloid model there exist analytical expressions that define the exponential and logarithmic maps in a given point $p$ lying on $\B^d$ and on the tangent space in that point $T_p\B^d$. 
+\paragraph{Exponential and logarithmic maps}\label{sec:expLogMaps_poincareBall}
+Like for the hyperboloid model there exist analytical expressions that define the exponential and logarithmic maps in a given point $p$ lying on $\B^d$ and on the tangent space in that point $\mathcal{T}_p\B^d$. 
 
-\begin{align*}
-    \exp_p(v) &= p \oplus \left(\tanh\left(\frac{\lambda_p\|v\|_2}{2}\right)\frac{v}{\|v\|_2}\right) \\
-    \log_p(y) &= \frac{2}{\lambda_p}\text{arctan}(\|-p \oplus y\|_2)\frac{-p \oplus y}{\|-p \oplus y\|_2}
-\end{align*}
+\begin{align}
+    \exp_p(v) &= p \oplus \left(\tanh\left(\frac{\lambda_p\|v\|_2}{2}\right)\frac{v}{\|v\|_2}\right) \label{eq:exp_poincareBall} \\
+    \log_p(y) &= \frac{2}{\lambda_p}\text{arctan}(\|-p \oplus y\|_2)\frac{-p \oplus y}{\|-p \oplus y\|_2} \label{eq:log_poincareBall}
+\end{align}
 
 where $\lambda_p$ is a curvature-dependent conformal factor at $p$.
 
@@ -251,6 +251,6 @@ As we have concluded in the previous section, trees can be thought of as the dis
 
 In Euclidean space the volume of balls grows polynomially with the radius, making it less suitable to represent exponentially growing graphs like trees. More concretely, because the growth is not as fast as that of the graph, the Euclidean space quickly becomes too crowded, resulting in geodesics intersecting each other.
 
-In contrast, $\delta$-hyperbolic spaces, and in particular hyperbolic spaces, have exponential growth. For instance, in a two dimensional hyperbolic space with constant curvature $K = -1$, the length of a circle is given as $2\pi \sinh r$ while the area of a ball is given as $2\pi(\cosh r - 1)$. Since $\sinh r = \frac{1}{2} (e^r - e^{-r})$ and $\cosh r = \frac{1}{2} (e^r + e^{-r})$, both disc area and circle length grow exponentially with $r$. 
+In contrast, $\delta$-hyperbolic spaces, and in particular hyperbolic spaces, have exponential growth. For instance, in a two dimensional hyperbolic space with constant curvature $\kappa = -1$, the length of a circle is given as $2\pi \sinh r$ while the area of a ball is given as $2\pi(\cosh r - 1)$. Since $\sinh r = \frac{1}{2} (e^r - e^{-r})$ and $\cosh r = \frac{1}{2} (e^r + e^{-r})$, both disc area and circle length grow exponentially with $r$. 
 
 This feature yields more room to fit complex hierarchies and makes these spaces ideal candidates to embed trees while accommodating for their exponential volume growth. 

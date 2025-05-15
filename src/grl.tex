@@ -150,7 +150,7 @@ The methods presented in this section were primarily designed for the task of kn
 \subsection{Reconstructing Labeled Data}
 Similarly to the simple graphs explored in \Cref{sec:shallowEmbeddings}, one can view the embedding of knowledge graphs as a reconstruction task. Given the embeddings $ \mathbf{z}_u $ and $ \mathbf{z}_v $ of two nodes, the objective is to reconstruct the relationship between these nodes while addressing the presence of multiple distinct edge types. To accommodate this complexity, we augment our decoder to function in a multi-relational manner. Consequently, the decoder is defined to accept not merely a pair of node embeddings as input, but also their relation type:
 \begin{equation*}
-    \text{decoding}: \mathbb{R}^d \times L \times \mathbb{R}^d \to \mathbb{R}^+.
+    \text{DEC}: \mathbb{R}^d \times L \times \mathbb{R}^d \to \mathbb{R}^+.
 \end{equation*}
 
 The output of this decoder can be interpreted as the likelihood that the edge $ (u,\ell,v) $ exists within the graph.
@@ -225,9 +225,6 @@ where $ \mathbf{z}_u, \mathbf{z}_v, \mathbf{r}_\ell \in \mathbb{C}^d $ are compl
 As an example of technique operating on heterogeneus multi-relational graphs, expanding on the \textit{node2vec} algorithm, we can consider the \textit{Het-node2vec}~\cite{soto2021hetnode2vec} algorithm. This approach generalizes the sampling type-aware random walks  by introducing ``switching'' parameters. These variables control the way the random walk moves between
 different node and edge types, providing a mechanism to incorporate the semantic information of the graph into the random walk generation process. Tuning the hyperparameters appropriately one can prioritize transitions toward specific node or edge types, allowing the algorithm to address problems where specific node/edge types are crucial for the prediction task under investigation.
 
-
-
-
 \section{Graph Neural Networks}\label{sec:gnn}
 The principal challenge in devising complex encoders for graph-structured data is that conventional deep learning methodologies do not apply. For instance, \term{Convolutional Neural Networks} (\term{CNNs}) are explicitly designed for grid-structured inputs such as images, while \term{Recurrent Neural Networks} (\term{RNNs}) are tailored for sequential data like text.
 
@@ -236,21 +233,21 @@ The concepts and architectures discussed in the following sections can be extend
 \subsection{Neural Message Passing}
 The defining characteristic of a Graph Neural Network (GNN) is its use of \term{neural message passing}, that consists in the exchange of vector messages between nodes that are subsequently updated through neural networks~\cite{Gilmer2017neuralMessagePassing}. The next sections will detail the elements of this neural message passing framework.
 
-\subsubsection{A Message Passing Framework}
-During each iteration of message passing in a GNN, a hidden embedding $ h_u^{(k)} $ corresponding to each node $ u \in V $ is updated based on information aggregated from $ u $’s graph neighbourhood $ \mathcal{N}(u) $. The message-passing update illustrated in \Cref{fig:MessageAggregation} demonstrates how the messages directed toward the target node result from the aggregation of their respective neighbourhood information. Observe that the computation graph of the GNN adopts a tree structure by unfolding the neighbourhood of the target node.
+\subsubsection{A Message Passing Framework}\label{sec:messagePassingFramework}
+During each iteration of message passing in a GNN, a hidden embedding $ \mathbf{h}_u^{(\ell)} $ corresponding to each node $ u \in V $ is updated based on information aggregated from $ u $’s graph neighbourhood $ \mathcal{N}(u) $. The message-passing update illustrated in \Cref{fig:MessageAggregation} demonstrates how the messages directed toward the target node result from the aggregation of their respective neighbourhood information. Observe that the computation graph of the GNN adopts a tree structure by unfolding the neighbourhood of the target node.
 
 \input{figs/figMessageAggregation}
 
 The message-passing update can be mathematically conveyed as follows:
 \begin{align}\label{eq:GNNupdate}
-    \mathbf{h}_u^{(k+1)} &= \text{UPDATE}^{(k)}\left(\mathbf{h}_u^{(k)}, \text{AGGREGATE}^{(k)}(\{\mathbf{h}_v^{(k)}, \forall v \in \mathcal{N}(u)\})\right) \\
-    &= \text{UPDATE}^{(k)}\left(\mathbf{h}_u^{(k)}, \mathbf{m}_{\mathcal{N}(u)}^{(k)}\right)
+    \mathbf{h}_u^{(\ell+1)} &= \text{UPDATE}^{(\ell)}\left(\mathbf{h}_u^{(\ell)}, \text{AGGREGATE}^{(\ell)}(\{\mathbf{h}_v^{(\ell)}, \forall v \in \mathcal{N}(u)\})\right) \\
+    &= \text{UPDATE}^{(\ell)}\left(\mathbf{h}_u^{(\ell)}, \mathbf{m}_{\mathcal{N}(u)}^{(\ell)}\right)
 \end{align}
-where UPDATE and AGGREGATE represent arbitrary differentiable functions which may also encompass complex models such as neural networks. The message $ \mathbf{m}_{\mathcal{N}(u)}^{(k)} $ is computed by aggregating the embeddings of $ u $'s neighbours. The subscript denotes the current iteration, often referred to as a layer within the GNN. In \Cref{fig:MessageAggregation} we portray a two-layer version of the message-passing model.
+where UPDATE and AGGREGATE represent arbitrary differentiable functions which may also encompass complex models such as neural networks. The message $ \mathbf{m}_{\mathcal{N}(u)}^{(\ell)} $ is computed by aggregating the embeddings of $ u $'s neighbours. The subscript denotes the current iteration, often referred to as a layer within the GNN. In \Cref{fig:MessageAggregation} we portray a two-layer version of the message-passing model.
 
-The initial embeddings (when $ k=0 $) are set to the input features for all nodes, $ \mathbf{h}_u^{(0)} = \mathbf{x}_u $. After $ K $ iterations of GNN message passing, the output of the final layer defines embeddings for each node, expressed as:
+The initial embeddings (when $ \ell=0 $) are set to the input features for all nodes, $ \mathbf{h}_u^{(0)} = \mathbf{x}_u $. After $ K $ iterations of GNN message passing, the output of the final layer defines embeddings for each node, expressed as:
 \begin{equation*}
-    \mathbf{z}_u=\mathbf{h}_u^{(K)} \quad \forall v \in V.
+    \mathbf{z}_u=\mathbf{h}_u^{(\ell)} \quad \forall v \in V.
 \end{equation*}
 Since the AGGREGATE function accepts sets as input, GNNs constructed in this fashion are inherently permutation equivariant.
 
@@ -261,37 +258,43 @@ Until now we have discussed the GNN framework rather abstractly as a series of m
 
 A simplification of the original GNN models proposed by~\cite{Merkwirth2005automaticGenerationComplementaryDescriptorsMolecularGraphNetworks}\cite{scarselli2008graphNeuralNetworkModel} is expressed as:
 \begin{equation}\label{eq:basicGNN}
-    \mathbf{h}_u^{(k)} = \sigma\left(\mathbf{W}_\text{self}^{(k)}\mathbf{h}_u^{(k-1)} + \mathbf{W}_\text{neigh}^{(k)}\sum_{v\in\mathcal{N}(u)}\mathbf{h}_v^{(k-1)} + \mathbf{b}^{(k)}\right)
+    \mathbf{h}_u^{(\ell)} = \sigma\left(\mathbf{W}_\text{self}^{(\ell)}\mathbf{h}_u^{(\ell-1)} + \mathbf{W}_\text{neigh}^{(\ell)}\sum_{v\in\mathcal{N}(u)}\mathbf{h}_v^{(\ell-1)} + \mathbf{b}^{(\ell)}\right)
 \end{equation}
-where $ \mathbf{W}_\text{self}^{(k)}, \mathbf{W}_\text{neigh}^{(k)} \in \mathbb{R}^{d^{(k)}\times d^{(k-1)}} $ are learnable parameter matrices, and $ \sigma $ represents an element-wise non-linear activation function (e.g., a tanh or ReLU). Generally, the parameters $ \mathbf{W}_\text{self}, \mathbf{W}_\text{neigh} $, and $\mathbf{b}$ can be shared across GNN message-passing iterations or may be trained separately for each layer. From here on we will be omitting the bias term $\mathbf{b}$ for notational simplicity.
+where $ \mathbf{W}_\text{self}^{(\ell)}, \mathbf{W}_\text{neigh}^{(\ell)} \in \mathbb{R}^{d^{(\ell)}\times d^{(\ell-1)}} $ are learnable parameter matrices, and $ \sigma $ represents an element-wise non-linear activation function (e.g., a tanh or ReLU). Generally, the parameters $ \mathbf{W}_\text{self}, \mathbf{W}_\text{neigh} $, and $\mathbf{b}$ can be shared across GNN message-passing iterations or may be trained separately for each layer. 
+
+One can also express the message passing rule as two steps:
+\begin{align}
+    \mathbf{x}_u^{(\ell)} &= \mathbf{W}_\text{self}^{(\ell)}\mathbf{h}_u^{(\ell-1)} + \mathbf{b}^{(\ell)} & \text{(feature transform)}\label{eq:featureTransform} \\ 
+    \mathbf{h}_u^{(\ell)} &= \sigma\left(\mathbf{x}_u^{(\ell)} + \mathbf{W}_\text{neigh}^{(\ell)} \sum_{v\in\mathcal{N}(u)}\mathbf{h}_v^{(\ell-1)}\right) & \text{(neighbourhood aggregation)} \label{eq:neighAgg}
+\end{align}
 
 We can equivalently depict the basic GNN by defining UPDATE and AGGREGATE functions:
-\begin{equation*}
-    \text{AGGREGATE}(\{\mathbf{h}_v^{(k)}, \forall v \in \mathcal{N}(u)\}) =
+\begin{equation}\label{eq:aggregateBase}
+    \text{AGGREGATE}(\{\mathbf{h}_v^{(\ell)}, \forall v \in \mathcal{N}(u)\}) =
     \mathbf{m}_{\mathcal{N}(u)} = \sum_{v\in\mathcal{N}(u)}\mathbf{h}_v,
-\end{equation*}
+\end{equation}
 \begin{equation}\label{eq:updateBase}
-    \text{UPDATE}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) = \sigma(\mathbf{W}_\text{self}\mathbf{h}_u + \mathbf{W}_\text{neigh}\mathbf{m}_{\mathcal{N}(u)}).
+    \text{UPDATE}(\mathbf{h}_u, \mathbf{m}_{\mathcal{N}(u)}) = \sigma(\mathbf{W}_\text{self}\mathbf{h}_u + \mathbf{W}_\text{neigh}\mathbf{m}_{\mathcal{N}(u)} + \mathbf{b}^{(\ell)}).
 \end{equation}
 
 Many GNN models can be defined succinctly using so called graph-level equations. In the case of basic GNNs, the definition in \Cref{eq:basicGNN} can be expressed as a graph-level equation as follows:
 
 \begin{equation}\label{eq:basicGNNgraphlevel}
-    \mathbf{H}^{(k)} = \sigma\left(\mathbf{A}\mathbf{H}^{(k-1)}\mathbf{W}_\text{neigh}^{(k)} + \mathbf{H}^{(k-1)}\mathbf{W}_\text{self}^{(k)}\right)
+    \mathbf{H}^{(\ell)} = \sigma\left(\mathbf{A}\mathbf{H}^{(\ell-1)}\mathbf{W}_\text{neigh}^{(\ell)} + \mathbf{H}^{(\ell-1)}\mathbf{W}_\text{self}^{(\ell)}\right)
 \end{equation}
-where $\mathbf{H}^{(k)} \in \mathbb{R}^{|V| \times d}$ denotes the matrix of node representations at layer $k$ in the GNN (with each node corresponding to a row in the matrix), and $\mathbf{A}$ is the graph adjacency matrix. While this graph-level representation is not easily applicable to all GNN models—such as the attention-based models we discuss below—it is often more succinct and also highlights how many GNNs can be efficiently implemented using a small number of sparse matrix operations.
+where $\mathbf{H}^{(\ell)} \in \mathbb{R}^{|V| \times d}$ denotes the matrix of node representations at layer $k$ in the GNN (with each node corresponding to a row in the matrix), and $\mathbf{A}$ is the graph adjacency matrix. From here on we will be omitting the bias term $\mathbf{b}$ for notational simplicity. While this graph-level representation is not easily applicable to all GNN models—such as the attention-based models we discuss below—it is often more succinct and also highlights how many GNNs can be efficiently implemented using a small number of sparse matrix operations.
 
 
 \paragraph{Self-Loops}
 As a simplification of the neural message passing framework, it is customary to incorporate \term{self-loops} into the input graph while omitting the explicit update step. In this setup, the message passing is merely defined as:
 \begin{equation}\label{eq:selfLoop}
-    \mathbf{h}_u^{(k)} = \text{AGGREGATE}(\{\mathbf{h}_v^{(k-1)}, \forall v \in \mathcal{N}(u)\cup {u}\}),
+    \mathbf{h}_u^{(\ell)} = \text{AGGREGATE}(\{\mathbf{h}_v^{(\ell-1)}, \forall v \in \mathcal{N}(u)\cup {u}\}),
 \end{equation}
 where the aggregation considers both the node's neighbours and the node itself. Herein, the update function is implicitly defined through the aggregation method. Simplifying message passing often alleviates overfitting but could severely restrict the expressiveness of the GNN, as the information from the node's neighbours cannot be differentiated from the node's inherent information.
 
 In the case of the basic GNN adding self-loops is equivalent to sharing parameters between $\mathbf{W}_\text{self}$ and $\mathbf{W}_\text{neigh}$ matrices, so the graph-level updates is given by:
 \begin{equation}\label{eq:basicGNNgraphlevelselfLoop}
-    \mathbf{H}^{(k)} = \sigma\left(\left(\mathbf{A} + \mathbb{I}_{|V|}\right)\mathbf{H}^{(k-1)}\mathbf{W}^{(k)}\right).
+    \mathbf{H}^{(\ell)} = \sigma\left(\left(\mathbf{A} + \mathbb{I}_{|V|}\right)\mathbf{H}^{(\ell-1)}\mathbf{W}^{(\ell)}\right).
 \end{equation}
 
 
@@ -316,7 +319,7 @@ This method reduces the influence of messages from highly connected neighbours, 
 The GCN model proposed by~\cite{kipf2016semi} combines symmetric-normalized aggregation (\Cref{eq:symmetricNormalization}) with the self-loop update approach (\Cref{eq:selfLoop}), yielding a message passing function as follows:
 
 \begin{equation*}
-    \mathbf{h}_u^{(k)} = \sigma\left(\mathbf{W}^{(k)}\sum_{v \in \mathcal{N}(u)}\frac{ \mathbf{h}_v}{\sqrt{|\mathcal{N}(u)||\mathcal{N}(v)|}}\right).
+    \mathbf{h}_u^{(\ell)} = \sigma\left(\mathbf{W}^{(\ell)}\sum_{v \in \mathcal{N}(u)}\frac{ \mathbf{h}_v}{\sqrt{|\mathcal{N}(u)||\mathcal{N}(v)|}}\right).
 \end{equation*}
 
 \subsubsection{Set Aggregators}
@@ -326,7 +329,7 @@ In GNNs, the neighbourhood aggregation process must maintain permutation invaria
 
 \paragraph{Janossy Pooling}~\cite{murphy2018janossyPooling} instead of depending on permutation-invariant operations like summation, it applies a permutation-sensitive function—such as an LSTM~\cite{hochreiter1997LSTM}—to fix a canonical ordering.
 
-\subsubsection{Neighbourhood Attention}
+\subsubsection{Neighbourhood Attention}\label{sec:neighbourhoodAttention}
 Using \term{attention}~\cite{Vaswani2017attentionIsAllYouNeed} involves assigning an attention weight to each neighbour, which is utilized to amplify that neighbour's influence during the aggregation step. The first GNN model to apply this attention style, termed \term{Graph Attention Network} (\term{GAT})~\cite{Velivckovic2017graphAttentionNetworks}, uses attention weights to define a weighted sum of the neighbours:
 \begin{equation*}
     \mathbf{m}_{\mathcal{N}(u)} = \sum_{v\in\mathcal{N}(u)} \alpha_{u,v}\mathbf{h}_v,
@@ -344,7 +347,7 @@ The introduction of attention serves as a valuable strategy to enhance the repre
 \subsection{UPDATE Generalization}
 
 \subsubsection{Concatenation and Skip Connections} 
-A crucial concern within GNNs is \term{over-smoothing}, which occurs when node-specific information becomes ``washed out''  after multiple iterations of GNN message passing. Intuitively, this is expected when the information aggregated from the node neighbours during message passing begins to dominate the updated node representations. In such circumstances, the updated node representations (i.e., the $ \mathbf{h}_u^{(k+1)} $) may disproportionately rely on the incoming messages aggregated from the neighbours (i.e., the $ \mathbf{m}_{\mathcal{N}(u)} $) at the expense of prior layer node representations (i.e., the $ \mathbf{h}_u^{(k)} $).
+A crucial concern within GNNs is \term{over-smoothing}, which occurs when node-specific information becomes ``washed out''  after multiple iterations of GNN message passing. Intuitively, this is expected when the information aggregated from the node neighbours during message passing begins to dominate the updated node representations. In such circumstances, the updated node representations (i.e., the $ \mathbf{h}_u^{(\ell+1)} $) may disproportionately rely on the incoming messages aggregated from the neighbours (i.e., the $ \mathbf{m}_{\mathcal{N}(u)} $) at the expense of prior layer node representations (i.e., the $ \mathbf{h}_u^{(\ell)} $).
 
 A straightforward technique to alleviate this involves preserving information from preceding rounds of message passing during the update step, by leveraging vector concatenation or skip connections, .
 
@@ -368,7 +371,7 @@ These techniques work to mitigate over-smoothing while enhancing the numerical s
 \subsubsection{Gated Updates}
 Drawing inspiration from \term{Recurrent Neural Networks} (\term{RNN}s)T, the GNN message passing algorithm can be interpreted as aggregation functions that receive \term{observations} from neighbours and subsequently update the \term{hidden state} of each node. For instance, one of the earliest GNN architectures defines the update function as:
 \begin{equation*}
-    \mathbf{h}_u^{(k)} = \text{GRU}(\mathbf{h}_u^{(k-1)}, \mathbf{m}_{\mathcal{N}(u)}^{(k)}).
+    \mathbf{h}_u^{(\ell)} = \text{GRU}(\mathbf{h}_u^{(\ell-1)}, \mathbf{m}_{\mathcal{N}(u)}^{(\ell)}).
 \end{equation*}
 
 Here, GRU refers to the update equation of the \term{gated recurrent unit} cell~\cite{Cho2014learningPhraseRepresentations}. Alternatively, updates can be constructed based on LSTM architectures~\cite{selsam2018LearningSATSolverSingleBitSupervision}, or any update function defined within RNN frameworks.
@@ -376,18 +379,18 @@ Here, GRU refers to the update equation of the \term{gated recurrent unit} cell~
 \subsubsection{Jumping Knowledge Connections}
 Thus far, we have assumed that the node representations used for downstream tasks are those produced by the final layer of the GNN.  One can enhance the quality of final node representations by leveraging the representations from each layer of the message passing process, leading to final node representations as such:
 \begin{equation*}
-    \mathbf{z}_u = f_\text{JK}(\mathbf{h}_u^{(0)} \oplus \mathbf{h}_u^{(1)} \oplus ... \oplus \mathbf{h}_u^{(K)}).
+    \mathbf{z}_u = f_\text{JK}(\mathbf{h}_u^{(0)} \oplus \mathbf{h}_u^{(1)} \oplus ... \oplus \mathbf{h}_u^{(\ell)}).
 \end{equation*}
 In this case, $ f_\text{JK} $ represents an arbitrary differentiable function. This strategy is referred to as \term{jumping knowledge} (\term{JK}) \term{connections}~\cite{xu2018RepresentationLearningGraphsJumpingKnowledgeNetworks}.
 
 \subsection{Generalized Message Passing}
 Until now we have focused on GNN message passing that operates at the node level. The message passing paradigm can be generalized to incorporate edge and graph-level information~\cite{battaglia2018relationalInductiveBiases} so that the equations defining a message passing step are expressed as follows:
 \begin{align*}
-\label\mathbf{h}^{(k)}_{(u,v)} &= \text{UPDATE}_\text{edge}(\mathbf{h}^{(k-1)}_{(u,v)}, \mathbf{h}^{(k-1)}_u, \mathbf{h}^{(k-1)}_v, \mathbf{h}^{(k-1)}_G)\\
-\mathbf{m}_{\mathcal{N}(u)} &= \text{AGGREGATE}_\text{node}(\{\mathbf{h}^{(k)}_{(u,v)}, \forall v \in \mathcal{N}(u)\})\\
-\mathbf{h}^{(k)}_u &= \text{UPDATE}_\text{node}(\mathbf{h}^{(k-1)}_u, \mathbf{m}_{\mathcal{N}(u)}, \mathbf{h}^{(k-1)}_G)\\
-\mathbf{h}^{(k)}_G &= \text{UPDATE}_\text{graph}(\mathbf{h}^{(k-1)}_G, \{\mathbf{h}^{(k)}_u, \forall u \in V\}, \{\mathbf{h}^{(k)}_{(u,v)}, \forall (u,v) \in E\}).
+\label\mathbf{h}^{(\ell)}_{(u,v)} &= \text{UPDATE}_\text{edge}(\mathbf{h}^{(\ell-1)}_{(u,v)}, \mathbf{h}^{(\ell-1)}_u, \mathbf{h}^{(\ell-1)}_v, \mathbf{h}^{(\ell-1)}_G)\\
+\mathbf{m}_{\mathcal{N}(u)} &= \text{AGGREGATE}_\text{node}(\{\mathbf{h}^{(\ell)}_{(u,v)}, \forall v \in \mathcal{N}(u)\})\\
+\mathbf{h}^{(\ell)}_u &= \text{UPDATE}_\text{node}(\mathbf{h}^{(\ell-1)}_u, \mathbf{m}_{\mathcal{N}(u)}, \mathbf{h}^{(\ell-1)}_G)\\
+\mathbf{h}^{(\ell)}_G &= \text{UPDATE}_\text{graph}(\mathbf{h}^{(\ell-1)}_G, \{\mathbf{h}^{(\ell)}_u, \forall u \in V\}, \{\mathbf{h}^{(\ell)}_{(u,v)}, \forall (u,v) \in E\}).
 \end{align*}
 
-The key innovation within this generalized message passing framework is the generation of hidden embeddings $ \mathbf{h}^{(k)}_{(u,v)} $ for each edge in the graph, alongside an embedding $ \mathbf{h}^{(k)}_G $ representing the entire graph. 
+The key innovation within this generalized message passing framework is the generation of hidden embeddings $ \mathbf{h}^{(\ell)}_{(u,v)} $ for each edge in the graph, alongside an embedding $ \mathbf{h}^{(\ell)}_G $ representing the entire graph. 
 The update is brought out in the order listed above. Each of the individual update and aggregation operations within this generalized message-passing framework can be implemented utilizing the techniques discussed within this section.

@@ -1,0 +1,18 @@
+\begin{algorithm}
+    \caption*{HGCN architecture}
+    \begin{algorithmic}
+    \State \textbf{Input:} Graph $G=(V, E)$, Euclidean features $(\mathbf{x}^{(0), E})_{u\in V}$
+    \State 
+    \State $\mathbf{x}^{(0)}_u = \exp_{\mathbf{o}}^{\kappa^{(0)}}(\mathbf{x}^{(0)}_u)$ \Comment{{\footnotesize Map Euclidean features to hyperbolic space}}
+    \For{each layer $\ell = 1$ to $L$}
+        \For{each node $u \in V$}
+            \State $\mathbf{h}^{(\ell)}_u = (\mathbf{W}^{(\ell)} \otimes^{\kappa^{(\ell-1)}} \mathbf{x}^{(\ell-1)}_u) \oplus^{\kappa^{(\ell-1)}} \mathbf{b}^{(\ell)}$ \Comment{{\footnotesize Hyperbolic feature transform}}
+            \State $\mathbf{y}^{(\ell)}_u = \text{AGG}^{\kappa^{(\ell-1)}}(\mathbf{h}^{(\ell)})_u$ \Comment{{\footnotesize Attention-based neighborhood aggregation}}
+            \State $\mathbf{x}^{(\ell)}_u = \sigma^{\otimes^{\kappa^{(\ell-1)}, \kappa^{(\ell)}}}(\mathbf{y}^{(\ell)}_u)$ \Comment{{\footnotesize Non-linear activation with different curvatures}}
+        \EndFor
+    \EndFor
+    \State
+    \State \textbf{Output:} Hyperbolic node embeddings $(\mathbf{x}^{(L)})_{u\in V}$
+    \end{algorithmic}
+    \label{alg:HGCN}
+\end{algorithm}

@@ -1,13 +1,17 @@
 % MATHS
-\usepackage{mathtools, amsmath,amssymb,amsthm}
+\usepackage{mathtools, amsmath, amssymb, amsthm}
 \usepackage[capitalise]{cleveref}
 
 \theoremstyle{definition}
 \newtheorem{definition}{Definition}
+\numberwithin{equation}{chapter}
+
 
 \theoremstyle{plain}
 \newtheorem{proposition}{Proposition}
 \newtheorem*{postulate}{Postulate}
+\newtheorem{theorem}{Theorem}
+
 
 
 % TYPOGRAPHY
@@ -78,6 +82,9 @@
 \pgfplotsset{
 	colormap={custom}{rgb255(0cm)= (144, 171, 220); rgb255(0.5cm)= (143,170,215); rgb255(1cm)= (89,137,165); rgb255(1.5cm)= (46,106,148); rgb255(2cm)= (18,71,119)}
 }
+
+\usepackage{algorithm}
+\usepackage{algpseudocode}
 
 \usepackage{shellesc}  % Ensures system calls work
 % \usetikzlibrary{external}
