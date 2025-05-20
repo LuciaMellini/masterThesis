@@ -282,7 +282,7 @@ Many GNN models can be defined succinctly using so called graph-level equations.
 \begin{equation}\label{eq:basicGNNgraphlevel}
     \mathbf{H}^{(\ell)} = \sigma\left(\mathbf{A}\mathbf{H}^{(\ell-1)}\mathbf{W}_\text{neigh}^{(\ell)} + \mathbf{H}^{(\ell-1)}\mathbf{W}_\text{self}^{(\ell)}\right)
 \end{equation}
-where $\mathbf{H}^{(\ell)} \in \mathbb{R}^{|V| \times d}$ denotes the matrix of node representations at layer $k$ in the GNN (with each node corresponding to a row in the matrix), and $\mathbf{A}$ is the graph adjacency matrix. From here on we will be omitting the bias term $\mathbf{b}$ for notational simplicity. While this graph-level representation is not easily applicable to all GNN models—such as the attention-based models we discuss below—it is often more succinct and also highlights how many GNNs can be efficiently implemented using a small number of sparse matrix operations.
+where $\mathbf{H}^{(\ell)} \in \mathbb{R}^{|V| \times d}$ denotes the matrix of node representations at layer $\ell$ in the GNN (with each node corresponding to a row in the matrix), and $\mathbf{A}$ is the graph adjacency matrix. From here on we will be omitting the bias term $\mathbf{b}$ for notational simplicity. While this graph-level representation is not easily applicable to all GNN models—such as the attention-based models we discuss below—it is often more succinct and also highlights how many GNNs can be efficiently implemented using a small number of sparse matrix operations.
 
 
 \paragraph{Self-Loops}

@@ -36,7 +36,7 @@ A Riemannian manifold is a mathematical space that generalizes the concept of cu
 \begin{definition} (Reimannian manifold)
 Given a smooth manifold $\Mcal$, a Riemannian metric is a smooth function that assigns to each $p \in \Mcal$ an inner product on the tangent space $\mathcal{T}_p\Mcal$:
 \begin{equation*}
-    g_p: \mathcal{T}_p\Mcal \times \mathcal{T}_athcal{T}_athcal{T}_athcal{T}_p\Mcal \to \R.
+    g_p: \mathcal{T}_p\Mcal \times \mathcal{T}_p\Mcal \to \R.
 \end{equation*}
     A Reimannian manifold is a pair $(\Mcal,g)$ where $\Mcal$ is a smooth manifold and $g$ is a Riemannian metric.
 \end{definition}
@@ -95,17 +95,18 @@ We can now define the hyperboloid model of hyperbolic space.
 
 \input{figs/figHyperbolicGeodesics}
 
-For each point $p$ in a hyperboloid $\Hy^{d,\kappa}$ the tangent space at $p$---$\mathcal{T}_athcal{T}_p\Hy$---is a $d$-dimensional vector space containing all possible directions of paths leaving from $p$. Formally the tangent space to point $p$ is described as:
-\begin{align*}
-    \mathcal{T}_athcal{T}_athcal{T}_p\Hy^{d,\kappa} 
+For each point $p$ in a hyperboloid $\Hy^{d,\kappa}$ the tangent space at $p$---$\mathcal{T}_p\Hy$---is a $d$-dimensional vector space containing all possible directions of paths leaving from $p$. 
+Formally the tangent space to point $p$ is defined as:
+\begin{align}\label{eq:tangentSpace}
+    \mathcal{T}_p\Hy^{d,\kappa} 
     &= \left\{u\in \R^{d+1} : \langle u, p \rangle_\Lcal = 0\right\} \\
     &= \left\{(v_0,v) \in \R^{d+1} : v_0 = \frac{v \cdot p}{\sqrt{\kappa(1 + \|p\|^2_2)}}\right\}
-\end{align*}
+\end{align}
 
 From hereon we refer to a hyperboloid model with negative curvature $1$ ($\Hy^{d,1}$), that we simply indicate with $\Hy^d$. In two dimensions the hyperboloid can be visualized as a surface in $\R^3$ which corresponds to the upper sheet of a two sheet hyperboloid of revolution (\Cref{fig:hyperboloid}).
 
 \paragraph{Distance function and geodesics}
-Let $p\in\Hy^d$ and $v\in \mathcal{T}_athcal{T}_p\Hy^d$, assuming $\langle v,v\rangle_\Lcal $ = 1. In the hyperboloid model the unique geodesic $\gamma_{p,v}(\cdot)$ such that $\gamma_{p,v}(0)=p$ and $\dot{\gamma}_{p,v}(0)=v$ is given by:
+Let $p\in\Hy^d$ and $v\in \mathcal{T}_p\Hy^d$, assuming $\langle v,v\rangle_\Lcal $ = 1. In the hyperboloid model the unique geodesic $\gamma_{p,v}(\cdot)$ such that $\gamma_{p,v}(0)=p$ and $\dot{\gamma}_{p,v}(0)=v$ is given by:
 
 \begin{equation*}
     \gamma_{p,v}(t) = \cosh(t)p + \sinh(t)v.
@@ -134,7 +135,7 @@ The boundary of the ball is not a part of the hyperbolic plane it represents, bu
 
 We now use the mathematical framework called \term{gyrovector spaces}~\cite{ungar2022gyrovectorSpaceHyperbolicGeometry}\cite{Ungar1999HyperbolicPythagoreanTheoremPoincareDiscModel} to describe elementary operations such as additions and scalar multiplications in the Poincaré ball model in analogy with Euclidean geometry.
 
-Vector addition is not well-defined in the hyperbolic space, since adding two points in the Poincaré ball might result in a point outside the ball. Instead, Möbius addition provides an analogue to Euclidean addition for hyperbolic space. We define the Möbius addition in the Poincaré ball model.
+Vector addition is not well-defined in the Poincaré ball, since adding two points might result in a point outside the ball. Instead, Möbius addition provides an analogue to Euclidean addition for hyperbolic space. We define the Möbius addition in the Poincaré ball model.
 
 \begin{definition}[Möbius addition]
     Given two points $p,q\in\B^d$, the Möbius addition is defined as:
