@@ -59,12 +59,11 @@
 
 \usepackage{subcaption}
 
-% Load externalization library
 \usepackage{tikz}
 \usepackage{pgfplots}
 \usepgfplotslibrary{colormaps}
 \pgfplotsset{compat=1.18}
-\usetikzlibrary{positioning, shapes, arrows, trees}
+\usetikzlibrary{positioning, shapes, arrows, trees, decorations.text}
 \newcommand{\hgline}[3]{
 \pgfmathsetmacro{\thetaone}{#1}
 \pgfmathsetmacro{\thetatwo}{#2}
@@ -87,8 +86,7 @@
 \usepackage{algpseudocode}
 
 \usepackage{shellesc}  % Ensures system calls work
-% \usetikzlibrary{external}
-% \tikzexternalize[prefix=tikz_cache/]  % Creates a cache folder for images
+
 
 % BIBLIOGRAPHY
 \bibliographystyle{unsrt}
