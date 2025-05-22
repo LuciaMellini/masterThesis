@@ -2,15 +2,24 @@
 We now delve into out contribution to tackling the problem of automatic differential diagnosis of Mendelian diseases. At this scope we have prepared a tailored KG integrated with patient data, that we describe in \Cref{sec:patientKG}. We then outline the approach used for link prediction, motivating the choice of hyperbolic graph representation learning techniques (\Cref{sec:linkPredictionDiffDiagnosis}). 
 
 \section{Patient KG}\label{sec:patientKG}
-In this section we describe the data that we have chosen for the task of differential diagnosis of Mendelian diseases. We proceed by exploring the biomedical knowledge graph that we have used and the patient data that we have selected. We also describe how these data sources have been integrated into a single knowledge graph.
+In this section we describe the data that we have chosen for the task of differential diagnosis of Mendelian diseases. We proceed by exploring the underlying biomedical knowledge graph that we have used and the patient data that we have selected. We also describe how these data sources have been integrated into a single knowledge graph.
 
 \subsection{Underlying biomedical KG}
+Initially we have considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge graph targeted at precision medicine analyses aggregating 20 high quality resources. Unfortunately, at the moment of use we have encountered substantial shortcomings in the representation of Mendelian diseases. Taking inspiration from the entities represented in PrimeKG, we have constructed a tailored knowledge graph. We have resorted to \emph{PheKnowLator} (\emph{Phenotype Knowledge Translator})~\cite{callahan2020PheKnowlator}\footnote{The Python library is available at \url{https://github.com/callahantiff/PheKnowLator}}, a KG framework designed for optimized construction of semantically-rich, large-scale biomedical KGs accounting for different standardized terminologies or vocabularies. 
+
+
+
+
 with PheKnowLator \& type choice
+
+\input{figs/figKG_hypergraph}
 
 \subsection{Patient data}
 Phenopackets \& field choice
 
 \subsection{Data integration}
+
+\input{figs/figpatientKG_hypergraph}
 
 \section{Link prediction for differential diagnosis}\label{sec:linkPredictionDiffDiagnosis}
 
