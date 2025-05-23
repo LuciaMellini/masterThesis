@@ -1,0 +1,42 @@
+\begin{figure}
+    \centering
+        \begin{tikzpicture}
+        [edge from parent fork down,
+        sibling distance=40mm,
+        every node/.style={anchor=west, align=center}]
+        \small
+        \node {disease } 
+        [sibling distance=30mm]
+        child {node {human disease}
+            [sibling distance=35mm] 
+            child {node {digestive system disorder}
+                [sibling distance=32mm]
+                child {node {intestinal disorder}
+                    [sibling distance=37mm]
+                    child {node {intestinal obstruction}
+                        [sibling distance=15mm]
+                        child {node {ileus}
+                            [sibling distance=27mm]
+                            child {node {meconium ileus}    
+                                [sibling distance=65mm]                 
+                                    child {node {\small \textbf{cystic fibrosis associated meconium ileus}}}                                        
+                                    child {node {\dots}}                    }
+                            child {node {\dots}}
+                       }
+                        child {node {\dots}}
+                   }
+                    child {node {\dots}}
+               }
+                child {node {\dots}}
+           }
+            child {node {\dots}}
+       }
+        child {node {perinatal disease}
+            [sibling distance=0mm]
+            child {node {\small \textbf{cystic fibrosis associated meconium ileus}}}
+       }
+        child {node {\dots}};
+    \end{tikzpicture}
+    \caption{A subtree composed of disease type nodes linked by \emph{subclassof} edges centered on the leaf disease \emph{cystic fibrosis associated meconium ileus} .}
+    \label{fig:SubclassofTree}
+\end{figure}

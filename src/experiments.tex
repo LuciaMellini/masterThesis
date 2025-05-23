@@ -1,28 +1,87 @@
 \chapter{Experiments}
-We now delve into out contribution to tackling the problem of automatic differential diagnosis of Mendelian diseases. At this scope we have prepared a tailored KG integrated with patient data, that we describe in \Cref{sec:patientKG}. We then outline the approach used for link prediction, motivating the choice of hyperbolic graph representation learning techniques (\Cref{sec:linkPredictionDiffDiagnosis}). 
+We now delve into out contribution to tackling the problem of automatic differential diagnosis of Mendelian diseases. At this scope we have prepared a tailored KG integrated with patient data, that we describe in \Cref{sec:patientKG}. We then outline how we have translated our problem into a link prediction task, motivating the choice of hyperbolic graph representation learning techniques (\Cref{sec:linkPredictionDiffDiagnosis}). 
 
 \section{Patient KG}\label{sec:patientKG}
 In this section we describe the data that we have chosen for the task of differential diagnosis of Mendelian diseases. We proceed by exploring the underlying biomedical knowledge graph that we have used and the patient data that we have selected. We also describe how these data sources have been integrated into a single knowledge graph.
 
 \subsection{Underlying biomedical KG}
-Initially we have considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge graph targeted at precision medicine analyses aggregating 20 high quality resources. Unfortunately, at the moment of use we have encountered substantial shortcomings in the representation of Mendelian diseases. Taking inspiration from the entities represented in PrimeKG, we have constructed a tailored knowledge graph. We have resorted to \emph{PheKnowLator} (\emph{Phenotype Knowledge Translator})~\cite{callahan2020PheKnowlator}\footnote{The Python library is available at \url{https://github.com/callahantiff/PheKnowLator}}, a KG framework designed for optimized construction of semantically-rich, large-scale biomedical KGs accounting for different standardized terminologies or vocabularies. 
+Initially we have considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge graph targeted at precision medicine analyses aggregating 20 high quality resources. Unfortunately, at the moment of use we have encountered substantial shortcomings in the representation of Mendelian diseases. Taking inspiration from the entities represented in PrimeKG, we have constructed a tailored knowledge graph. We have resorted to \emph{PheKnowLator} (\emph{Phenotype Knowledge Translator})~\cite{callahan2020PheKnowlator}\footnote{The Python library is available at \url{https://github.com/callahantiff/PheKnowLator}}, a KG framework designed for optimized construction of semantically-rich, large-scale biomedical KGs accounting for different standardized terminologies or vocabularies. To construct our heterogenous graph we have selected various ontologies taking into account our final goal and memory constraints. The chosen ontologies, grouped by resulting node types, are the following.
 
 
+\begin{multicols}{2}
 
+\paragraph{Gene Ontology}
+\begin{itemize}
+\item Gene Ontology Chemical Entities (GOCHE)
+\item Gene Ontology (GO)
+\end{itemize}
 
-with PheKnowLator \& type choice
+\paragraph{Genomic Features}
+\begin{itemize}
+\item Ontology of Genes and Genomes (OGG)
+\item Sequence Ontology (SO)
+\end{itemize}
 
+\paragraph{Proteins}
+\begin{itemize}
+\item Protein Ontology (PR)
+\item Cell Ontology (CL)
+\item Human Phenotype Ontology (HP)
+\item Molecular Function (MF)
+\end{itemize}
+\bigskip
+
+\paragraph{Diseases}
+\begin{itemize}
+\item Disease Ontology (DOID)
+\item Mondo Disease Ontology (MONDO)
+\end{itemize}
+\bigskip
+
+\paragraph{Phenotypes}
+\begin{itemize}
+\item Human Phenotype Ontology (HP)
+\item Phenotype And Trait Ontology (PATO)
+\item uPheno Ontology (UPHENO)
+\end{itemize}
+\end{multicols}
+\input{figs/tabKGNodeTypes}
+\input{figs/tabKGEdgeDistrib}
 \input{figs/figKG_hypergraph}
+The relations between the entities and their predicates derive from the annotations listed in the ontologies. 
+
+In order of magnitude the knowledge graph has a total of $2.34\cdot10^5$ heterogeneus nodes and $2.71\cdot10^7$ heteorogeneous edges. The graph has a total of 6 node types and 117 edge predicates. In \Cref{fig:kg_hypergraph} we show the hypergraph representation of the knowledge graph obtained by aggregating the ontological data sources. To simplify the representation we have specified the edge predicates having at least $10^5$ occurrences in the whole knowledge graph. We specify the number of nodes for each type in \Cref{tab:nodetypes}, and in \Cref{tab:edgedistrib}, where we show the distribution of (the most frequent) edge predicates between node types.
+
+\input{figs/figSubclassofTree}
+One can observe that the graph is connected thanks to some edge predicates being one the symmetric of the other, e.g. \emph{has phenotype} and \emph{phenotype of}. Also, for each of the node types there are edges of predicate \emph{subclassof} that describe hierarchical relations between the entities. In \Cref{fig:SubclassofTree} we show a subtree of one of these hierarchical components in the knowledge graph. For other examples we suggest exploring the tree representations provided by the EMBL-EBI Ontology Lookup Service\footnote{Visit the EMBL-EBI Ontology Lookup Service at the link \url{https://www.ebi.ac.uk/ols4/}.}. One can imagine the knowledge graph made up of ``vertical'' components, one for each of the node types, as the one in the example. These hierarchies are interconnected by ``horizontal'' links that are agnostic to the hierarchical level of the nodes they are incident to. This characteristic has hinted us to the use of approaches based on hyperbolic geometry, as we will explore in \Cref{sec:hypPatientKG}.
 
 \subsection{Patient data}
-Phenopackets \& field choice
+We have selected the patient data from the Phenopacket Store put together by~\cite{Danis2025Phenopackets}, consultable at the dedicated repository~\cite{Robinson2024PhenopacketStore}. We have based our analyses on the latest release to date, dating back to 19 January 2025 (version 0.1.24)\footnote{The phenopackets can be downloaded at \url{https://github.com/monarch-initiative/phenopacket-store/releases/download/0.1.24/all_phenopackets.zip}}, containing 7799 cohorts. 
+
+The cohorts that represent the individuals with Mendelian diseases follow the GA4GH Phenopacket Schema~\cite{jacobsen2022ga4ghPhenopacketSchema}\footnote{In depth documentation can be found at \url{https://phenopacket-schema.readthedocs.io/en/latest/}}. The Phenopacket Schema represents an open standard for sharing disease and phenotype information useful for rare and common disease research. A Phenopacket links detailed phenotype descriptions with disease, patient, and genetic information, enabling human disease and biological understanding. 
+
+For the patients collected in the Phenopacket Store the available attributes are listed below.
+\begin{itemize}
+  \item patient code
+  \item sex
+  \item age at last encounter
+  \item phenotypes, with optional specification of the year of onset
+  \item diagnosed disease, with optional specification of the year of onset and genomic interpretations
+  \item reference to the research article
+\end{itemize}
+
+We have chosen to focus on features that are present in all cohorts, or described with similar level of detail. Therefore, we have discarded the year of onset of single phenotypes, the onset of the disease. In addition to genomic interpretations being not always present, this aspect will be covered by links contained in the underlying knowledge graph described in the previous section. We have also removed the age of last encounter of the patient since it is often unrelated with the diagnosed disease.
 
 \subsection{Data integration}
+The patient data has been integrated with the underling knowledge graph by adding nodes of type \emph{Person} and of type \emph{Article}. In particular, the \emph{Person} nodes comprehend the actual patients, and two nodes representing respectively the male and the female sex. For standardization purposes the \emph{Male} and \emph{Female} nodes are identified respectively using the IRIs \texttt{$\langle$http://purl.obolibrary.org/obo/NCIT\_C16576$\rangle$} and \texttt{$\langle$http://purl.obolibrary.org/obo/NCIT\_C20197$\rangle$}. Each article is indicated with \\ \texttt{$\langle$https://pubmed.ncbi.nlm.nih.gov/{article\_id}$\rangle$}. The nodes referring to patients expand on the \emph{Article} identifiers by adding the patient code, resulting in a string like \\ \texttt{$\langle$https://pubmed.ncbi.nlm.nih.gov/{article\_id}?{patient\_code}$\rangle$}. 
+
+We clarify how the Phenopacket's data has been integrated with the underlying knowledge graph in \Cref{fig:patient_kg_hypergraph}, by specifying how the additional nodes have been connected among them and with the existing \emph{Phenotype} and \emph{Disease} nodes. From here on we will refer to the integrated knowledge graph as \emph{Patient KG}.
 
 \input{figs/figpatientKG_hypergraph}
 
 \section{Link prediction for differential diagnosis}\label{sec:linkPredictionDiffDiagnosis}
+In this section we describe how we have used the PatientKG to tackle the problem of differential diagnosis. 
 
-\subsection{Why hyperbolic graph representation learning?}
+\subsection{Why hyperbolic graph representation learning?}\label{sec:hypPatientKG}
 
 \subsection{Experiment setup}
