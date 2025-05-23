@@ -4,33 +4,33 @@
         % Nodes
         \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Disease) at (1,4) {Disease};
         \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Phenotype) at (-4,3) {Phenotype};
-        \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Article) at (2,9) {Article};
+        \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Article) at (2,8) {Article};
         \node[circle, draw, fill=none, minimum size=5cm, inner sep=0pt] (Person) at (-4,9) {Person};
         \node[circle, draw, dashed,  fill=none, minimum size=1.5cm, inner sep=0pt] (Male) at (-5,10.3) {\textit{Male}};
         \node[circle, draw, dashed, fill=none, minimum size=1.5cm, inner sep=0pt] (Female) at (-3,10.3) {\textit{Female}};
         \node[circle, draw, dashed, fill=none, minimum size=1.5cm, inner sep=0pt] (Patient) at (-4,7.4) {Patient};
 
         % Edges with curved labels
-            \draw[->] (Person) to[bend right=10] (Article);
-            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Part of}}] (Person) to[bend right=10] (Article);
+            \draw[->] (Patient) to[bend right=10] (Article);
+            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Part of}}] (Patient) to[bend right=10] (Article);
 
-            \draw[->] (Article) to[bend right=10] (Person);
-            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has part}}] (Person) to[bend left=10] (Article);
+            \draw[->] (Article) to[bend right=10] (Patient);
+            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has part}}] (Patient) to[bend left=10] (Article);
 
             \draw[dashed, ->] (Patient) to[bend left=30] (Male);
             \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Subclassof}}] (Patient) to[bend left=30] (Male);
             \draw[dashed, ->] (Patient) to[bend right=30] (Female);
             \path[decorate, decoration={text along path, text align=center, raise=-8pt, text={Subclassof}}] (Patient) to[bend right=30] (Female);
 
-            \draw[->] (Person) to[bend left=10] (Disease);
-            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has disease}}] (Person) to[bend left=10] (Disease);
+            \draw[->] (Patient) to[bend left=10] (Disease);
+            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has disease}}] (Patient) to[bend left=10] (Disease);
 
-            \draw[->] (Person) to[bend right=15] (Phenotype);
-            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has phenotype}}] (Phenotype) to[bend left=15] (Person);
-            \draw[->] (Phenotype) to[bend right=10] (Person);
-            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Phenotype of}}] (Phenotype) to[bend right=10] (Person);
+            \draw[->] (Patient) to[bend right=15] (Phenotype);
+            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has phenotype}}] (Phenotype) to[bend left=15] (Patient);
+            \draw[->] (Phenotype) to[bend right=10] (Patient);
+            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Phenotype of}}] (Phenotype) to[bend right=10] (Patient);
     \end{tikzpicture}
 
-    \caption{The hypergraph representing the node types and edge predicates added during the integration of the underlying knowledge graph and patient data. The nodes contained in the Person hypernode and the relative hyperedges are merely a semantic schematization of the data. In particular Male and Female correspond to single nodes in the knowledge graph.}
+    \caption{The hypergraph representing the node types and edge predicates added during the integration of the underlying knowledge graph and patient data. The nodes contained in the \emph{Person} hypernode and the relative hyperedges are merely a semantic schematization of the data. The nodes \emph{Male} and \emph{Female} written in italic correspond to single nodes in the knowledge graph.}
     \label{fig:patient_kg_hypergraph}
 \end{figure}
