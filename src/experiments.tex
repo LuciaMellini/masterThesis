@@ -72,6 +72,10 @@ For the patients collected in the Phenopacket Store the available attributes are
 
 We have chosen to focus on features that are present in all cohorts, or described with similar level of detail. Therefore, we have discarded the year of onset of single phenotypes, the onset of the disease. In addition to genomic interpretations being not always present, this aspect will be covered by links contained in the underlying knowledge graph described in the previous section. We have also removed the age of last encounter of the patient since it is often unrelated with the diagnosed disease.
 
+When working with Mendelian diseases obviously the pool data on patients is limited. Specifically, there are vast amounts of diseases for which the number of cohorts is very low. To characterize the distribution of the Mendelian diseases at our disposal in \Cref{fig:disease-histogram} we have plotted in decreasing order the occurences for each disease in the Phenopacket Store.
+
+\input{figs/plotMendDiseaseDistrib}
+
 \subsection{Data integration}
 The patient data has been integrated with the underling knowledge graph by adding nodes of type \emph{Person} and of type \emph{Article}. In particular, the \emph{Person} nodes comprehend the actual patients, and two nodes representing respectively the male and the female sex. For standardization purposes the \emph{Male} and \emph{Female} nodes are identified respectively using the IRIs \texttt{$\langle$http://purl.obolibrary.org/obo/NCIT\_C16576$\rangle$} and \texttt{$\langle$http://purl.obolibrary.org/obo/NCIT\_C20197$\rangle$}. Each article is indicated with \\ \texttt{$\langle$https://pubmed.ncbi.nlm.nih.gov/{article\_id}$\rangle$}. The nodes referring to patients expand on the \emph{Article} identifiers by adding the patient code, resulting in a string like \\ \texttt{$\langle$https://pubmed.ncbi.nlm.nih.gov/{article\_id}?{patient\_code}$\rangle$}. 
 
@@ -80,7 +84,10 @@ We clarify how the Phenopacket's data has been integrated with the underlying kn
 \input{figs/figpatientKG_hypergraph}
 
 \section{Link prediction for differential diagnosis}\label{sec:linkPredictionDiffDiagnosis}
-In this section we describe how we have used the PatientKG to tackle the problem of differential diagnosis. 
+In this section we describe how we have used PatientKG to tackle the problem of differential diagnosis. For our scope it is sufficient to consider the link prediction task upon the edges of type \emph{Has disease} connecting the \emph{Person} nodes representing patients to the corresponding \emph{Disease} node. We have done this by subdividing the edges in PatientKG into two sets: a test set composed by a random sample of \emph{Has disease} edges, and a training set formed by the remaining \emph{Has disease} edges and all the other edges in PatientKG. Seen the amount of data available we have chosen to desist from using a validation set to regulate the learning process. 
+
+Since the test edges are retrieved from the relations provided by the Phenopacket Store, the model learned using the training set will be evaluated only on differential diagnosis \emph{only} among Mendelian diseases. This modus operandi has sense since one often explores Mendelian diseases when all other diagnoses have been ruled out. 
+
 
 \subsection{Why hyperbolic graph representation learning?}\label{sec:hypPatientKG}
 
