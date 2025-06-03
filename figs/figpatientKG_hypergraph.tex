@@ -2,9 +2,9 @@
     \centering
     \begin{tikzpicture}
         % Nodes
-        \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Disease) at (1,4) {Disease};
-        \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Phenotype) at (-4,3) {Phenotype};
-        \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Article) at (2,8) {Article};
+        \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Disease) at (2,8) {Disease};
+        \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Phenotype) at (1,4) {Phenotype};
+        \node[circle, draw, fill=none, minimum size=2cm, inner sep=0pt] (Article) at (-4,3) {Article};
         \node[circle, draw, fill=none, minimum size=5cm, inner sep=0pt] (Person) at (-4,9) {Person};
         \node[circle, draw, dashed,  fill=none, minimum size=1.5cm, inner sep=0pt] (Male) at (-5,10.3) {\textit{Male}};
         \node[circle, draw, dashed, fill=none, minimum size=1.5cm, inner sep=0pt] (Female) at (-3,10.3) {\textit{Female}};
@@ -12,10 +12,10 @@
 
         % Edges with curved labels
             \draw[->] (Patient) to[bend right=10] (Article);
-            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Part of}}] (Patient) to[bend right=10] (Article);
+            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Part of}}] (Article) to[bend left=10] (Patient);
 
             \draw[->] (Article) to[bend right=10] (Patient);
-            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has part}}] (Patient) to[bend left=10] (Article);
+            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has part}}] (Article) to[bend right=10] (Patient);
 
             \draw[dashed, ->] (Patient) to[bend left=30] (Male);
             \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Subclassof}}] (Patient) to[bend left=30] (Male);
@@ -26,11 +26,11 @@
             \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has disease}}] (Patient) to[bend left=10] (Disease);
 
             \draw[->] (Patient) to[bend right=15] (Phenotype);
-            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has phenotype}}] (Phenotype) to[bend left=15] (Patient);
+            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Has phenotype}}] (Patient) to[bend right=15] (Phenotype);
             \draw[->] (Phenotype) to[bend right=10] (Patient);
-            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Phenotype of}}] (Phenotype) to[bend right=10] (Patient);
+            \path[decorate, decoration={text along path, text align=center, raise=2pt, text={Phenotype of}}] (Patient) to[bend left=10] (Phenotype);
     \end{tikzpicture}
 
-    \caption{The hypergraph representing the node types and edge predicates added during the integration of the underlying knowledge graph and patient data. The nodes contained in the \emph{Person} hypernode and the relative hyperedges are merely a semantic schematization of the data. The nodes \emph{Male} and \emph{Female} written in italic correspond to single nodes in the knowledge graph.}
+    \caption{The hypergraph representing the node types and edge predicates added during the integration of the underlying knowledge graph and patient data. The nodes contained in the \emph{Person} hypernode and the relative hyperedges are merely a semantic schematization of the data. The nodes \emph{Male} and \emph{Female} correspond to single nodes in the knowledge graph.}
     \label{fig:patient_kg_hypergraph}
 \end{figure}
