@@ -4,7 +4,7 @@ We now delve into out contribution to tackling the problem of automatic differen
 \section{Patient KG}\label{sec:patientKG}
 In this section we describe the data that we have chosen for the task of differential diagnosis of Mendelian diseases. We proceed by exploring the underlying biomedical knowledge graph that we have used and the patient data that we have selected. We also describe how these data sources have been integrated into a single knowledge graph.
 
-\subsection{Underlying biomedical KG}
+\subsection{Underlying biomedical KG}\label{sec:underlyingKG}
 Initially we have considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge graph targeted at precision medicine analyses aggregating 20 high quality resources. Unfortunately, at the moment of use we have encountered substantial shortcomings in the representation of Mendelian diseases. Taking inspiration from the entities represented in PrimeKG, we have constructed a tailored knowledge graph. We have resorted to \emph{PheKnowLator} (\emph{Phenotype Knowledge Translator})~\cite{callahan2020PheKnowlator}\footnote{The Python library is available at \url{https://github.com/callahantiff/PheKnowLator}}, a KG framework designed for optimized construction of semantically-rich, large-scale biomedical KGs accounting for different standardized terminologies or vocabularies. To construct our heterogenous graph we have selected various ontologies taking into account our final goal and memory constraints. The chosen ontologies, grouped by resulting node types, are the following.
 
 
@@ -51,9 +51,9 @@ Initially we have considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge grap
 The relations between the entities and their predicates derive from the annotations listed in the ontologies. 
 
 In order of magnitude the knowledge graph has a total of $2.34\cdot10^5$ heterogeneus nodes and $2.71\cdot10^7$ heteorogeneous edges. The graph has a total of 6 node types and 117 edge predicates. In \Cref{fig:kg_hypergraph} we show the hypergraph representation of the knowledge graph obtained by aggregating the ontological data sources. To simplify the representation we have specified the edge predicates having at least $10^5$ occurrences in the whole knowledge graph. We specify the number of nodes for each type in \Cref{tab:nodetypes}, and in \Cref{tab:edgedistrib}, where we show the distribution of (the most frequent) edge predicates between node types.
-
 \input{figs/figSubclassofTree}
-One can observe that the graph is connected thanks to some edge predicates being one the symmetric of the other, e.g. \emph{has phenotype} and \emph{phenotype of}. Also, for each of the node types there are edges of predicate \emph{subclassof} that describe hierarchical relations between the entities. In \Cref{fig:SubclassofTree} we show a subtree of one of these hierarchical components in the knowledge graph. For other examples we suggest exploring the tree representations provided by the EMBL-EBI Ontology Lookup Service\footnote{Visit the EMBL-EBI Ontology Lookup Service at the link \url{https://www.ebi.ac.uk/ols4/}.}. One can imagine the knowledge graph made up of ``vertical'' components, one for each of the node types, as the one in the example. These hierarchies are interconnected by ``horizontal'' links that are agnostic to the hierarchical level of the nodes they are incident to. This characteristic has hinted us to the use of approaches based on hyperbolic geometry, as we will explore in \Cref{sec:hypPatientKG}.
+\paragraph{Abstract graph structure}\label{sec:abstractGraphStructure}
+One can observe that the graph is connected thanks to some edge predicates being one the symmetric of the other, e.g. \emph{has phenotype} and \emph{phenotype of}. Also, for each of the node types there are edges of predicate \emph{Subclassof} that describe hierarchical relations between the entities. In \Cref{fig:SubclassofTree} we show a subtree of one of these hierarchical components in the knowledge graph. For other examples we suggest exploring the tree representations provided by the EMBL-EBI Ontology Lookup Service\footnote{Visit the EMBL-EBI Ontology Lookup Service at the link \url{https://www.ebi.ac.uk/ols4/}.}. One can imagine the knowledge graph made up of ``vertical'' components, one for each of the node types, as the one in the example. In our discussion we will refer to these subgraphs(trees) as \term{hierarchical components}. These hierarchies are interconnected by ``horizontal'' links that are agnostic to the hierarchical level of the nodes they are incident to. This characteristic has hinted us to the use of approaches based on hyperbolic geometry, as we will explore in \Cref{sec:hypPatientKG}.
 
 \subsection{Patient data}
 We have selected the patient data from the Phenopacket Store put together by~\cite{Danis2025Phenopackets}, consultable at the dedicated repository~\cite{Robinson2024PhenopacketStore}. We have based our analyses on the latest release to date, dating back to 19 January 2025 (version 0.1.24)\footnote{The phenopackets can be downloaded at \url{https://github.com/monarch-initiative/phenopacket-store/releases/download/0.1.24/all_phenopackets.zip}}, containing 7799 cohorts. 
@@ -73,22 +73,58 @@ For the patients collected in the Phenopacket Store the available attributes are
 We have chosen to focus on features that are present in all cohorts, or described with similar level of detail. Therefore, we have discarded the year of onset of single phenotypes, the onset of the disease. In addition to genomic interpretations being not always present, this aspect will be covered by links contained in the underlying knowledge graph described in the previous section. We have also removed the age of last encounter of the patient since it is often unrelated with the diagnosed disease.
 
 When working with Mendelian diseases obviously the pool data on patients is limited. Specifically, there are vast amounts of diseases for which the number of cohorts is very low. To characterize the distribution of the Mendelian diseases at our disposal in \Cref{fig:disease-histogram} we have plotted in decreasing order the occurences for each disease in the Phenopacket Store.
-
 \input{figs/plotMendDiseaseDistrib}
 
 \subsection{Data integration}
 The patient data has been integrated with the underling knowledge graph by adding nodes of type \emph{Person} and of type \emph{Article}. In particular, the \emph{Person} nodes comprehend the actual patients, and two nodes representing respectively the male and the female sex. For standardization purposes the \emph{Male} and \emph{Female} nodes are identified respectively using the IRIs \texttt{$\langle$http://purl.obolibrary.org/obo/NCIT\_C16576$\rangle$} and \texttt{$\langle$http://purl.obolibrary.org/obo/NCIT\_C20197$\rangle$}. Each article is indicated with \\ \texttt{$\langle$https://pubmed.ncbi.nlm.nih.gov/{article\_id}$\rangle$}. The nodes referring to patients expand on the \emph{Article} identifiers by adding the patient code, resulting in a string like \\ \texttt{$\langle$https://pubmed.ncbi.nlm.nih.gov/{article\_id}?{patient\_code}$\rangle$}. 
 
-We clarify how the Phenopacket's data has been integrated with the underlying knowledge graph in \Cref{fig:patient_kg_hypergraph}, by specifying how the additional nodes have been connected among them and with the existing \emph{Phenotype} and \emph{Disease} nodes. From here on we will refer to the integrated knowledge graph as \emph{Patient KG}.
-
+We clarify how the Phenopacket's data has been integrated with the underlying knowledge graph in \Cref{fig:patient_kg_hypergraph}, by specifying how the additional nodes have been connected among them and with the existing \emph{Phenotype} and \emph{Disease} nodes. From here on we will refer to the integrated knowledge graph as \emph{PatientKG}.
 \input{figs/figpatientKG_hypergraph}
 
 \section{Link prediction for differential diagnosis}\label{sec:linkPredictionDiffDiagnosis}
-In this section we describe how we have used PatientKG to tackle the problem of differential diagnosis. For our scope it is sufficient to consider the link prediction task upon the edges of type \emph{Has disease} connecting the \emph{Person} nodes representing patients to the corresponding \emph{Disease} node. We have done this by subdividing the edges in PatientKG into two sets: a test set composed by a random sample of \emph{Has disease} edges, and a training set formed by the remaining \emph{Has disease} edges and all the other edges in PatientKG. Seen the amount of data available we have chosen to desist from using a validation set to regulate the learning process. 
-
-Since the test edges are retrieved from the relations provided by the Phenopacket Store, the model learned using the training set will be evaluated only on differential diagnosis \emph{only} among Mendelian diseases. This modus operandi has sense since one often explores Mendelian diseases when all other diagnoses have been ruled out. 
-
-
-\subsection{Why hyperbolic graph representation learning?}\label{sec:hypPatientKG}
+In this section we describe how we have used PatientKG to tackle the problem of differential diagnosis. We first adapt the problem to the Patient KG at our disposal
 
 \subsection{Experiment setup}
+Using Patient KG the problem of differential diagnosis is translated into the link prediction task of edges of type \emph{Has disease} connecting the \emph{Person} nodes representing patients to the corresponding \emph{Disease} node. Taking into account the techniques analyzed in \Cref{grl}, we have opted for an inductive approach, namely GNNs, to allow the model to generalize to unseen patients. Specifically we have chosen the HGCN model, according to the reasoning discussed in \Cref{sec:hypPatientKG}.
+
+To train the model for link prediction and evaluate its performance the edges in PatientKG have been subdivided into two sets: a test set of randomly chosen \emph{Has disease} edges, and a training set formed by the remaining \emph{Has disease} edges and all the other edges in PatientKG. To regulate the learning process through early stopping we have also extracted a validation set.
+
+Seen the limited amount of annotated disease diagnoses, we have chosen to not insert \emph{Has disease} edges into the validation set used to regulate the learning process. The distribution of cohorts by disease, plotted in \Cref{fig:disease-histogram}, is such that about half of the diseases in the Phenopacket Store have less than 10 cohorts, and around one third have at most 5 occurrences.
+
+Since the test edges are retrieved from the relations provided by the Phenopacket Store, the model learned using the training set will be evaluated on differential diagnosis \emph{only} among Mendelian diseases. This modus operandi has sense since one often explores Mendelian diseases when all other diagnoses have been ruled out. 
+Some preliminary experiments run using this data split have evidenced suspected overfitting. Since the articles often concern to a specific disease, as to be expected the edges connecting the patients to their articles of provenance provide a shortcut to grasping the disease of the patients. To avoid data leakage, we removed all \emph{Has part} and \emph{Part of} edges connecting the \emph{Person} nodes to the \emph{Article} nodes. 
+
+\subsection{Why hyperbolic graph representation learning?}\label{sec:hypPatientKG}
+Before delving into the hyperparameters that have determined the experiments that have been run, we would like to account for the choice of hyperbolic graph representation learning techniques, specifically HGCN\footnote{We have used the implementation provided by the Hazy Research group in the repository at \url{https://github.com/HazyResearch/hgcn}. This library also provides code for shallow embeddings, GCN and GAT models that have been used for the discussion below}. As discussed in \Cref{sec:hyperbolicAndTrees}, hyperbolic geometry is particularly suited to represent hierarchical structures, such as the ones nested in PatientKG (refer to \Cref{sec:abstractGraphStructure}). To verify this empirically we have embedded in hyperbolic space each hierarchical component. To put in evidence the position of each node in the hierarchy we have embedded the transitive closure of each subgraph. The transitive closure of a directed graph is the graph obtained by adding an edge between each pair of nodes that are connected by a directed path. As an example, \Cref{fig:diseasePoincare} shows the embedded \emph{Disease} nodes arranged in a Poincaré ball. One can notice that the nodes with a larger neighbourhood, i.e. the nodes higher in the ontological hierarchy are located closer to the centre of the ball. The image can be interpreted as a real world case of the structure schematized in \Cref{fig:radialTree}, following the considerations made in \Cref{sec:expGrowth}. 
+\input{figs/figDiseasePoincare.tex}
+
+Though the shallow embedding has given great results, as touched on in the previous section we have opted for an inductive graph representation technique. To assure that the HGCN model would grasp the hierarchical components in PatientKG in a first instance we have evaluated the model's performance solely on these subgraphs. For comparison we have run the same experiments on two representatives of advanced Euclidean GNN models, namely GCN (\Cref{sec:GCN}) and GAT (\Cref{sec:neighbourhoodAttention}). In \Cref{tab:tabHypPerf} we show the performance of the three models with a random split of the edges into training, validation and test sets. The hyperparameters used in our experiments are shown in Table~\ref{tab:hyperparams}; the number of head parameter is overlooked by the GCN model. For HGCN learning the parameters for the Fermi-Dirac decoder are set to \texttt{r}=2 and \texttt{t}=1 (refer to \Cref{sec:linkPredictionHGCN}).
+\begin{table}[ht]
+\centering
+\caption{Hyperparameters used in the comparative experiments between GCN, GAT and HGCN.}
+\label{tab:hyperparams}
+\begin{tabular}{rl}
+\hline
+\textbf{Hyperparameter} & \textbf{Value} \\
+\hline
+\texttt{Number of layers} & 2 \\
+\texttt{Number of heads} &  4 \\
+\texttt{Weight decay} & 0.001 \\
+\texttt{Learning rate} & 0.01 \\
+\texttt{LR reduce frequency} & 5000 \\
+\texttt{Dropout} & 0.1 \\
+\texttt{Optimizer} & Adam \\
+\texttt{Momentum} & 0.999 \\
+\texttt{Gamma} & 0.5 \\
+\texttt{Activation function} & ReLU \\
+\texttt{Early stopping patience} & 200 \\
+\texttt{Validation fraction} & 0.1 \\
+\texttt{Test fraction} & 0.1 \\
+
+\hline
+\end{tabular}
+\end{table}
+\input{figs/tabHypPerf.tex}
+
+\subsection{Resulting hyperparameters}
+

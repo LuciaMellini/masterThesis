@@ -2,17 +2,17 @@
     \centering
     \begin{subtable}[t]{\textwidth}
         \centering
-        \begin{tabular}{l|cc|cc|cc}        
+        \begin{tabular}{l|ccc|ccc|ccc}        
             \toprule
-            \multirow{2}{*}{\textbf{size}} & \multicolumn{2}{c}{\textit{Loss}} & \multicolumn{2}{c}{\textit{ROC\_AUC}} & \multicolumn{2}{c}{\textit{AP score}} \\
-            & \textbf{GAT} & \textbf{HGCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GAT} & \textbf{HGCN} \\
+            \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c}{\textit{Loss}} & \multicolumn{3}{c}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
+            & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} \\
             \midrule
-            4 & - & 1.2305 & - & 0.9118 & - & 0.9106 \\
-            8 & 1.6097 & 0.9730 & 0.7658 & 0.9442 & 0.6977 & 0.9584 \\
-            16 & 1.6124 & 0.8388 & 0.7697 & 0.9479 & 0.7077 & 0.9615 \\
-            32 & 2.2532 & 0.8666 & 0.6984 & 0.9527 & 0.7430 & 0.9647 \\
-            64 & - & 0.8539 & - & 0.9484 & - & 0.9637 \\
-            100 & 2.2514 & 0.6406 & 0.7020 & 0.9573 & 0.74652 & 0.9604 \\
+                4 & 2.2522 & 2.2536 & \underline{1.2305} & 0.6289 & 0.5488 & \underline{0.9118} & 0.5913 & 0.5102 & \underline{0.9106} \\  
+                8 & 2.2538 & 2.2523 & \underline{0.9730} & 0.6764 & 0.5836 & \underline{0.9442} & 0.6440 & 0.5744 & \underline{0.9584} \\
+                16 & 2.2538 & - & \underline{0.8388} & 0.7117 & - & \underline{0.9479} & 0.7067 & - & \underline{0.9615} \\
+                32 & 2.2538 & - & \underline{0.8666} & 0.7646 & - & \underline{0.9527} & 0.7444 & - & \underline{0.9647} \\
+                64 & 2.2538 & - & \underline{0.8539} & 0.7901 & - & \underline{0.9484} & 0.7612 & - & \underline{0.9637} \\
+                100 & 2.2537 & 2.2451 & \underline{0.6406} & 0.8012 & 0.7107 & \underline{0.9573} & 0.7973 & 0.7415 & \underline{0.9604} \\
             \bottomrule
         \end{tabular}
         \caption{Node type \textit{Disease}}
@@ -22,17 +22,16 @@
     
     \begin{subtable}[t]{\textwidth}
         \centering
-        \begin{tabular}{l|cc|cc|cc}        
+        \begin{tabular}{l|ccc|ccc|ccc}      
             \toprule
-            \multirow{2}{*}{\textbf{size}} & \multicolumn{2}{c}{\textit{Loss}} & \multicolumn{2}{c}{\textit{ROC\_AUC}} & \multicolumn{2}{c}{\textit{AP score}} \\
-            & \textbf{GAT} & \textbf{HGCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GAT} & \textbf{HGCN} \\
-            \midrule
-            4 & 1.8816 & 2.3959 & 0.5003 & 0.7459 & 0.4612 & 0.6906 \\
-            8 & 1.8395 & 1.3602 & 0.5151 & 0.8838 & 0.4900 & 0.8751 \\
-            16 & 1.8038 & 1.0282 & 0.5016 & 0.9193 & 0.4891 & 0.9119 \\
-            32 & 1.8493 & 1.0209 & 0.5482 & 0.9317 & 0.5115 & 0.9307 \\
-            64 & 1.9317 & 1.3956 & 0.5364 & 0.8922 & 0.5364 & 0.9109 \\
-            100 & 1.7748 & 1.0364 & 0.5115 & 0.9232 & 0.4757 & 0.9159 \\
+            \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c}{\textit{Loss}} & \multicolumn{3}{c}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
+            & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} \\
+            4 & 2.2539 & 2.2532 & \underline{2.3959} & \underline{0.7094} & 0.5958 & 0.7459 & \underline{0.6371} & 0.5268 & 0.6906 \\
+            8 & 2.2538 & 2.2521 & \underline{1.3602} & 0.7353 & 0.5918 & \underline{0.8838} & 0.6796 & 0.5350 & \underline{0.8751} \\
+            16 & 2.2538 & 2.2517 & \underline{1.0282} & 0.7770 & 0.6673 & \underline{0.9193} & 0.7415 & 0.6436 & \underline{0.9119} \\
+            32 & 2.2538 & 2.2507 & \underline{1.0209} & 0.8628 & 0.7112 & \underline{0.9317} & 0.8249 & 0.7301 & \underline{0.9307} \\
+            64 & 2.2533 & 2.2492 & \underline{1.3956} & \underline{0.9333} & 0.7374 & 0.8922 & \underline{0.9256} & 0.7765 & 0.9109 \\
+            100 & 2.2538 & 2.2433 & \underline{1.0364} & \underline{0.9683} & 0.7604 & 0.9232 & \underline{0.9539} & 0.8028 & 0.9159 \\
             \bottomrule
         \end{tabular}
         \caption{Node type \textit{Genomic feature}}
@@ -42,18 +41,18 @@
     
     \begin{subtable}[t]{\textwidth}
         \centering
-        \begin{tabular}{l|cc|cc|cc}        
-            \toprule
-            \multirow{2}{*}{\textbf{size}} & \multicolumn{2}{c}{\textit{Loss}} & \multicolumn{2}{c}{\textit{ROC\_AUC}} & \multicolumn{2}{c}{\textit{AP score}} \\
-            & \textbf{GAT} & \textbf{HGCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GAT} & \textbf{HGCN} \\
-            \midrule
-            4 & 1.8259 & 0.8984 & 0.7958 & 0.9479 & 0.7396 & 0.9443 \\
-            8 & 1.6656 & 0.7069 & 0.8415 & 0.9672 & 0.7884 & 0.9732 \\
-            16 & 2.2535 & 0.6602 & 0.7331 & 0.9692 & 0.7472 & 0.9754 \\
-            32 & 2.2534 & 0.6035 & 0.7574 & 0.9690 & 0.7939 & 0.9761 \\
-            64 & 2.2532 & 0.5554 & 0.7724 & 0.9705 & 0.8151 & 0.9769 \\
-            100 & 2.2526 & 0.5618 & 0.7817 & 0.9692 & 0.8273 & 0.9765 \\
-            \bottomrule
+        \begin{tabular}{l|ccc|ccc|ccc}   
+             \toprule
+                \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c}{\textit{Loss}} & \multicolumn{3}{c}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
+                & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} \\
+                \midrule
+                4 & 2.2538 & 2.2538 & \underline{0.8984} & 0.6441 & 0.6087 & \underline{0.7923} & 0.6152 & 0.5869 & \underline{0.8179} \\
+                8 & 2.2538 & 2.2537 & \underline{0.7069} & 0.6627 & 0.6207 & \underline{0.8354} & 0.6513 & 0.6160 & \underline{0.8791} \\
+                16 & 2.2538 & 2.2532 & \underline{0.6602} & 0.6992 & 0.6697 & \underline{0.8609} & 0.7059 & 0.6861 & \underline{0.8883} \\
+                32 & 2.2538 & 2.2521 & \underline{0.6035} & 0.7403 & 0.6832 & \underline{0.8773} & 0.7265 & 0.7106 & \underline{0.9001} \\
+                64 & 2.2535 & 2.2517 & \underline{0.5554} & 0.7569 & 0.7123 & \underline{0.9479} & 0.7598 & 0.7392 & \underline{0.9153} \\
+                100 & 2.2534 & 2.2492 & \underline{0.5618} & 0.7742 & 0.7044 & \underline{0.9692} & 0.7749 & 0.7373 & \underline{0.9140} \\
+                \bottomrule
         \end{tabular}
         \caption{Node type \textit{GO}}
     \end{subtable}
@@ -62,21 +61,21 @@
     
     \begin{subtable}[t]{\textwidth}
         \centering
-        \begin{tabular}{l|cc|cc|cc}        
-            \toprule
-            \multirow{2}{*}{\textbf{size}} & \multicolumn{2}{c}{\textit{Loss}} & \multicolumn{2}{c}{\textit{ROC\_AUC}} & \multicolumn{2}{c}{\textit{AP score}} \\
-            & \textbf{GAT} & \textbf{HGCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GAT} & \textbf{HGCN} \\
+        \begin{tabular}{l|ccc|ccc|ccc}   
+        \toprule
+            \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c}{\textit{Loss}} & \multicolumn{3}{c}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
+            & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} \\
             \midrule
-            4 & 2.2537 & 1.4855 & 0.6223 & 0.9240 & 0.6195 & 0.9460 \\
-            8 & 2.2537 & 1.3125 & 0.6512 & 0.9334 & 0.6626 & 0.9572 \\
-            16 & 2.2533 & 1.1390 & 0.6645 & 0.9359 & 0.7039 & 0.9594 \\
-            32 & 2.2529 & 0.9025 & 0.6773 & 0.9382 & 0.7409 & 0.9610 \\
-            64 & 2.2510 & 0.6700 & 0.6842 & 0.9452 & 0.7617 & 0.9633 \\
-            100 & 2.2494 & 0.6079 & 0.6858 & 0.9573 & 0.7713 & 0.9688 \\
+            4 & 2.2539 & - & \underline{1.4855} & 0.6289 & - & \underline{0.9240} & 0.5947 & - & \underline{0.9460} \\
+            8 & 2.2538 & - & \underline{1.3125} & 0.6501 & - & \underline{0.9334} & 0.6284 & - & \underline{0.9572} \\
+            16 & 2.2538 & - & \underline{1.1390} & 0.6848 & - & \underline{0.9359} & 0.6728 & - & \underline{0.9594} \\
+            32 & 2.2538 & - & \underline{0.9025} & 0.7036 & - & \underline{0.9382} & 0.7017 & - & \underline{0.9610} \\
+            64 & 2.2538 & - & \underline{0.6700} & 0.7276 & - & \underline{0.9452} & 0.7119 & - & \underline{0.9633} \\
+            100 & 2.2538 & 2.2389 & \underline{0.6079} & 0.7567 & 0.6555 & \underline{0.9573} & 0.7318 & 0.6771 & \underline{0.9688} \\
             \bottomrule
         \end{tabular}
         \caption{Node type \textit{Phenotype}}
     \end{subtable}
-    
-    \caption{Performance of models HCGN, GAT and GCN on \textit{Subclassof} edges across different node types}
+    \label{tab:tabHypPerf}
+    \caption{Performance of models HCGN, GAT and GCN on hierarchical components in PatientKG across different node types}
 \end{table}

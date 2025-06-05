@@ -111,7 +111,7 @@ The returned node embeddings can then be used for node classification or link pr
 \paragraph{Node classification}
 For node classification tasks one maps the output of the final HGCN layer to the tangent space at the origin with the logarithmic map $\log_\mathbf{o}^{\kappa^\ell}$ to the perform Euclidean multinomial logistic regression. Another option would be to directly classify nodes on the hyperboloid manifold using the multinomial logistic loss, as done for HNN~\cite{ganea2018HNN}.
 
-\paragraph{Link prediction}
+\paragraph{Link prediction}\label{sec:linkPredictionHGCN}
 In the case of link prediction tasks the authors use the Fermi-Dirac decoder~\cite{Krioukov2010HyperbolicGeometryComplexNetworks}\cite{nickel2017poincare}, a generalization of sigmoid to compute probability scores for the edges based on the embeddings of the incident nodes:
 \begin{equation*}
     \mathbb{P}\left((i, j) \in E|\mathbf{x}_i^{(L)}, \mathbf{x}_j^{(L)}\right) = \left[e^{(d^{\kappa^{(L)}}_{\mathcal{L}}(\mathbf{x}^{(L)}_i, \mathbf{x}^{(L)}_j)^2-r)/t} + 1\right]^{-1},
