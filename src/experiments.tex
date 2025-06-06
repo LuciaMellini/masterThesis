@@ -1,11 +1,11 @@
 \chapter{Experiments}
-We now delve into out contribution to tackling the problem of automatic differential diagnosis of Mendelian diseases. At this scope we have prepared a tailored KG integrated with patient data, that we describe in \Cref{sec:patientKG}. We then outline how we have translated our problem into a link prediction task, motivating the choice of hyperbolic graph representation learning techniques (\Cref{sec:linkPredictionDiffDiagnosis}). 
+We now delve into out contribution to tackling the problem of automatic differential diagnosis of Mendelian diseases. At this scope we have prepared a tailored KG integrated with patient data, that we describe in \Cref{sec:patientKG}. We then outline how we have translated our problem into a link prediction task, validating the choice of hyperbolic graph representation learning techniques (\Cref{sec:linkPredictionDiffDiagnosis}). 
 
 \section{Patient KG}\label{sec:patientKG}
 In this section we describe the data that we have chosen for the task of differential diagnosis of Mendelian diseases. We proceed by exploring the underlying biomedical knowledge graph that we have used and the patient data that we have selected. We also describe how these data sources have been integrated into a single knowledge graph.
 
 \subsection{Underlying biomedical KG}\label{sec:underlyingKG}
-Initially we have considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge graph targeted at precision medicine analyses aggregating 20 high quality resources. Unfortunately, at the moment of use we have encountered substantial shortcomings in the representation of Mendelian diseases. Taking inspiration from the entities represented in PrimeKG, we have constructed a tailored knowledge graph. We have resorted to \emph{PheKnowLator} (\emph{Phenotype Knowledge Translator})~\cite{callahan2020PheKnowlator}\footnote{The Python library is available at \url{https://github.com/callahantiff/PheKnowLator}}, a KG framework designed for optimized construction of semantically-rich, large-scale biomedical KGs accounting for different standardized terminologies or vocabularies. To construct our heterogenous graph we have selected various ontologies taking into account our final goal and memory constraints. The chosen ontologies, grouped by resulting node types, are the following.
+Initially we had considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge graph targeted at precision medicine analyses aggregating 20 high quality resources. Unfortunately, at the moment of use we have encountered substantial shortcomings in the representation of Mendelian diseases. Taking inspiration from the entities represented in PrimeKG, we have constructed a tailored knowledge graph. We have resorted to \emph{PheKnowLator} (\emph{Phenotype Knowledge Translator})~\cite{callahan2020PheKnowlator}\footnote{The Python library is available at \url{https://github.com/callahantiff/PheKnowLator}}, a KG framework designed for optimized construction of semantically-rich, large-scale biomedical KGs accounting for different standardized terminologies or vocabularies. To build our heterogenous graph we have selected various ontologies taking into account our final goal and memory constraints. The chosen ontologies, grouped by resulting node types, are the following.
 
 
 \begin{multicols}{2}
@@ -95,36 +95,11 @@ Since the test edges are retrieved from the relations provided by the Phenopacke
 Some preliminary experiments run using this data split have evidenced suspected overfitting. Since the articles often concern to a specific disease, as to be expected the edges connecting the patients to their articles of provenance provide a shortcut to grasping the disease of the patients. To avoid data leakage, we removed all \emph{Has part} and \emph{Part of} edges connecting the \emph{Person} nodes to the \emph{Article} nodes. 
 
 \subsection{Why hyperbolic graph representation learning?}\label{sec:hypPatientKG}
-Before delving into the hyperparameters that have determined the experiments that have been run, we would like to account for the choice of hyperbolic graph representation learning techniques, specifically HGCN\footnote{We have used the implementation provided by the Hazy Research group in the repository at \url{https://github.com/HazyResearch/hgcn}. This library also provides code for shallow embeddings, GCN and GAT models that have been used for the discussion below}. As discussed in \Cref{sec:hyperbolicAndTrees}, hyperbolic geometry is particularly suited to represent hierarchical structures, such as the ones nested in PatientKG (refer to \Cref{sec:abstractGraphStructure}). To verify this empirically we have embedded in hyperbolic space each hierarchical component. To put in evidence the position of each node in the hierarchy we have embedded the transitive closure of each subgraph. The transitive closure of a directed graph is the graph obtained by adding an edge between each pair of nodes that are connected by a directed path. As an example, \Cref{fig:diseasePoincare} shows the embedded \emph{Disease} nodes arranged in a Poincaré ball. One can notice that the nodes with a larger neighbourhood, i.e. the nodes higher in the ontological hierarchy are located closer to the centre of the ball. The image can be interpreted as a real world case of the structure schematized in \Cref{fig:radialTree}, following the considerations made in \Cref{sec:expGrowth}. 
+Before delving into the hyperparameters that have determined the experiments that have been run, we would like to account for the choice of hyperbolic graph representation learning techniques, specifically HGCN. As discussed in \Cref{sec:hyperbolicAndTrees}, hyperbolic geometry is particularly suited to represent hierarchical structures, such as the ones nested in PatientKG (refer to \Cref{sec:abstractGraphStructure}). To verify this empirically we have embedded in hyperbolic space each hierarchical component. To put in evidence the position of each node in the hierarchy we have embedded the transitive closure of each subgraph. The transitive closure of a directed graph is the graph obtained by adding an edge between each pair of nodes that are connected by a directed path. As an example, \Cref{fig:diseasePoincare} shows the embedded \emph{Disease} nodes arranged in a Poincaré ball. One can notice that the nodes with a larger neighbourhood, i.e. the nodes higher in the ontological hierarchy are located closer to the centre of the ball. The image can be interpreted as a real world case of the structure schematized in \Cref{fig:radialTree}, following the considerations made in \Cref{sec:expGrowth}. 
 \input{figs/figDiseasePoincare.tex}
 
-Though the shallow embedding has given great results, as touched on in the previous section we have opted for an inductive graph representation technique. To assure that the HGCN model would grasp the hierarchical components in PatientKG in a first instance we have evaluated the model's performance solely on these subgraphs. For comparison we have run the same experiments on two representatives of advanced Euclidean GNN models, namely GCN (\Cref{sec:GCN}) and GAT (\Cref{sec:neighbourhoodAttention}). In \Cref{tab:tabHypPerf} we show the performance of the three models with a random split of the edges into training, validation and test sets. The hyperparameters used in our experiments are shown in Table~\ref{tab:hyperparams}; the number of head parameter is overlooked by the GCN model. For HGCN learning the parameters for the Fermi-Dirac decoder are set to \texttt{r}=2 and \texttt{t}=1 (refer to \Cref{sec:linkPredictionHGCN}).
-\begin{table}[ht]
-\centering
-\caption{Hyperparameters used in the comparative experiments between GCN, GAT and HGCN.}
-\label{tab:hyperparams}
-\begin{tabular}{rl}
-\hline
-\textbf{Hyperparameter} & \textbf{Value} \\
-\hline
-\texttt{Number of layers} & 2 \\
-\texttt{Number of heads} &  4 \\
-\texttt{Weight decay} & 0.001 \\
-\texttt{Learning rate} & 0.01 \\
-\texttt{LR reduce frequency} & 5000 \\
-\texttt{Dropout} & 0.1 \\
-\texttt{Optimizer} & Adam \\
-\texttt{Momentum} & 0.999 \\
-\texttt{Gamma} & 0.5 \\
-\texttt{Activation function} & ReLU \\
-\texttt{Early stopping patience} & 200 \\
-\texttt{Validation fraction} & 0.1 \\
-\texttt{Test fraction} & 0.1 \\
+Though the shallow embedding has given great results, as touched on in the previous section we have opted for an inductive graph representation technique. To assure that the HGCN model would grasp the hierarchical components in PatientKG in a first instance we have evaluated the model's performance solely on these subgraphs. For comparison we have run the same experiments on two representatives of advanced Euclidean GNN models, namely GCN (\Cref{sec:GCN}) and GAT (\Cref{sec:neighbourhoodAttention}). The hyperparameters used in our experiments are shown in Table~\ref{tab:hyperparams}; the number of attention heads is overlooked by the GCN model. For HGCN learning the parameters for the Fermi-Dirac decoder are set to \texttt{r}=2 and \texttt{t}=1 (refer to \Cref{sec:linkPredictionHGCN}). To set these values we have taken inspiration from the hyperparameters suggested in the code repository provided by Hazy Research that for HGCN and other euclidean and hyperbolic GNN implementations\footnote{We have used the implementations provided by the Hazy Research group at \url{https://github.com/HazyResearch/hgcn}. Specifically, we have relied on their code for the shallow Poincaré ball embeddings, GCN and GAT models and obviously HGCN.}. 
+\input{figs/tabHypPerfHyp.tex}
 
-\hline
-\end{tabular}
-\end{table}
+In \Cref{tab:tabHypPerf} we show the performance of the three models with a random split of the edges into training, validation and test sets, with validation and test sets containing 10 of the edges each. We have run various experiments varying the desired embedding size. The evaluation of the prediction is expressed as the sum of the cross-entropy losses of positive and negative predictions, the ROC\_AUC and Average Precision score. As expected, the results improve when increasing the hidden representation of the nodes. The results clearly show that HGCN outperforms euclidean GNN models. The only exception lies in the \emph{Genomic feature} hierarchical component, where GCN and GAT perform slightly better than HGCN with greater embedding sizes. In these cases the loss is high, so we can deduce that the models are assigning confident likeliness to wrong predictions. These tests strengthen ou confidence in using HGCN for the link prediction task on PatientKG.
 \input{figs/tabHypPerf.tex}
-
-\subsection{Resulting hyperparameters}
-

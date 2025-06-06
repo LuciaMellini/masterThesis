@@ -1,10 +1,12 @@
-\begin{table}
+\begin{table} 
     \centering
+    \caption{Performance of models HCGN, GAT and GCN on hierarchical components in PatientKG across different node types}
+    \label{tab:tabHypPerf}  
     \begin{subtable}[t]{\textwidth}
         \centering
         \begin{tabular}{l|ccc|ccc|ccc}        
             \toprule
-            \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c}{\textit{Loss}} & \multicolumn{3}{c}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
+            \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c|}{\textit{Loss}} & \multicolumn{3}{c|}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
             & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} \\
             \midrule
                 4 & 2.2522 & 2.2536 & \underline{1.2305} & 0.6289 & 0.5488 & \underline{0.9118} & 0.5913 & 0.5102 & \underline{0.9106} \\  
@@ -24,8 +26,9 @@
         \centering
         \begin{tabular}{l|ccc|ccc|ccc}      
             \toprule
-            \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c}{\textit{Loss}} & \multicolumn{3}{c}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
+            \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c|}{\textit{Loss}} & \multicolumn{3}{c|}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
             & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} \\
+            \midrule
             4 & 2.2539 & 2.2532 & \underline{2.3959} & \underline{0.7094} & 0.5958 & 0.7459 & \underline{0.6371} & 0.5268 & 0.6906 \\
             8 & 2.2538 & 2.2521 & \underline{1.3602} & 0.7353 & 0.5918 & \underline{0.8838} & 0.6796 & 0.5350 & \underline{0.8751} \\
             16 & 2.2538 & 2.2517 & \underline{1.0282} & 0.7770 & 0.6673 & \underline{0.9193} & 0.7415 & 0.6436 & \underline{0.9119} \\
@@ -35,7 +38,7 @@
             \bottomrule
         \end{tabular}
         \caption{Node type \textit{Genomic feature}}
-        \end{subtable}
+    \end{subtable}
     
     \vspace{1em}
     
@@ -43,7 +46,7 @@
         \centering
         \begin{tabular}{l|ccc|ccc|ccc}   
              \toprule
-                \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c}{\textit{Loss}} & \multicolumn{3}{c}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
+                \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c|}{\textit{Loss}} & \multicolumn{3}{c|}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
                 & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} \\
                 \midrule
                 4 & 2.2538 & 2.2538 & \underline{0.8984} & 0.6441 & 0.6087 & \underline{0.7923} & 0.6152 & 0.5869 & \underline{0.8179} \\
@@ -63,8 +66,8 @@
         \centering
         \begin{tabular}{l|ccc|ccc|ccc}   
         \toprule
-            \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c}{\textit{Loss}} & \multicolumn{3}{c}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
-            & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} \\
+            \multirow{2}{*}{\textbf{size}} & \multicolumn{3}{c|}{\textit{Loss}} & \multicolumn{3}{c|}{\textit{ROC\_AUC}} & \multicolumn{3}{c}{\textit{AP score}} \\
+                & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} & \textbf{GCN} & \textbf{GAT} & \textbf{HGCN} \\
             \midrule
             4 & 2.2539 & - & \underline{1.4855} & 0.6289 & - & \underline{0.9240} & 0.5947 & - & \underline{0.9460} \\
             8 & 2.2538 & - & \underline{1.3125} & 0.6501 & - & \underline{0.9334} & 0.6284 & - & \underline{0.9572} \\
@@ -76,6 +79,4 @@
         \end{tabular}
         \caption{Node type \textit{Phenotype}}
     \end{subtable}
-    \label{tab:tabHypPerf}
-    \caption{Performance of models HCGN, GAT and GCN on hierarchical components in PatientKG across different node types}
 \end{table}
