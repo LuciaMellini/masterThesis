@@ -1,21 +1,21 @@
 \chapter{Graph Representation Learning}\label{grl}
 Here we give an insight on some techniques used to learn the underlying structure of graphs. Specifically, in \Cref{sec:graphLearningProblems} we introduce the main machine learning tasks involving graph data. In \Cref{sec:shallowEmbeddings} we delve into node embeddings, a fundamental concept in graph representation learning and we show how these embeddings can be adapted for knowledge graphs in \Cref{sec:embeddingsKGs}. Finally we discuss more recent methods that allow to transpose the learned representation to new nodes (\Cref{sec:gnn}).
 
-\section{Graph Learning Problems}\label{sec:graphLearningProblems}
+\section{Graph learning problems}\label{sec:graphLearningProblems}
 Machine learning is fundamentally a problem-driven discipline focused on developing models that learn from data to address specific tasks. These machine learning models typically depend the type of task they aim to solve: supervised or unsupervised. This principle is equally applicable to learning with graphs; however, the conventional distinctions of supervised and unsupervised learning may not always provide the most informative or useful framework when dealing with graph data. In this section, we provide a concise overview of machine learning tasks involving graph data. As will be illustrated, machine learning challenges concerning graphs frequently blur the lines between traditional machine learning categories.
 
-\subsection{Node Classification}
+\subsection{Node classification}
 Given a graph $ G = (V,E,L) $, the objective of \term{node classification} is to predict the label associated with each node $ v \in V $ a training set of nodes $ V_\text{train} \subset V $ containing true labels. It is common to assume that label information is available for only a limited subset of nodes, although there are instances where a considerable number of nodes are labeled, such as in the case of classifying the functions of proteins within the interactomes of various species~\cite{Hamilton2017inductiveRepresentationLearning}.
 
 The nodes in a graph are not independent and identically distributed; rather, they constitute an interconnected set. The central insight behind many successful node classification methods is the explicit utilization of connections among nodes. A particularly popular approach is to exploit \term{homophily}, the tendency of nodes to share attributes with their neighbours in the graph~\cite{Mcpherson2001homophilyInSocialNw}. For instance, it is common for individuals to form friendships with others who have similar interests or demographics. Based on the principle of homophily, one can develop machine learning models that assign similar labels to neighbouring nodes in a graph~\cite{Zhou2003LearningLocalGlobalConsistency}. In addition to homophily, concepts such as structural equivalence~\cite{Donnat2017GraphWaveletsStructuralRoleSimilarityComplexNws}, which postulates that nodes with similar local neighbourhood structures will have analogous labels, and \term{heterophily}, which suggests that nodes are preferentially connected to nodes with differing labels, also play a role. When constructing node classification models, it is essential to leverage these concepts instead of treating nodes as independent data points like one would do in standard machine learning.
 
-\subsection{Link Prediction}
+\subsection{Link prediction}
 The standard framework for \term{link prediction} involves a set of nodes $ V $ and an incomplete set of edges connecting these nodes $ E_\text{train} \subset E $. The goal is to utilize this partial information to infer the missing edges $ E \setminus E_\text{train} $. Link prediction is one of the most popular machine learning tasks applied to graph data and has a multitude of applications, including predicting drug side effects~\cite{Zitnik2018ModelingPolypharmacySideEffectsGCN}. In complex multi-relational graph datasets, such as Biological Knowledge Graphs (BKGs) encoding numerous distinct biological interactions, link prediction may call for sophisticated reasoning and inference strategies~\cite{Nickel2015ReviewRelationalMLKG}.
 
-\subsection{Clustering and Community Detection}
+\subsection{Clustering and community detection}
 Both node classification and link prediction infer missing information about graph data, essentially positioning these tasks as graph analogs of supervised learning. In contrast, community detection represents the equivalent of unsupervised clustering in the graph context. The fundamental intuition behind clustering is that the graph exhibits a community structure, wherein nodes are significantly more likely to form edges with nodes that are part of the same community. The challenge lies in inferring latent community structures based solely on the input graph $ G = (V, E) $. Numerous real-world applications of community detection include uncovering functional modules in genetic interaction networks~\cite{Agrawal2018LargeScaleAnalysisDiseasePathwaysHumanInteractome}.
 
-\subsection{Why Graph Representation Learning?}
+\subsection{Why graph representation learning?}
 To address the aforementioned challenges, various ``traditional'' methods exist~\cite{Hamilton2020GraphRL}, including:
 \begin{itemize}
     \item graph statistics and kernel methods for extracting feature information relevant for classification tasks,
@@ -25,13 +25,13 @@ To address the aforementioned challenges, various ``traditional'' methods exist~
 
 These methodologies require carefully crafted, hand-engineered statistics and measures that lack adaptability through a learning process, and the design of these features can be both time-consuming and costly. The following sections propose an alternative approach to graph analysis: graph representation learning. Instead of extracting predetermined features, we will focus on learning representations that encapsulate structural information about the graph.
 
-\section{Node Embeddings}\label{sec:shallowEmbeddings}
+\section{Node embeddings}\label{sec:shallowEmbeddings}
 The aim of node embedding methodologies is to encode nodes into low-dimensional vectors, or \term{embeddings}, which encapsulate their position within the graph and the structure of their local neighbourhoods. In essence, we aspire to project nodes into a latent space where geometric relationships within this space align with relationships in the original graph~\cite{Hoff2002latentSpaceApproachesSocialNetworkAnalysis}. In \Cref{fig:nodeEmbedding}, we illustrate this problem, where the objective is to learn an encoder that maps nodes to a low-dimensional embedding space. These embeddings are optimized such that distances in the embedding space accurately reflect the relative positions of nodes in the original graph.
 
 \input{figs/figNodeEmbedding}
 We introduce an encoder-decoder framework to illustrate the workings of node embeddings and subsequently we describe several methodologies for node embedding, with a focus on random walk approaches utilized as baselines in our experimental framework.
 
-\subsection{An Encoder-Decoder Framework}
+\subsection{Encoder-decoder framework}
 Our discussion of node embeddings is organized around the framework of encoding and decoding graphs, closely mirroring the itinerary followed in~\cite{Hamilton2020GraphRL}. Within the encoder-decoder framework, the problem of graph representation learning involves two primary operations:
 \begin{description}
     \item[encoder] maps each node in the graph to a low-dimensional embedding,
@@ -65,7 +65,7 @@ Applying the pairwise decoder to a pair of embeddings $ (\mathbf{z}_u, \mathbf{z
 \end{equation}
 where $ \textbf{S} $ stands for a graph similarity measure between nodes. When predicting edges in a graph, the similarity function for a pair of nodes could correspond to the respective entry within the graph's adjacency matrix.
 
-\subsubsection{Optimizing the Encoder-Decoder Model}
+\subsubsection{Optimizing the encoder-decoder model}
 To achieve the reconstruction objective outlined in \Cref{eq:reconstruction}, it is standard practice to minimize an empirical reconstruction loss $ \mathcal{L} $ over a set of training node pairs $ \mathcal{D} $:
 \begin{equation}\label{eq:loss}
     \mathcal{L} = \sum_{(u,v)\in\mathcal{D}} \ell(\text{DEC}(\mathbf{z}_u, \mathbf{z}_v), \textbf{S}[u,v])
@@ -74,10 +74,10 @@ where $ \ell: \mathbb{R}\times\mathbb{R}\to\mathbb{R} $ denotes a loss function 
 
 We proceed by delineating several representative node embedding methods. We initially discuss node embedding methods justified by matrix factorization approaches. Then we explore more recent methods based on random walks, initially inspired by techniques from natural language processing. Our focus on these recent methods stems from their utility as baseline performance measures in our experiments.
 
-\subsection{Factorization-Based Approaches}\label{sec:factorization}
+\subsection{Factorization-based approaches}\label{sec:factorization}
 One perspective on the encoder-decoder framework is through the lens of matrix factorization. Indeed, the challenge of decoding local neighbourhood structure from a node's embedding closely relates to reconstructing entries within the graph adjacency matrix. In a broader sense, we can consider this task in terms of employing matrix factorization to learn a low-dimensional approximation of a node-node similarity matrix $ \mathbf{S} $, where $ \mathbf{S} $ generalizes the adjacency matrix and captures user-defined notions of node-node similarity as addressed in \Cref{sec:decoder}~\cite{Belkin2001laplacianEigenmapsSpectralClusteringTechniquesEmbeddingClustering}\cite{Kruskal1964MultidimensionalScalingOptimizingGoodnessFitNonmetricHypothesis}.
 
-\subsubsection{Laplacian Eigenmaps}
+\subsubsection{Laplacian eigenmaps}
 Among the earliest factorization-based approaches is the \term{Laplacian eigenmaps} (\term{LE}) technique, which is built on spectral clustering~\cite{Belkin2001laplacianEigenmapsSpectralClusteringTechniquesEmbeddingClustering}. In this method, the decoder is defined based on the $ L_2 $ distance between node embeddings:
 \begin{equation*}
     \text{DEC}(\mathbf{z}_u, \mathbf{z}_v) = \|\mathbf{z}_u - \mathbf{z}_v\|_2^2.
@@ -89,7 +89,7 @@ The loss function weighs pairs of nodes according to their similarity within the
 
 The underlying intuition for this approach is that \Cref{eq:laplacianEigenmaploss} penalizes the model when highly similar nodes have embeddings that are distant from one another. When $ \mathbf{S} $ is structured like a Laplacian matrix and if the embeddings $ z_u $ are $ d $-dimensional, then the node embeddings minimizing the loss in \Cref{eq:laplacianEigenmaploss} correspond to the $ d $ smallest eigenvectors of the Laplacian (excluding the eigenvector comprising all ones).
 
-\subsubsection{Inner-Product Methods}
+\subsubsection{Inner-product methods}
 More recent work commonly employs an inner-product based decoder defined as follows:
 \begin{equation}\label{eq:innerProductDec}
     \text{DEC}(\mathbf{z}_u, \mathbf{z}_v) = \mathbf{z}_u^T\mathbf{z}_v.
@@ -104,7 +104,7 @@ These methods are categorized as matrix-factorization approaches, as their loss 
 \end{equation*}
 which represents a low-dimensional factorization of the node-node similarity matrix $ \textbf{S} $. 
 
-\subsection{Random Walk Embeddings}
+\subsection{Random walk embeddings}
 In these approaches the node embeddings are optimized such that two nodes will have comparable embeddings if they frequently co-occur on short random walks throughout the graph.
 
 \subsubsection{DeepWalk \& node2vec}
@@ -125,14 +125,14 @@ Evaluating the loss in \Cref{eq:randomWalkloss} can be computationally intensive
 
 A noteworthy distinction of the \textit{node2vec} approach is its provision for a more flexible definition of random walks. While \textit{DeepWalk} utilizes uniformly random walks to define $ p_{G,T}(v|u) $, the \textit{node2vec} approach leverages second order random walks, the next state depends not only on the current state but also on the previous state. This results in hyperparameters that bias the walk to either favor a depth-first or breadth-first search.
 
-\subsubsection{Large-Scale Information Network Embeddings (LINE)}
+\subsubsection{Large-scale Information Network Embeddings (LINE)}
 The method \textit{LINE}~\cite{Tang2015line} does not explicitly harness random walk strategies, but shares conceptual underpinnings with both \textit{DeepWalk} and \textit{node2vec}. The primary concept in LINE is to combine two encoder-decoder objectives. The first objective encodes first-order adjacency information, employing the following decoder:
 \begin{equation*}
     \text{DEC}(\mathbf{z}_u, \mathbf{z}_v) = \frac{1}{1 + e^{-\mathbf{z}_u^\top\mathbf{z}_v}}.
 \end{equation*}
 This decoder relies on an adjacency-based similarity measure (i.e., $ \textbf{S}[u,v] = \mathbf{A}[u,v] $). The second objective mirrors random walk approaches, using the same decoder as in \Cref{eq:randomWalkdec}, but trained using Kullback-Leibler divergence~\footnote{Kullback–Leibler (KL) divergence measures the statistical distance between two probability distributions $P$ and $Q$, defined as $ D_{\text{KL}}(P\parallel Q)=\sum_{x\in \mathcal{X}}P(x)\log \left(\frac{P(x)}{Q(x)}\right) $, with $\mathcal{X}$ being the set of possible observations.} to encode two-hop adjacency information (i.e., the data encapsulated in $ \mathbf{A}^2 $). Therefore, LINE is conceptually tied to \textit{node2vec} and \textit{DeepWalk}, yet it reconstructs first- and second-order neighbourhood information without sampling random walks.
 
-\subsection{Limitations of Shallow Embeddings}
+\subsection{Limitations of shallow embeddings}
 Shallow embedding approaches define the encoder model simply as an embedding lookup (\Cref{eq:encoderLookup}), which trains a unique embedding for each node within the graph. These approaches exhibit several notable drawbacks:
 \begin{itemize}
     \item They do not share any parameters between nodes in the encoder, since the encoder directly optimizes a unique embedding vector for each node. This absence of parameter sharing is inefficient from both statistical and computational standpoints. Statistically, parameter sharing can serve as a powerful regularization method. Computationally, the lack of parameter sharing results in a growing number of parameters as $ O(V) $.
@@ -144,10 +144,10 @@ To mitigate these limitations, shallow encoders may be replaces with more sophis
 \section{Embeddings for Knowledge Graphs (KGs)}\label{sec:embeddingsKGs}
 Maintaining our focus on shallow embedding methods, we now pivot towards knowledge graphs, specifically directed edge-labeled graphs.
 
-\paragraph{Knowledge Graph Completion}
+\paragraph{Knowledge graph completion}
 The methods presented in this section were primarily designed for the task of knowledge graph completion. Given a directed edge-labeled graph $ G = (V, E, L) $, a generic edge is denoted as $ (u,\ell,v) $, indicating the presence of a particular relation $ \ell \in L $ between nodes $ u $ and $ v $. An edge label can be interpreted as a fact that holds between two nodes. The overarching goal of knowledge graph completion is to predict missing edges within the graph.
 
-\subsection{Reconstructing Labeled Data}
+\subsection{Reconstructing labeled data}
 Similarly to the simple graphs explored in \Cref{sec:shallowEmbeddings}, one can view the embedding of knowledge graphs as a reconstruction task. Given the embeddings $ \mathbf{z}_u $ and $ \mathbf{z}_v $ of two nodes, the objective is to reconstruct the relationship between these nodes while addressing the presence of multiple distinct edge types. To accommodate this complexity, we augment our decoder to function in a multi-relational manner. Consequently, the decoder is defined to accept not merely a pair of node embeddings as input, but also their relation type:
 \begin{equation*}
     \text{DEC}: \mathbb{R}^d \times L \times \mathbb{R}^d \to \mathbb{R}^+.
@@ -168,10 +168,10 @@ where $ \mathbf{A}\in\mathbb{R}^{|V|\times|L|\times|V|} $ denotes the adjacency 
 \medskip
 In \Cref{sec:shallowEmbeddings}, we highlighted how the diversity of methods for node embeddings largely arises from the choice of different decoders, similarity measures, and loss functions. In the context of knowledge graphs, nearly all multi-relational embedding methods directly define the similarity measure based on the adjacency tensor. This is primarily due to the challenges associated with establishing higher-order neighbourhood relationships in knowledge graphs, as well as the fact that most multi-relational embedding methods were uniquely designed for relation prediction.
 
-\subsection{Loss Functions}
+\subsection{Loss functions}
 To account for the considered loss functions, we first address the shortcomings of the simple reconstruction loss introduced in \Cref{eq:reconstructionLossMulti}. The first issue is its computational expense: the nested summations in the equation require $ O(|V|^2|L|) $ operations, leading to prohibitive computation times in many large graphs. Additionally, since many knowledge graphs are sparse, (so $ |E| \ll |V|^2|L| $),a loss function with complexity reduced to $ O(|E|) $ would be preferable. The second issue is somewhat more nuanced; our aim is to decode the adjacency tensor using the low-dimensional node embeddings. Although this tensor generally contains only binary values, the mean-squared error discussed in \Cref{eq:reconstructionLossMulti} is not particularly suited for binary comparisons since it is aimed at regression tasks.
 
-\subsubsection{Cross-Entropy with Negative Sampling}
+\subsubsection{Cross-Entropy with negative sampling}\label{sec:crossEntropyLossNegSampling}
 A widely adopted loss function that is both efficient and appropriate for the task is the \term{cross-entropy loss with negative sampling}. We define this loss as:
 \begin{equation*}
     \mathcal{L} = \sum_{(u,\ell,v)\in E} -\log(\sigma(\text{DEC}(\mathbf{z}_u, \ell, \mathbf{z}_v))) - \gamma\mathbb{E}_{v_n\sim P_{n,u}(V)}[\log(\sigma(-\text{DEC}(\mathbf{z}_u, \ell, \mathbf{z}_{v_n})))]
@@ -188,7 +188,7 @@ represents the log-likelihood that we predict ``true'' for an edge that indeed e
 \end{equation}
 represents the expected log-likelihood that we accurately predict ``false'' for an edge that does not exist in the graph. In practice, this expectation is approximated using Monte Carlo simulations.
 
-\subsubsection{Max-Margin Loss}
+\subsubsection{Max-margin loss}
 Another widely used loss function for multi-relational node embedding is the \term{margin loss}:
 \begin{equation}\label{eq:marginLoss}
     \mathcal{L} = \sum_{(u,\ell,v)\in E} \sum_{v_n\sim P_{n,u}(V)} \max(0, -\text{DEC}(\mathbf{z}_u, \ell, \mathbf{z}_v) + \text{DEC}(\mathbf{z}_u, \ell, \mathbf{z}_{v_n}) + \Delta).
@@ -200,7 +200,7 @@ The loss functions discussed in prior sections can be integrated with various de
 
 More popular decoders seek to utilize only $ O(d) $ parameters for each relation. 
 
-\subsubsection{Translational Decoders}
+\subsubsection{Translational decoders}
 A notable class of decoders characterizes relations as translations within the embedding space. This line of thought originated with the \textit{TransE}~\cite{Bordes2013TransE} model, which defines the decoder as:
 \begin{equation*}
     \text{DEC}(\mathbf{z}_u, \ell, \mathbf{z}_v) = -\|\mathbf{z}_u + \mathbf{r}_\ell - \mathbf{z}_v\|.
@@ -213,7 +213,7 @@ Many works have been proposed to extend this translation idea, collectively refe
 \end{equation*}
 where $ g_{1,\ell}, g_{2,\ell} $ stand for trainable transformations dependent on the relation $ \ell $.
 
-\subsubsection{Multi-linear Dot Product}
+\subsubsection{Multi-linear dot product}
 Another prevalent methodology generalizes the inner product decoder from simple graphs (\Cref{eq:innerProductDec}). This approach, termed \textit{DistMult}~\cite{Yang2014DistMult}, defines the decoder as follows:
 \begin{align*}
 \text{DEC}(\mathbf{z}_u, \ell, \mathbf{z}_v) &= \text{Re}(\langle \mathbf{z}_u, \mathbf{r}_\ell, \overline{\mathbf{z}}_v\rangle)\\
@@ -230,10 +230,10 @@ The principal challenge in devising complex encoders for graph-structured data i
 
 The concepts and architectures discussed in the following sections can be extended to encompass multi-relational graphs, similarly to the methodologies illustrated in \Cref{sec:embeddingsKGs}.
 
-\subsection{Neural Message Passing}
+\subsection{Neural message passing}
 The defining characteristic of a Graph Neural Network (GNN) is its use of \term{neural message passing}, that consists in the exchange of vector messages between nodes that are subsequently updated through neural networks~\cite{Gilmer2017neuralMessagePassing}. The next sections will detail the elements of this neural message passing framework.
 
-\subsubsection{A Message Passing Framework}\label{sec:messagePassingFramework}
+\subsubsection{A message passing framework}\label{sec:messagePassingFramework}
 During each iteration of message passing in a GNN, a hidden embedding $ \mathbf{h}_u^{(\ell)} $ corresponding to each node $ u \in V $ is updated based on information aggregated from $ u $’s graph neighbourhood $ \mathcal{N}(u) $. The message-passing update illustrated in \Cref{fig:MessageAggregation} demonstrates how the messages directed toward the target node result from the aggregation of their respective neighbourhood information. Observe that the computation graph of the GNN adopts a tree structure by unfolding the neighbourhood of the target node.
 
 \input{figs/figMessageAggregation}
@@ -253,7 +253,7 @@ Since the AGGREGATE function accepts sets as input, GNNs constructed in this fas
 
 The core intuition behind the GNN message-passing framework is that, at each iteration, every node aggregates information from its local neighbourhood, leading to progressively more informative embeddings as iterations continue. Precisely, after $ k $ iterations, each node's embedding encapsulates information pertaining to its $ k $-hop neighbourhood. The information encapsulated in the resulting node embeddings reflects both structural aspects and features present within the $ K $-hop neighbourhoods.
 
-\subsubsection{The Basic GNN}
+\subsubsection{The basic GNN}
 Until now we have discussed the GNN framework rather abstractly as a series of message-passing iterations governed by the generic functions UPDATE and AGGREGATE (\Cref{eq:GNNupdate}). 
 
 A simplification of the original GNN models proposed by~\cite{Merkwirth2005automaticGenerationComplementaryDescriptorsMolecularGraphNetworks}\cite{scarselli2008graphNeuralNetworkModel} is expressed as:
@@ -285,7 +285,7 @@ Many GNN models can be defined succinctly using so called graph-level equations.
 where $\mathbf{H}^{(\ell)} \in \mathbb{R}^{|V| \times d}$ denotes the matrix of node representations at layer $\ell$ in the GNN (with each node corresponding to a row in the matrix), and $\mathbf{A}$ is the graph adjacency matrix. From here on we will be omitting the bias term $\mathbf{b}$ for notational simplicity. While this graph-level representation is not easily applicable to all GNN models—such as the attention-based models we discuss below—it is often more succinct and also highlights how many GNNs can be efficiently implemented using a small number of sparse matrix operations.
 
 
-\paragraph{Self-Loops}
+\paragraph{Self-loops}
 As a simplification of the neural message passing framework, it is customary to incorporate \term{self-loops} into the input graph while omitting the explicit update step. In this setup, the message passing is merely defined as:
 \begin{equation}\label{eq:selfLoop}
     \mathbf{h}_u^{(\ell)} = \text{AGGREGATE}(\{\mathbf{h}_v^{(\ell-1)}, \forall v \in \mathcal{N}(u)\cup {u}\}),
@@ -298,10 +298,10 @@ In the case of the basic GNN adding self-loops is equivalent to sharing paramete
 \end{equation}
 
 
-\subsection{AGGREGATE Generalization}
+\subsection{AGGREGATE generalization}
 The basic GNN can be enhanced and generalized in multiple ways through variations of the AGGREGATE and UPDATE functions.
 
-\paragraph{neighbourhood Aggregation}
+\paragraph{Neighbourhood aggregation}
 The most basic aggregation operations (\Cref{eq:basicGNN}) merely compute the sum of the neighbourhood embeddings. This approach can prove unstable and highly sensitive to node degrees, with nodes possessing higher degrees expected to yield greater values in the components of their embeddings.
 
 A potential solution is to normalize the aggregation process according to the degrees of the nodes involved. The simplest method is to compute an average instead of a sum:
@@ -322,14 +322,14 @@ The GCN model proposed by~\cite{kipf2016semi} combines symmetric-normalized aggr
     \mathbf{h}_u^{(\ell)} = \sigma\left(\mathbf{W}^{(\ell)}\sum_{v \in \mathcal{N}(u)}\frac{ \mathbf{h}_v}{\sqrt{|\mathcal{N}(u)||\mathcal{N}(v)|}}\right).
 \end{equation*}
 
-\subsubsection{Set Aggregators}
+\subsubsection{Set aggregators}
 In GNNs, the neighbourhood aggregation process must maintain permutation invariance, given that node neighbourhoods possess no inherent order. We look at a pair of set aggregation methods that enhance the expressive potential of GNNs with respect to traditional methods. 
 
-\paragraph{Set Pooling}~\cite{zaheer2017deepSets} applies a multi-layer perceptron (MLP) to each neighbour’s embedding prior to summing the outputs, followed by passing the results through another MLP. This method guarantees universal function approximation while retaining permutation invariance. 
+\paragraph{Set pooling}~\cite{zaheer2017deepSets} applies a multi-layer perceptron (MLP) to each neighbour’s embedding prior to summing the outputs, followed by passing the results through another MLP. This method guarantees universal function approximation while retaining permutation invariance. 
 
-\paragraph{Janossy Pooling}~\cite{murphy2018janossyPooling} instead of depending on permutation-invariant operations like summation, it applies a permutation-sensitive function—such as an LSTM~\cite{hochreiter1997LSTM}—to fix a canonical ordering.
+\paragraph{Janossy pooling}~\cite{murphy2018janossyPooling} instead of depending on permutation-invariant operations like summation, it applies a permutation-sensitive function—such as an LSTM~\cite{hochreiter1997LSTM}—to fix a canonical ordering.
 
-\subsubsection{Neighbourhood Attention}\label{sec:neighbourhoodAttention}
+\subsubsection{Neighbourhood attention}\label{sec:neighbourhoodAttention}
 Using \term{attention}~\cite{Vaswani2017attentionIsAllYouNeed} involves assigning an attention weight to each neighbour, which is utilized to amplify that neighbour's influence during the aggregation step. The first GNN model to apply this attention style, termed \term{Graph Attention Network} (\term{GAT})~\cite{Velivckovic2017graphAttentionNetworks}, uses attention weights to define a weighted sum of the neighbours:
 \begin{equation*}
     \mathbf{m}_{\mathcal{N}(u)} = \sum_{v\in\mathcal{N}(u)} \alpha_{u,v}\mathbf{h}_v,
@@ -344,9 +344,9 @@ Numerous attention models are inspired by deep learning literature. For instance
 \medskip
 The introduction of attention serves as a valuable strategy to enhance the representational capacity of a GNN model, particularly when prior knowledge suggests that certain neighbours may hold greater informational significance than others.
 
-\subsection{UPDATE Generalization}
+\subsection{UPDATE generalization}
 
-\subsubsection{Concatenation and Skip Connections} 
+\subsubsection{Concatenation and skip connections} 
 A crucial concern within GNNs is \term{over-smoothing}, which occurs when node-specific information becomes ``washed out''  after multiple iterations of GNN message passing. Intuitively, this is expected when the information aggregated from the node neighbours during message passing begins to dominate the updated node representations. In such circumstances, the updated node representations (i.e., the $ \mathbf{h}_u^{(\ell+1)} $) may disproportionately rely on the incoming messages aggregated from the neighbours (i.e., the $ \mathbf{m}_{\mathcal{N}(u)} $) at the expense of prior layer node representations (i.e., the $ \mathbf{h}_u^{(\ell)} $).
 
 A straightforward technique to alleviate this involves preserving information from preceding rounds of message passing during the update step, by leveraging vector concatenation or skip connections, .
@@ -368,7 +368,7 @@ In this formulation, $ \circ $ denotes component-wise multiplication, and $ \alp
 \medskip
 These techniques work to mitigate over-smoothing while enhancing the numerical stability of GNN training. They prove particularly beneficial for node classification tasks in moderately deep GNN architectures (2-5 layers) and demonstrate effectiveness in homophilic contexts, where node labels align with local neighbourhood features.
 
-\subsubsection{Gated Updates}
+\subsubsection{Gated updates}
 Drawing inspiration from \term{Recurrent Neural Networks} (\term{RNN}s)T, the GNN message passing algorithm can be interpreted as aggregation functions that receive \term{observations} from neighbours and subsequently update the \term{hidden state} of each node. For instance, one of the earliest GNN architectures defines the update function as:
 \begin{equation*}
     \mathbf{h}_u^{(\ell)} = \text{GRU}(\mathbf{h}_u^{(\ell-1)}, \mathbf{m}_{\mathcal{N}(u)}^{(\ell)}).
@@ -376,14 +376,14 @@ Drawing inspiration from \term{Recurrent Neural Networks} (\term{RNN}s)T, the GN
 
 Here, GRU refers to the update equation of the \term{gated recurrent unit} cell~\cite{Cho2014learningPhraseRepresentations}. Alternatively, updates can be constructed based on LSTM architectures~\cite{selsam2018LearningSATSolverSingleBitSupervision}, or any update function defined within RNN frameworks.
 
-\subsubsection{Jumping Knowledge Connections}
+\subsubsection{Jumping knowledge connections}
 Thus far, we have assumed that the node representations used for downstream tasks are those produced by the final layer of the GNN.  One can enhance the quality of final node representations by leveraging the representations from each layer of the message passing process, leading to final node representations as such:
 \begin{equation*}
     \mathbf{z}_u = f_\text{JK}(\mathbf{h}_u^{(0)} \oplus \mathbf{h}_u^{(1)} \oplus ... \oplus \mathbf{h}_u^{(\ell)}).
 \end{equation*}
 In this case, $ f_\text{JK} $ represents an arbitrary differentiable function. This strategy is referred to as \term{jumping knowledge} (\term{JK}) \term{connections}~\cite{xu2018RepresentationLearningGraphsJumpingKnowledgeNetworks}.
 
-\subsection{Generalized Message Passing}
+\subsection{Generalized message passing}
 Until now we have focused on GNN message passing that operates at the node level. The message passing paradigm can be generalized to incorporate edge and graph-level information~\cite{battaglia2018relationalInductiveBiases} so that the equations defining a message passing step are expressed as follows:
 \begin{align*}
 \label\mathbf{h}^{(\ell)}_{(u,v)} &= \text{UPDATE}_\text{edge}(\mathbf{h}^{(\ell-1)}_{(u,v)}, \mathbf{h}^{(\ell-1)}_u, \mathbf{h}^{(\ell-1)}_v, \mathbf{h}^{(\ell-1)}_G)\\
