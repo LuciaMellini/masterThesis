@@ -63,7 +63,8 @@
 \usepackage{pgfplots}
 \usepgfplotslibrary{colormaps}
 \pgfplotsset{compat=1.18}
-\usetikzlibrary{positioning, shapes, arrows, trees, decorations.text}
+\usetikzlibrary{positioning, shapes, arrows, trees, decorations.text, fit, calc}
+
 
 \newcommand{\hgline}[3]{
 \pgfmathsetmacro{\thetaone}{#1}
@@ -83,8 +84,9 @@
 	colormap={custom}{rgb255(0cm)= (144, 171, 220); rgb255(0.5cm)= (143,170,215); rgb255(1cm)= (89,137,165); rgb255(1.5cm)= (46,106,148); rgb255(2cm)= (18,71,119)}
 }
 
-\usepackage{algorithm}
-\usepackage{algpseudocode}
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+% \usepackage{algorithm}
+% \usepackage{algpseudocode}
 
 \usepackage{shellesc}  % Ensures system calls work
 

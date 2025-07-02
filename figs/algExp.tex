@@ -1,0 +1,68 @@
+\begin{algorithm}
+\caption{Graph Neural Network Training}\label{alg:gnn_train}
+\SetKwInOut{Input}{Input}
+\SetKwInOut{Output}{Output}
+
+\Input{
+    $args$: Training arguments (epochs, eval\_freq, patience, etc.) \\
+    $train\_data$: Training graph data \\
+    $model$: GNN model to train
+}
+\Output{
+    Best validation and test metrics
+}
+
+\BlankLine
+\SetKwProg{Fn}{Procedure}{}{}
+\Fn{Train($args$)}{
+    $\text{prepare\_model}(args)$\;
+    $counter \gets 0$\;
+    $best\_val\_metrics, best\_test\_metrics \gets \text{None},\text{None}$\;
+    
+    Initialize $train\_loader$ with\;
+    \Indp $\text{num\_neighbors} \gets args.num\_neighbours$\;
+    $\text{shuffle} \gets \text{True}$\;
+    $\text{input\_nodes} \gets \text{torch.arange}(0, train\_data.num\_nodes)[::3]$\;
+    \Indm
+    
+    $model.\text{train}()$\;
+    \For{$epoch = 1$ \KwTo $args.epochs$}{
+        $total\_loss \gets 0$\;
+        \ForEach{$batch \in train\_loader$}{
+            $batch\_embeddings \gets model.\text{encode}(features, adj\_train)$\;
+            $train\_metrics \gets model.\text{compute\_metrics}(batch\_embeddings, data, \text{'train'})$\;
+            $\text{backpropagation}()$\;
+        }
+        
+        Initialize $inference\_loader$ with\;
+        \Indp $\text{num\_neighbors} \gets \text{all}$\;
+        $\text{shuffle} \gets \text{False}$\;
+        $\text{input\_nodes} \gets \text{carefully chosen order}$\;
+
+        \Indm
+        
+        $embeddings \gets \text{torch.zeros}((train\_data.num\_nodes, args.embedding\_dim))$\;
+        $model.\text{eval}()$\;
+        \ForEach{$batch \in inference\_loader$}{
+            $local\_embeddings \gets model.\text{encode}(features, adj\_train)$\;
+            $embeddings[seed\_indices] \gets local\_embeddings$\;
+        }
+        
+        \If{$(epoch + 1) \bmod args.eval\_freq = 0$}{
+            $val\_metrics \gets model.\text{compute\_metrics}(embeddings, data, \text{'valid'})$\;
+            \If{$model.\text{has\_improved}(best\_val\_metrics, val\_metrics)$}{
+                $best\_test\_metrics \gets model.\text{compute\_metrics}(embeddings, data, \text{'test'})$\;
+                $best\_val\_metrics \gets val\_metrics$\;
+                $counter \gets 0$\;
+            }
+            \Else{
+                $counter \gets counter + 1$\;
+                \If{$counter == args.patience$ \textbf{and} $epoch > args.min\_epochs$}{
+                    \textbf{break}\;
+                }
+            }
+        }
+    }
+    \Return{$best\_val\_metrics$, $best\_test\_metrics$}\;
+}
+\end{algorithm}
