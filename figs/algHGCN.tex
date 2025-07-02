@@ -8,13 +8,13 @@
 Euclidean features $(\mathbf{x}^{(0), E})_{u\in V}$}
 \Output{Hyperbolic node embeddings $(\mathbf{x}^{(L)})_{u\in V}$}
 \BlankLine
-$\mathbf{x}^{(0)}_u = \exp_{\mathbf{o}}^{\kappa^{(0)}}(\mathbf{x}^{(0)}_u)$ \tcp*[r]{Map Euclidean features to hyperbolic space}
+$\mathbf{x}^{(0)}_u = \exp_{\mathbf{o}}^{\kappa^{(0)}}(\mathbf{x}^{(0)}_u)$ \tcp*[r]{\small Map Euclidean features to hyperbolic space}
 \BlankLine
 \For{each layer $\ell \in [1,\dots,L]$}{
     \For{each node $u \in V$}{
-        $\mathbf{h}^{(\ell)}_u = (\mathbf{W}^{(\ell)} \otimes^{\kappa^{(\ell-1)}} \mathbf{x}^{(\ell-1)}_u) \oplus^{\kappa^{(\ell-1)}} \mathbf{b}^{(\ell)}$ \tcp*[r]{Hyperbolic feature transform}
-        $\mathbf{y}^{(\ell)}_u = \text{AGG}^{\kappa^{(\ell-1)}}(\mathbf{h}^{(\ell)})_u$ \tcp*[r]{Attention-based neighborhood aggregation}
-        $\mathbf{x}^{(\ell)}_u = \sigma^{\otimes^{\kappa^{(\ell-1)}, \kappa^{(\ell)}}}(\mathbf{y}^{(\ell)}_u)$ \tcp*[r]{Non-linear activation with different curvatures}
+        $\mathbf{h}^{(\ell)}_u = (\mathbf{W}^{(\ell)} \otimes^{\kappa^{(\ell-1)}} \mathbf{x}^{(\ell-1)}_u) \oplus^{\kappa^{(\ell-1)}} \mathbf{b}^{(\ell)}$ \tcp*[r]{\small Hyperbolic feature transform}
+        $\mathbf{y}^{(\ell)}_u = \text{AGG}^{\kappa^{(\ell-1)}}(\mathbf{h}^{(\ell)})_u$ \tcp*{\small Attention-based neighborhood aggregation}
+        $\mathbf{x}^{(\ell)}_u = \sigma^{\otimes^{\kappa^{(\ell-1)}, \kappa^{(\ell)}}}(\mathbf{y}^{(\ell)}_u)$ \tcp*[r]{\small Non-linear activation with different curvatures}
     }
 }
 \label{alg:HGCN}
