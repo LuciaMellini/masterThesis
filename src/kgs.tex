@@ -45,7 +45,7 @@ The principal graph structures used to represent knowledge graphs are delineated
 A directed edge-labeled graph is composed of a set of nodes and a set of directed, labeled edges interconnecting these nodes. Within knowledge graphs, nodes correspond to entities, while edges represent the relationships between them. 
 
 \begin{definition}[Directed edge-labelled graph]\label{def:directed-edge-labelled-graph}
-    Given $\textbf{Con}$ a set of constants used as names, a directed edge-labelled graph is a tuple $G = (V, E, L)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge labels, and $E \subseteq V \times L \times V$ is a set of edges.
+    Given $\textbf{Con}$ a set of constants used as, a directed edge-labelled graph is a tuple $G = (V, E, L)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge labels, and $E \subseteq V \times L \times V$ is a set of edges.
 \end{definition}
 
 The Resource Description Framework (RDF)~\cite{Cyganiak2014rdf}, as endorsed by the World Wide Web Consortium (W3C)\footnote{More details about RDFs at \url{https://www.w3.org/TR/rdf12-concepts/}}, represents a standard data model. This model specifies node types including Internationalized Resource Identifiers (IRIs)\footnote{Section of the W3C working draft on RDFs regarding IRIs \url{https://www.w3.org/TR/rdf12-concepts/\#section-IRIs}} for global identification, literals for strings and datatype values, as well as blank nodes for anonymous nodes.
