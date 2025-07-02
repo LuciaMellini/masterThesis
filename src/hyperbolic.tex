@@ -33,6 +33,10 @@ Spaces in non-Euclidean geometries can be classified according to their curvatur
 \subsection{Reimannian manifolds}
 A Riemannian manifold is a mathematical space that generalizes the concept of curved surfaces and higher-dimensional spaces, allowing us to define distances, angles, and curvature in a smooth way. 
 
+Simply put, a \term{manifold} is a topological space\footnote{A \term{topological space} is a set of points, along with a topology, an additional structure which can be defined as a set of neighbourhoods for each point that satisfy some axioms formalizing the concept of closeness.} that locally resembles Euclidean space near each point. More precisely, a $d$-manifold  is a topological space with the property that each point has a neighborhood that resembles an open subset of $d$-dimensional Euclidean space. 
+
+A \term{smooth manifold} is such when functions and coordinate changes along the manifold are infinitely differentiable. The associated metric entails that at each point $p$ lengths and angles are measured differently. 
+
 \begin{definition} (Reimannian manifold)
 Given a smooth manifold $\Mcal$, a Riemannian metric is a smooth function that assigns to each $p \in \Mcal$ an inner product on the tangent space $\mathcal{T}_p\Mcal$:
 \begin{equation*}
@@ -41,11 +45,9 @@ Given a smooth manifold $\Mcal$, a Riemannian metric is a smooth function that a
     A Reimannian manifold is a pair $(\Mcal,g)$ where $\Mcal$ is a smooth manifold and $g$ is a Riemannian metric.
 \end{definition}
 
-Simply put, a \term{manifold} is a topological space\footnote{A \term{topological space} is a set of points, along with a topology, an additional structure which can be defined as a set of neighbourhoods for each point that satisfy some axioms formalizing the concept of closeness.} that locally resembles Euclidean space near each point. More precisely, a $d$-manifold  is a topological space with the property that each point has a neighborhood that resembles an open subset of $d$-dimensional Euclidean space. 
 
-A \term{smooth manifold} is such when functions and coordinate changes along the manifold are infinitely differentiable. The associated metric entails that at each point $p$ lengths and angles are measured differently. 
 
-\paragraph{Distance function and geodesics} An important concept in Euclidean geometry, arising from Euclid's first postulate (\Cref{sec:parallelPostulate}), is that of straight lines, which are shortest paths between points. We can generalize this concept to manifolds by seeking curves with minimal length, called \term{geodesics}. A geodesic is a curve $\gamma(t)=(\gamma(t)^1, \dots, \gamma(t)^d)$ in a manifold $\Mcal$ connecting points $p,q\in \Mcal$ with minimum length. 
+\paragraph{Distance function and geodesics} An important concept in Euclidean geometry, arising from Euclid's first postulate (\Cref{sec:parallelPostulate}), is that of straight lines, which are shortest paths between points. We can generalize this concept to manifolds by seeking curves with minimal length, called \term{geodesics}. A geodesic is a curve in a manifold $\Mcal$ connecting points $p,q\in \Mcal$ with minimum length, defined as $\gamma(t)=(\gamma(t)^1, \dots, \gamma(t)^d)$ depending on parameter $t\in \R$. 
 
 In Euclidean space geodesics are straight lines in $\R^d$ and for given parameters $a,b\in \R^d$ they have the form 
 \begin{equation}
@@ -62,7 +64,7 @@ Building on the concept of manifolds we analyze how distances and straight lines
 
 Because of the fundamental difficulties in representing spaces of constant negative curvature as subsets of Euclidean spaces, there are many equivalent models of hyperbolic spaces\footnote{The possible models of hyperbolic spaces are the following: the Poincaré ball, the Poincaré half-ball, the Klein ball, the hyperboloid model and the upper half-space model.}. Each model emphasizes different aspects of hyperbolic geometry, but no model simultaneously represents all of its properties. In \Cref{sec:hyperboloidModel} we introduce the hyperboloid model as it is useful for computation due to relatively simple formulas for geodesics a. We then focus on Poincaré ball model in \Cref{sec:poincareBall}, that represents the infinite hyperbolic space in a finite ball, and is therefore very useful for visualizations. We then show the relation between these two models (\Cref{sec:isometry}).
 
-For both the models we show how distances are measured and how minimum-length lines are defined. We also put in evidence the respective exponential and logarithmic maps that relate the points on the models to to tangent spaces which are vector spaces that are isomorphic to $\R^d$. In \Cref{hrl} we will use these maps to leverage some of the tools of Euclidean geometry in which standard operations like addition and multiplication are defined for hyperbolic methods, such as optimization or neural network operations.
+For both the models we show how distances are measured and how geodesics are defined. We also put in evidence the respective exponential and logarithmic maps that relate the points on the models to to tangent spaces which are vector spaces that are isomorphic to $\R^d$. In \Cref{hrl} we will use these maps to leverage some of the tools of Euclidean geometry in which standard operations like addition and multiplication are defined for hyperbolic methods, such as optimization or neural network operations.
 
 More in depth discussion on hyperbolic geometry can be found in~\cite{Anderson2006hyperbolicGeometry}\cite{Ramsay2013introductionHyperbolicGeometry}.
 
