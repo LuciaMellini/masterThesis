@@ -9,13 +9,13 @@ The concept of knowledge graphs has garnered significant attention since Google'
     
     \item[Domain-specific representations] According to the Semantic Web Company, knowledge graphs can adapt to represent structures specific to varied fields, encompassing concepts, documents, and datasets.    
     
-        \item[Formal definition] Färber et al.~\cite{Farber2016linked} articulate knowledge graphs as RDF graphs (introduced in \Cref{models:directed_edge_labeled_graphs}), which consist of a collection of $(s, p, o)$ triples, where:
+        \item[Formal definition] Färber et al.~\cite{Farber2016linked} articulate knowledge graphs as RDF graphs (introduced in \Cref{models:directed_edge_labeled_graphs}), composed of RDF terms, that can be represented as a URI ($u\in \mathcal{U}$), a blank node ($b\in \mathcal{B}$), or a literal ($l\in \mathcal{L}$). A RDF graph consists of a collection of $(s, p, o)$ triples, where:
     \begin{itemize}
-        \item $s\in U \cup B$ denotes a subject,
-        \item $o\in U\cup B\cup L$ denotes an object,
-        \item $p\in U$ denotes a predicate
+        \item $s\in \mathcal{U} \cup \mathcal{B}$ denotes a subject,
+        \item $o\in \mathcal{U}\cup \mathcal{B}\cup \mathcal{L}$ denotes an object,
+        \item $p\in \mathcal{U}$ denotes a predicate
     \end{itemize}
-    Here, an RDF term can be represented as a URI ($u\in \mathcal{U}$), a blank node ($b\in \mathcal{B}$), or a literal ($l\in \mathcal{L}$).
+    Here, an 
     
     \item[Dynamic extraction] An emphasis on the automatic extraction of interconnected facts from the web has been presented by Pujara et al.~\cite{Pujara2013KGIdentification}.
 \end{description}
@@ -45,7 +45,7 @@ The principal graph structures used to represent knowledge graphs are delineated
 A directed edge-labeled graph is composed of a set of nodes and a set of directed, labeled edges interconnecting these nodes. Within knowledge graphs, nodes correspond to entities, while edges represent the relationships between them. 
 
 \begin{definition}[Directed edge-labelled graph]\label{def:directed-edge-labelled-graph}
-    A directed edge-labelled graph is a tuple $G = (V, E, L)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge labels, and $E \subseteq V \times L \times V$ is a set of edges.
+    Given $\textbf{Con}$ a set of constants used as names, a directed edge-labelled graph is a tuple $G = (V, E, L)$, where $V \subseteq \textbf{Con}$ is a set of nodes, $L \subseteq \textbf{Con}$ is a set of edge labels, and $E \subseteq V \times L \times V$ is a set of edges.
 \end{definition}
 
 The Resource Description Framework (RDF)~\cite{Cyganiak2014rdf}, as endorsed by the World Wide Web Consortium (W3C)\footnote{More details about RDFs at \url{https://www.w3.org/TR/rdf12-concepts/}}, represents a standard data model. This model specifies node types including Internationalized Resource Identifiers (IRIs)\footnote{Section of the W3C working draft on RDFs regarding IRIs \url{https://www.w3.org/TR/rdf12-concepts/\#section-IRIs}} for global identification, literals for strings and datatype values, as well as blank nodes for anonymous nodes.
