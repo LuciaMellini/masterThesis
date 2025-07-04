@@ -1,17 +1,21 @@
-\begin{figure}
-        
+\begin{figure}        
 \centering
-    \begin{tikzpicture}
+\begin{adjustbox}{margin=-1cm 0cm 0cm 0cm} % Left, Bottom, Right, Top margins
+
+\begin{tikzpicture}
 \begin{axis}[
     ybar,
-    ymin=0.5,
+    xmin=-2,
+    ymin=-10,
+    ymax=580,
     ymode=log, % Using logarithmic scale for y-axis
     log basis y=10,
     bar width=0.5pt,
-    width=12cm, % Make the plot wider
-    height=8cm,  % Adjusted height for better proportions
-    xlabel= Disease,
-    ylabel= Occurences (log scale),
+    axis lines=left,
+    width=0.8\textwidth,  % Scale to full text width
+    height=0.6\textwidth, % Optional, for aspect ratio
+    xlabel= {Disease},
+    ylabel= {Occurences (log scale)},
     ylabel shift=-35pt, % Moves the y-label closer to the axis
     xlabel shift=-10pt, % Moves the x-label closer to the axis
     label style={font=\bfseries, fill=none},
@@ -518,6 +522,7 @@
 };
 \end{axis}
 \end{tikzpicture}
-\caption{Bar plot of Mendelian disease occurrence distribution the Phenopacket Store.}
+\end{adjustbox}
+\caption{Bar plot of Mendelian disease occurrence distribution in the Phenopacket Store.}
 \label{fig:disease-histogram}
 \end{figure}
