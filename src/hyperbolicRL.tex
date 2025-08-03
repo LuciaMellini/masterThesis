@@ -75,24 +75,47 @@ To perform bias addition one can define $\mathbf{b}$ as an Euclidean vector loca
     \mathbf{x} \oplus^\kappa \mathbf{b} = \exp_{\mathbf{x}}^\kappa\left(P_{\mathbf{o}\to \mathbf{x}}^\kappa\left(\log_{\mathbf{o}}^\kappa(\mathbf{b})\right)\right).
 \end{equation*}
 
-\subsection{Neighbourhood aggregation in hyperbolic space}
-As seen in \Cref{sec:gnn} regarding GNNs, the neighbourhood aggregation step (\Cref{eq:neighAgg}) is crucial to capture neighbourhood structures and features. The analogue of mean aggregation in Euclidean GNNs (\Cref{eq:aggregateBase}) in hyperbolic space is the Fréchet mean~\cite{frechet1948elements}, which alas has no closed form solution. Therefor, the authors of HGCN perform aggregation in tangent spaces using hyperbolic attention.
+\subsection{Neighbourhood aggregation in hyperbolic space}\label{sec:hgcnAggregation}
+As seen in \Cref{sec:gnn} regarding GNNs, the neighbourhood aggregation step (\Cref{eq:neighAgg}) is crucial to capture neighbourhood structures and features. The analogue of mean aggregation in Euclidean GNNs (\Cref{eq:aggregateBase}) in hyperbolic space is the Fréchet mean~\cite{frechet1948elements}, which alas has no closed form solution. Therefore, the authors of HGCN perform aggregation in tangent spaces using hyperbolic attention.
 
 \subsubsection{Attention-based aggregation}
 Attention in GNNs learns a notion of neighbours' importance and aggregates neighbours' messages accordingly, as discussed in \Cref{sec:neighbourhoodAttention}. However, attention on Euclidean embeddings does not take into account the possible hierarchical nature of graphs. Thus, the need for hyperbolic attention-based aggregation. 
 
-Given a pair of hyperbolic embeddings $(\mathbf{x}_i, \mathbf{x}_j)$, one first maps them to the tangent space to the origin to compute attention weights $w_{ij}$ with concatenation and Euclidean Multi-layer Perceptron (MLP). Then the nodes' representations are averaged, like in the basic GNN. The aggregation step is formalized as:
-\begin{equation*}
-    \text{AGGREGATE}^\kappa(\mathbf{x})_i = \exp_{\mathbf{x}_i}^\kappa\left(\sum_{j\in\mathcal{N}(i)}w_{ij}\log_{\mathbf{x}_i}^\kappa\left(\mathbf{x}_j\right)\right)
-\end{equation*}
-and the weights are computed as:
+Given a pair of hyperbolic embeddings $(\mathbf{x}_i, \mathbf{x}_j)$, one first maps them to the tangent space to the origin to compute attention weights $w_{ij}$ with concatenation and Euclidean Multi-layer Perceptron (MLP) as formalized below:
 \begin{equation*}
     w_{ij} = \text{softmax}\left(\text{MLP}\left(\log_{\mathbf{o}}^\kappa(\mathbf{x}_i) \left|\right| \log_{\mathbf{o}}^\kappa\left(\mathbf{x}_j\right)\right)\right).
 \end{equation*}
 
-In this way the aggregation is directly performed in the tangent space for each point, as this is where the Euclidean approximation is best. This approach is schematized in \Cref{fig:HGCNaggregation}: the message is first mapped to the tangent space, then the aggregation is performed in the tangent space and finally the result is mapped back to the hyperbolic space.
+Then the nodes' representations are averaged, like in the basic GNN. The aggregation step can be performed in two flavours.
+\begin{description}
+    \item[global] 
+    In this case all features are simply mapped to the tangent space to the origin and attention information is aggregated globally across all nodes. 
+    \begin{equation*}
+        \text{AGGREGATE}^\kappa(\mathbf{x})_i = \exp_{\mathbf{o}}^\kappa\left(\sum_{j\in V}w_{ij}\log_{\mathbf{o}}^\kappa\left(\mathbf{x}_j\right)\right).
+    \end{equation*}    
+    This option allows for a faster and more scalable implementation since it does not require computing the tangent space for each node individually. However one loses node-specific geometric context since all nodes share the same tangent space at the origin.
 
-\input{figs/figHGCNAggregation}
+    \item[local]
+    To account of local geometry, for a node $i$, one can ``see'' all the nodes in its neighbourhood from the perspective of node $i$ on the manifold.
+    Each node aggregates features from its local neighborhood using manifold operations.
+
+    \begin{equation*}
+        \text{AGGREGATE}^\kappa(\mathbf{x})_i = \exp_{\mathbf{o}}^\kappa\left(\exp_{\mathbf{x}_i}^\kappa\left(\sum_{j\in\mathcal{N}(i)}w_{ij}\log_{\mathbf{x}_i}^\kappa\left(\mathbf{x}_j\right)\right)\right)
+    \end{equation*}
+
+    In this way the aggregation is directly performed in the tangent space for each point, as this is where the Euclidean approximation is best. This approach is schematized in \Cref{fig:HGCNaggregation}: the message is first mapped to the tangent space, then the aggregation is performed in the tangent space and finally the result is mapped back to the hyperbolic space.
+
+    \input{figs/figHGCNAggregation}
+
+    Although this approach is preferred in terms of manifold-awareness, computing the logarithmic map for each node over the whole graph is computationally expensive. This version is also more memory intensive, as it requires storing the tangent space of each node in the graph.
+
+
+\end{description}
+
+
+
+
+
 
 \subsubsection{Non-linear activation with different curvatures}
 Analogous to Euclidean aggregation (\Cref{eq:aggregateBase}) HGCN uses a non-linear activation function $\sigma(\cdot)$ such that $\sigma(0)=0$ to learn non-linear transformations. Given hyperbolic curvatures $-\frac{1}{\kappa^{(\ell-1)}}$ and $-\frac{1}{\kappa^{(\ell)}}$ at layers $\ell-1$ and $\ell$ respectively, the authors introduce a hyperbolic non-linear activation $\sigma^{\otimes^{\kappa^{(\ell-1)}, \kappa^{(\ell)}}}$ for different curvatures. This step is crucial as it allows to smoothly vary curvature at each layer. More concretely, HGCN applies the Euclidean non-linear activation to $\mathcal{T}_\mathbf{o}\Hy^{d,\kappa^{(\ell)}}$ and then maps the result back to $\Hy^{d,\kappa^{(\ell)}}$:
@@ -102,7 +125,7 @@ Analogous to Euclidean aggregation (\Cref{eq:aggregateBase}) HGCN uses a non-lin
 
 Note that in order to apply the exponential map, points must be located in the tangent space at the north pole. Fortunately, tangent spaces of the north pole are shared across hyperboloid manifolds of the same dimension that have different curvatures.
 
-\subsection{HGCN architecture}
+\subsection{HGCN architecture}\label{sec:hgcnArchitecture}
 Having introduced the building blocks of HGCN we summarize the model architecture in the following algorithm.
 \input{figs/algHGCN}
 
