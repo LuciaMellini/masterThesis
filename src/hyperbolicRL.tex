@@ -86,7 +86,7 @@ Given a pair of hyperbolic embeddings $(\mathbf{x}_i, \mathbf{x}_j)$, one first 
     w_{ij} = \text{softmax}\left(\text{MLP}\left(\log_{\mathbf{o}}^\kappa(\mathbf{x}_i) \left|\right| \log_{\mathbf{o}}^\kappa\left(\mathbf{x}_j\right)\right)\right).
 \end{equation*}
 
-Then the nodes' representations are averaged, like in the basic GNN. The aggregation step can be performed in two flavours.
+These weights are masked against the adjacency matrix of the graph $\mathbf{A}$, so that $w_{ij}=0$ if $(i,j)\notin E$. The attention weights are then used to aggregate the neighbours' features, like in the basic GNN. This aggregation step can be performed in two flavours.
 \begin{description}
     \item[global] 
     In this case all features are simply mapped to the tangent space to the origin and attention information is aggregated globally across all nodes. 
@@ -111,11 +111,6 @@ Then the nodes' representations are averaged, like in the basic GNN. The aggrega
 
 
 \end{description}
-
-
-
-
-
 
 \subsubsection{Non-linear activation with different curvatures}
 Analogous to Euclidean aggregation (\Cref{eq:aggregateBase}) HGCN uses a non-linear activation function $\sigma(\cdot)$ such that $\sigma(0)=0$ to learn non-linear transformations. Given hyperbolic curvatures $-\frac{1}{\kappa^{(\ell-1)}}$ and $-\frac{1}{\kappa^{(\ell)}}$ at layers $\ell-1$ and $\ell$ respectively, the authors introduce a hyperbolic non-linear activation $\sigma^{\otimes^{\kappa^{(\ell-1)}, \kappa^{(\ell)}}}$ for different curvatures. This step is crucial as it allows to smoothly vary curvature at each layer. More concretely, HGCN applies the Euclidean non-linear activation to $\mathcal{T}_\mathbf{o}\Hy^{d,\kappa^{(\ell)}}$ and then maps the result back to $\Hy^{d,\kappa^{(\ell)}}$:
