@@ -83,14 +83,27 @@ We clarify the integration of the Phenopacket data with the underlying knowledge
 \section{Link prediction for differential diagnosis}\label{sec:linkPredictionDiffDiagnosis}
 In this section, we describe how we have employed PatientKG to address the challenge of differential diagnosis. We first adapt the problem to the PatientKG at our disposal.
 
-\subsection{Experiment Setup}
+\subsection{Experimental setup}
 Utilizing PatientKG, the problem of differential diagnosis is reframed as the link prediction task involving edges of type \emph{Has disease} connecting the \emph{Person} nodes representing patients to the corresponding \emph{Disease} node. Considering the techniques evaluated in \Cref{grl}, we have chosen an inductive approach, specifically Graph Neural Networks (GNNs), to enable the model to generalize to previously unseen patients. In particular, we have selected the HGCN model, according to the reasoning discussed in \Cref{sec:hypPatientKG}.
 
 To train the model for link prediction and evaluate its performance, the edges in PatientKG were partitioned into two sets: a test set composed of randomly selected \emph{Has disease} edges and a training set comprising the remaining \emph{Has disease} edges and all other edges in PatientKG. To regulate the learning process through early stopping, we also have extracted a validation set.
 
-Given the limited availability of annotated disease diagnoses, we opted not to include \emph{Has disease} edges within the validation set utilized to monitor the learning process. The distribution of cohorts by disease, illustrated in \Cref{fig:disease-histogram}, indicates that approximately half of the diseases represented in the Phenopacket Store have fewer than 10 cohorts, and roughly one-third have at most 5 occurrences.
+The distribution of cohorts by disease, illustrated in \Cref{fig:disease-histogram}, indicates that approximately half of the diseases represented in the Phenopacket Store have fewer than 10 cohorts, and roughly one-third have at most 5 occurrences. Given the limited availability of annotated disease diagnoses we have including in the test set only diseases with at least 5 cohorts. In addition we opted not to include \emph{Has disease} edges within the validation set utilized to monitor the learning process.
 
-Since the test edges are derived from the relations provided by the Phenopacket Store, the model trained on the training set will be evaluated on differential diagnoses exclusively among Mendelian diseases. This approach is logical as Mendelian diseases are often explored after all alternative common diagnoses have been ruled out. Preliminary experiments conducted using this data split revealed indications of potential overfitting. Since the articles typically pertain to specific diseases, the edges connecting patients to their corresponding articles of origin create a shortcut for inferring the patients' diseases. To prevent data leakage, we excluded all \emph{Has part} and \emph{Part of} edges linking the \emph{Person} nodes to the \emph{Article} nodes.
+Since the test edges are derived from the relations provided by the Phenopacket Store, the model trained on the training set was evaluated on differential diagnoses exclusively among Mendelian diseases. This approach is logical as Mendelian diseases are often explored after all alternative common diagnoses have been ruled out. Preliminary experiments conducted using this data split revealed indications of potential overfitting. Since the articles typically pertain to specific diseases, the edges connecting patients to their corresponding articles of origin create a shortcut for inferring the patients' diseases. To prevent data leakage, we excluded all \emph{Has part} and \emph{Part of} edges linking the \emph{Person} nodes to the \emph{Article} nodes.
+
+\medskip
+
+In \cref{tab:hyperparams} we list how the main hyperparameters have been set across all experiments. The first three are related to the HGCN model, :
+\begin{itemize}
+  \item the number of layers $L$
+  \item the number of attention heads $R$
+  \item the activation function $\sigma$ 
+\end{itemize}
+
+
+
+% negative sampling
 
 \subsection{Why hyperbolic graph representation learning?}\label{sec:hypPatientKG}
 Prior to delving into the run experiments, we would like to account for the selection of hyperbolic graph representation learning techniques, specifically HGCN. As discussed in \Cref{sec:hyperbolicAndTrees}, hyperbolic geometry is particularly suited to represent hierarchical structures, such as those nested within PatientKG (refer to \Cref{sec:abstractGraphStructure}). To empirically verify this, we embedded each hierarchical component into hyperbolic space. To emphasize the positioning of each node within the hierarchy, we have considered the transitive closure of each subtree. The transitive closure of a directed graph is derived by adding an edge between every pair of nodes that are connected by a directed path. For instance, \Cref{fig:diseasePoincare} depicts the embedded \emph{Disease} nodes arranged within a Poincaré ball. One notices that nodes with a more extensive neighbourhood, i.e. nodes situated higher in the ontological hierarchy, are positioned closer to the centre of the ball. This representation can be interpreted as a real-world instance of the structure schematized in \Cref{fig:radialTree}, in accordance with the considerations articulated in \Cref{sec:expGrowth}. 
@@ -104,5 +117,37 @@ In \Cref{tab:tabSubclassofPerf}, we display the performance of the three models 
 
 We are aware of more advanced techniques than HGCN that are tailored to knowledge graph applications. In particular, we highlight the \textsc{Att\_H} model~\cite{chami2020lowDimensionalHyperbolicKnowledgeGraphEmbeddings}, proposed by the authors of HGCN. Their rationale is that existing hyperbolic embedding methods do not adequately account for the logical patterns present in knowledge graphs, which we have referred to as "horizontal" links. Consequently, they introduce a class of hyperbolic KG embedding models that simultaneously capture hierarchical and logical patterns by combining hyperbolic reflections and rotations with attention. We have chosen to stick with a model like HGCN that emphasizes the hierarchical components, as we were interested in evaluating whether this approach would be sufficient to address the challenges of differential diagnosis. We leave the exploration of more advanced hyperbolic models for future work.
 
+\subsection{Managing a large graph}
+As seen in the description of the HGCN architecture, the aggregation step (\Cref{sec:hgcnAggregation}) requires the model to access the neighbourhoods of each node. In the code implemented in the Hazy Research repository this information is provided in the form of an adjacency matrix of the whole input graph. However for large graphs like PatientKG, this approach is not feasible due to memory constraints, especially considering that the model is trained and evaluated on GPU.
+To overcome this issue we have initially attempted to reimplement the model using sparse matrices, keeping in mind the properties of PatientKG's adjacency matrix. Unfortunately we encountered various technical issues since the \texttt{PyTorch} library used to implement HGCN is ill equipped to handle sparse tensors. The attempted solution entailed specifying methods, among others, for sparse-sparse and sparse-dense matrix division, row-wise normalization, and various hyperbolic functions, such as the hyperbolic tangent. However, accounting for forward and backward passes, we were unable to achieve a working implementation considering the time constraints and scope of this thesis.
 
-\input{figs/algExp.tex}
+We then opted for a more straightforward solution, that is to use mini-batching of the graph. We now discuss the validity of this choice and how we have implemented this approach in our experiments.
+
+\subsubsection{Mini-batching}
+
+Training deep neural networks (DNNs) typically involves processing independent and identically distributed (i.i.d.) examples, whereas graph neural networks (GNNs) operate on interconnected vertices within a graph structure, introducing dependencies that complicate training. GNNs can be trained using either full-graph (full-batch) or mini-batch approaches.
+
+In full-graph training, message-passing is performed across the entire graph in each epoch, ensuring that all vertex dependencies are considered. However, this method becomes computationally expensive and memory-intensive for large graphs, requiring multi-GPU model parallelism where the graph is partitioned and hidden features are exchanged across GPUs. While full-graph training avoids information loss by processing the complete graph, its high per-epoch cost and communication overhead make scaling difficult.
+
+Mini-batch training, in contrast, splits the graph into smaller subgraphs (batches) and processes them iteratively, updating model parameters multiple times per epoch. However, preparing these mini-batches is non-trivial because GNNs require $k$-hop neighbourhood aggregation—meaning that for a GNN with $L$ layers, each batch must include vertices up to $L$ hops away to ensure correct message-passing. This leads to the neighbourhood explosion problem, where the required subgraph grows exponentially with depth, making full neighbourhood aggregation impractical. To mitigate this, mini-batch systems use sampling techniques (e.g., Neighbourhood Sampling, ClusterGCN, GraphSAINT) to load only a subset of the k-hop neighbours, trading off some accuracy for efficiency. 
+
+Despite these challenges, mini-batch training often converges faster in practice because it performs multiple parameter updates per epoch, whereas full-graph training updates only once per epoch. Also the simple Neighbourhood Sampling method empirically shows a more stable behaviour.
+
+To implement the batching of PatientKG into subgraphs we have relied on the \texttt{torch-geometric} library~\cite{fey2019pytorchGeometric}. More specifically we have chosen to sample the subgraphs using the \texttt{NeighborSampler} class. This class is designed to sample a fixed-size batch of so called seed nodes, and for each of these it samples their neighbourhood. For each seed node one can specify a list of integers $[n_1, n_2, \dots, n_k]$, such that $n_1$ of its neighbours are sampled, then from each of those 1-hop neighbours $n_2$ neighbours are sampled, and so on, until $n_k$ neighbours are sampled from the $k$-th hop neighbours. The sampling is performed in a breadth-first manner, meaning that all nodes at the first hop are sampled before moving to the second hop, and so on. This approach allows us to control the size and the of the subgraphs sampled, letting us determine the size of the input adjacency matrix a priori. This sampling strategy implies that all the nodes are seen at least once by the model when they are seed nodes of a given batch, and can be re-extracted if they are selected among the sampled neighbours of other nodes. 
+
+Like when batching in classical machine learning settings, on each local sample the forward and backward passes are performed independently, and the weights of the model are updated after each batch. 
+
+\medskip 
+
+In addition to the hyperparameters listed in \Cref{tab:hyperparams}, we also hae set the batch size and neighbourhood sample sizes. Using the parameters in GraphSAGE~\cite{Hamilton2017inductiveRepresentationLearning}, we set the neighbourhood sample sizes to $n_1=25$ and $n_2=10$ since we were working with a 2 layer model. To respect memory constraints we have set the batch size to $172$. In addition we have tested the model on batches formed by fewer extracted nodes, but with additional hops from the seed nodes. Concretely the list describing the neighbourhood sample sizes was set to $[5,3,3,3]$. In this case we were able to increase the batch size to $235$ nodes.
+
+\subsubsection{Final inference step}
+Recall from \Cref{sec:hgcnArchitecture} that the link prediction task requires the encoded embeddings to be decoded to compute the probability scores among the edges. Note that when encoding a subgraph the resulting embeddings refer only to that subset of nodes. This does not pose a problem during training seen that the embeddings local to the batch are sufficient to compute the local loss for the backward pass. In the case of validation and testing, however, one needs the embeddings of all the nodes to compute the link prediction scores. To address this, one adds a final inference step after training. This involves running a forward pass on (ideally) the entire graph. As discussed before, for PatientKG this is not feasible due to memory constraints, therefore one can load the full graph in manageable chunks, made up of some seed nodes and their whole neighbourhoods. In this way the forward pass is as similar as possible to the full-graph inference. 
+
+In \Cref{fig:neighDistr} we plot the distribution of the neighbourhood sizes among nodes in PatientKG. The distribution is highly skewed, as put in evidence by the knee point in the plot\footnote{The knee point has been located using the kneedle algorithm~\cite{satopaa2011KneePointDetection}}. This has allowed us to reduce the memory footprint during inference by creating batches mad up of few large neighbourhood nodes and a lot of small neighbourhood nodes. 
+\input{figs/plotNeighDistr}
+
+
+\input{figs/algExp}
+
+\section{Results}
