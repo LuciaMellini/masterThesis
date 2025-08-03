@@ -119,13 +119,14 @@ We are aware of more advanced techniques than HGCN that are tailored to knowledg
 
 \subsection{Managing a large graph}
 As seen in the description of the HGCN architecture, the aggregation step (\Cref{sec:hgcnAggregation}) requires the model to access the neighbourhoods of each node. In the code implemented in the Hazy Research repository this information is provided in the form of an adjacency matrix of the whole input graph. However for large graphs like PatientKG, this approach is not feasible due to memory constraints, especially considering that the model is trained and evaluated on GPU.
-To overcome this issue we have initially attempted to reimplement the model using sparse matrices, keeping in mind the properties of PatientKG's adjacency matrix. Unfortunately we encountered various technical issues since the \texttt{PyTorch} library used to implement HGCN is ill equipped to handle sparse tensors. The attempted solution entailed specifying methods, among others, for sparse-sparse and sparse-dense matrix division, row-wise normalization, and various hyperbolic functions, such as the hyperbolic tangent. However, accounting for forward and backward passes, we were unable to achieve a working implementation considering the time constraints and scope of this thesis.
+Seen these limitations it was necessary to settle for the more general global version of the aggregation step. 
+To further overcome this issue we have initially attempted to reimplement the model using sparse matrices, keeping in mind the properties of PatientKG's adjacency matrix. Unfortunately we encountered various technical issues since the \texttt{PyTorch} library used to implement HGCN is ill equipped to handle sparse tensors. The attempted solution entailed specifying methods, among others, for sparse-sparse and sparse-dense matrix division, row-wise normalization, and various hyperbolic functions, such as the hyperbolic tangent. However, accounting for forward and backward passes, we were unable to achieve a working implementation considering the time constraints and scope of this thesis.
 
 We then opted for a more straightforward solution, that is to use mini-batching of the graph. We now discuss the validity of this choice and how we have implemented this approach in our experiments.
 
 \subsubsection{Mini-batching}
 
-Training deep neural networks (DNNs) typically involves processing independent and identically distributed (i.i.d.) examples, whereas graph neural networks (GNNs) operate on interconnected vertices within a graph structure, introducing dependencies that complicate training. GNNs can be trained using either full-graph (full-batch) or mini-batch approaches.
+Training deep neural networks (DNNs) typically involves processing independent and identically distributed (i.i.d.) examples, whereas graph neural networks (GNNs) operate on interconnected vertices within a graph structure, introducing dependencies that complicate training. GNNs can be trained using either full-graph (full-batch) or mini-batch approaches~\cite{bajaj2024graph}.
 
 In full-graph training, message-passing is performed across the entire graph in each epoch, ensuring that all vertex dependencies are considered. However, this method becomes computationally expensive and memory-intensive for large graphs, requiring multi-GPU model parallelism where the graph is partitioned and hidden features are exchanged across GPUs. While full-graph training avoids information loss by processing the complete graph, its high per-epoch cost and communication overhead make scaling difficult.
 
@@ -135,7 +136,10 @@ Despite these challenges, mini-batch training often converges faster in practice
 
 To implement the batching of PatientKG into subgraphs we have relied on the \texttt{torch-geometric} library~\cite{fey2019pytorchGeometric}. More specifically we have chosen to sample the subgraphs using the \texttt{NeighborSampler} class. This class is designed to sample a fixed-size batch of so called seed nodes, and for each of these it samples their neighbourhood. For each seed node one can specify a list of integers $[n_1, n_2, \dots, n_k]$, such that $n_1$ of its neighbours are sampled, then from each of those 1-hop neighbours $n_2$ neighbours are sampled, and so on, until $n_k$ neighbours are sampled from the $k$-th hop neighbours. The sampling is performed in a breadth-first manner, meaning that all nodes at the first hop are sampled before moving to the second hop, and so on. This approach allows us to control the size and the of the subgraphs sampled, letting us determine the size of the input adjacency matrix a priori. This sampling strategy implies that all the nodes are seen at least once by the model when they are seed nodes of a given batch, and can be re-extracted if they are selected among the sampled neighbours of other nodes. 
 
-Like when batching in classical machine learning settings, on each local sample the forward and backward passes are performed independently, and the weights of the model are updated after each batch. 
+Like when batching in classical machine learning settings, on each local sample the forward and backward passes are performed independently, and the weights of the model are updated after each batch. The weights are updated according to the loss value computed on only the seed nodes in each batch. Empirically, we have found that computing the loss over all batch nodes to guide backpropagation causes overfitting. Focusing on seed nodes prevents the backpropagation signal from being diluted across thousands of neighbours. This choice allows the model to learn more effectively from the most relevant nodes in each batch, while still benefiting from the rich information provided by their neighbors.
+
+
+To assure the compatibility among batches it was necessary to set the curvature of the hyperbolic space to a fixed value, which we have set to $c=1$. This derives from the definition of the Poincaré ball model (\Cref{sec:poincareBall}).
 
 \medskip 
 
@@ -151,3 +155,5 @@ In \Cref{fig:neighDistr} we plot the distribution of the neighbourhood sizes amo
 \input{figs/algExp}
 
 \section{Results}
+
+% \input{figs/lossResultsns_20}
