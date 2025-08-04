@@ -1,0 +1,110 @@
+\begin{figure}
+\centering
+\begin{adjustbox}{margin=-2.3cm 0cm 0cm 0cm} % Left, Bottom, Right, Top margins
+
+  \begin{tikzpicture}
+    % Read the CSV once
+      \pgfplotstableread[col sep=comma]{figs/data/lossResultsns_20.csv}\datatablea
+      \pgfplotstableread[col sep=comma]{figs/data/lossResultsns_50.csv}\datatableb
+      
+      \begin{groupplot}[
+        group style={
+          group size=2 by 3,        % 2 columns, 3 rows
+          vertical sep=3em,         % space between plots
+          horizontal sep=2em,       % space between columns
+          xlabels at=edge bottom,  
+          ylabels at=edge left
+        },
+        width=6.3cm,
+        height=5cm,
+        scale only axis,            % make "width" apply only to the plot area
+        xlabel={Epoch},
+        axis lines=left,
+        ymajorgrids,
+        grid style=dashed,
+        label style={font=\bfseries\small, fill=none},
+        xticklabel style={fill=none, font=\footnotesize},
+        yticklabel style={fill=none, font=\footnotesize},
+        ylabel style={
+          at={(-0.13,0.5)},         % Position relative to axis
+          anchor=center,            % Center both horizontally and vertically
+          align=center,
+        },
+        legend style={
+          font = \small,
+          at={(1,-2.9)},        % legend below all plots
+          anchor=north,
+          draw=none,
+          fill=none,
+          legend columns=2,
+          legend cell align=center,
+          legend image post style={mark=none},
+          nodes={draw=none, fill=none, shape=rectangle}
+        }
+      ]
+
+        % 1) Loss
+        \nextgroupplot[
+          ylabel=Loss,
+          ymin=1.1, ymax=1.5,
+          xlabel = {(a) 20:1 negative samples},
+          xlabel style={at={(0.5,-2.4)}, anchor=north, align=center, font=\small} 
+        ]
+        \addplot[steelbluedark, semithick, mark=none]
+          table[x=epoch,y=train_loss] {\datatablea};
+        \addlegendentry{Training set}
+        \addplot[red!50, semithick, mark=none]
+          table[x=epoch,y=val_loss]   {\datatablea};
+        \addlegendentry{Validation set}
+
+        \nextgroupplot[
+          ymin=1.1, ymax=1.5,
+          xlabel = {(b) 50:1 negative samples},
+          xlabel style={at={(0.5,-2.4)}, anchor=north, align=center, font=\small} 
+        ]
+        \addplot[steelbluedark, semithick, mark=none]
+          table[x=epoch,y=train_loss] {\datatableb};
+        \addplot[red!50, semithick, mark=none]
+          table[x=epoch,y=val_loss]   {\datatableb};
+
+        % 2) ROC-AUC
+        \nextgroupplot[
+          ylabel=ROC-AUC,
+          ymin=0, ymax=1
+        ]
+        \addplot[steelbluedark, semithick, mark=none]
+          table[x=epoch,y=train_roc] {\datatablea};
+        \addplot[red!50, semithick, mark=none]
+          table[x=epoch,y=val_roc]   {\datatablea};
+          
+        \nextgroupplot[
+          ymin=0, ymax=1
+        ]
+        \addplot[steelbluedark, semithick, mark=none]
+          table[x=epoch,y=train_roc] {\datatableb};
+        \addplot[red!50, semithick, mark=none]
+          table[x=epoch,y=val_roc]   {\datatableb};
+
+        % 3) Average Precision
+        \nextgroupplot[
+          ylabel=Average precision,
+          ymin=0, ymax=1
+        ]
+        \addplot[steelbluedark, semithick, mark=none]
+          table[x=epoch,y=train_ap] {\datatablea};
+        \addplot[red!50, semithick, mark=none]
+          table[x=epoch,y=val_ap]   {\datatablea};
+
+        \nextgroupplot[
+          ymin=0, ymax=1
+        ]
+        \addplot[steelbluedark, semithick, mark=none]
+          table[x=epoch,y=train_ap] {\datatableb};
+        \addplot[red!50, semithick, mark=none]
+          table[x=epoch,y=val_ap]   {\datatableb};
+
+      \end{groupplot}
+  \end{tikzpicture}
+\end{adjustbox}
+\caption{Evolution of metrics across training epochs, for training and validation sets.}
+\end{figure}
