@@ -1,12 +1,9 @@
-\documentclass[12pt]{article}
-
-\usepackage[utf8]{inputenc}
-\usepackage[backend=bibtex]{biblatex} 
-\addbibresource{bibliography.bib} 
-\usepackage{graphicx}
+\documentclass[11pt]{article}
+\usepackage{xurl}
+\usepackage[a4paper, margin=1.5in]{geometry}
 
 
-\title{Integration of KGs and PSNs for biomedical application}
+\title{Differential diagnosis of Mendelian disease using hyperbolic graph representation learning}
 \author{Lucia Mellini}
 \date{}
 
@@ -14,19 +11,25 @@
 
 \maketitle
 
-In the past year the literature has seen significant efforts in the automated collection, integration, and analysis of the vast amount of heterogeneous biomedical information published online. This information can be semi-automatically mined from various knowledge bases, harmonized and standardized, and condensed into integrated biomedical information structures known as knowledge graphs (KGs). In these graphs, information is represented by entities or concepts (such as proteins, drugs, and chemical compounds), which are nodes linked by edges representing known relationships.
-To extract meaningful knowledge from these graphs, various graph representation learning techniques have been proposed, including random-walk based approaches and graph neural networks~\cite{Hamilton2020GraphRL}. These techniques compute representative embeddings for graph elements and use these embeddings to predict unknown categories of nodes or edges or the existence of edges between nodes.
+In the past years literature has seen significant efforts into gathering biomedical knowledge in the form of knowledge graphs. Numerous graph representation learning (GRL) techniques have been proposed to extract meaningful knowledge from these graphs. Despite the progress in data integration research, a clear divide remains between two predictive strategies, as pointed out in the vision of individualized knowledge graphs~\cite{PingPeipei2017IKGA}. On one side are predictive methods that work on datasets representing specific patient cases, which often yield knowledge that is not generalizable enough to be applied to compute reliable predictions on novel cases. On the other side are methods that work on Knowledge Graphs (KGs) to uncover broad, static knowledge that is often too general for practical application. What is missing is an approach that enables predictions on specific sample data using the broad knowledge from KGs. To address this issue, the first challenge is to connect these two knowledge sources. This requires an investigation into how nodes representing specific patients or samples can be linked to nodes representing broader concepts, such as genomic features. Secondly, given the vast number of nodes in a KG compared to the often limited number of cases in medical studies, new approaches should be developed to process a KG in a way that biases its representation to retain information from less represented nodes.
 
-Despite the progress in data integration research, a clear divide remains between two predictive strategies, as pointed out in the vision of ``individualized knowledge graphs''~\cite{PingPeipei2017IKGA}. On one side are predictive methods that work on datasets representing specific cases, which often yield knowledge that is not generalizable enough to be applied to compute reliable predictions on novel cases. On the other side are methods that work on KGs to uncover broad, static knowledge that is often too general for practical application. What is missing is an approach that enables predictions on specific sample data using the broad knowledge from KGs, while also deriving new relationships within a KG based on information from specific sample data. To address this issue, the first challenge is to connect these two knowledge sources. This requires an investigation into how nodes representing specific patients or samples can be linked to nodes representing broader concepts, such as genes or phenotypes. Secondly, given the vast number of nodes in a KG compared to the often limited number of cases in medical studies, new techniques should be developed to process a KG in a way that biases its representation to retain information from less represented nodes.
+The techniques analyzed in this work are addressed at the task of differential diagnosis of patients suffering from Mendelian diseases\footnote{Mendelian diseases are those caused by a mutation in a single gene that follow Mendelian inheritance patterns. These diseases mostly overlap with rare diseases, but they are not equivalent sets.}, for which the available data is not sufficient for statistically relevant considerations. The goal is to predict the most likely Mendelian disease for a new patient based on their phenotypes (symptoms) and sex. 
 
-In our study case we consider PrimeKG~\cite{ChandakPayal2023Bakg} as our knowledge base. PrimeKG integrates 20 high-quality biomedical resources to describe 17,080 diseases with 4,050,249 relationships representing ten major biological scales. The data types integrated in the knowledge base are described by the hypergraph in Figure~\ref{fig:primekg_edge_types_hypergraph}.
-\begin{figure}
-    \centering
-    \includegraphics[width=0.6\textwidth]{figs/edge_types_hypergraph.png}
-    \caption{Hypergraph of the edge types in PrimeKG}
-    \label{fig:primekg_edge_types_hypergraph}
-\end{figure}
-In addition we use data regarding patients with Mendelian disease provided by GA4GH Phenopackets~\cite{peter_robinson_2024_13847741}. For each individual we possess their disease and their phenotypes, coupled with other features like their gender.
+At this scope we have prepared a cured KG integrated with patient data. This has involved the construction of an underlying biomedical knowledge graph using \emph{PheKnowLator}~\cite{callahan2020PheKnowlator}, subsequently integrated with patient data coming from the Phenopacket Store compiled by~\cite{Danis2025Phenopackets}. Based on the information provided by the phenopackets, we have connected patient nodes to the KG through their phenotypes and their diagnosed disease. We have also added nodes representing sex as to enrich the biomedical knowledge of the KG.
 
-\printbibliography
+To extract meaningful predictions based on this KG we have reformulated our problem as a link prediction task. This kind of task is brought out by training a model to extract low dimensional representations (embeddings) of the nodes in a graph, that are then used to predict whether an edge connects two nodes. In our case, we are interested in those edges connecting (new) patients and possible Mendelian diseases. When choosing how to tackle the problem, we have based our rationale on the intuition that ontological data present in the KG is organized hierarchically, so it could be beneficial to stress these underlying tree-like structures. This motivates the exploration of hyperbolic GRL techniques, which have been shown to be effective in embedding hierarchical data~\cite{nickel2017Poincare}. Simply put, spaces of constant negative curvature\footnote{Very roughly, spaces of constant negative curvature are those in which the sum of the internal angles of a triangle is less than 180 degrees. Conversely, in spaces of constant positive curvature, such as spheres, the sum of the internal angles of a triangle exceeds 180 degrees.}, like hyperbolic spaces, can be thought of as continuous versions of trees, allowing for a more faithful representation of hierarchical data.
+
+Specifically, we have opted for the Hyperbolic Graph Convolutional Network (HGCN) technique~\cite{chami2019HGCN}. Seen that the resulting model is inductive, we can compute embeddings for nodes that were not present during training, which is essential for our link prediction task. We have opted for an approach that does not account for non-hierarchical patterns, as we were interested in evaluating whether it would be sufficient to address the challenges of differential diagnosis. 
+
+As expected, HGCN performed well when predicting links involving nodes in the ontological subtrees of the KG. Unfortunately, the prediction of the correct Mendelian disease for test patients does not reach satisfactory results. This likely suggests that more advanced models are needed to capture links among the hierarchical components.
+
+
+\bibliographystyle{unsrt} 
+{
+
+\footnotesize\bibliography{bibliography}
+
+}
+
+
 \end{document}
