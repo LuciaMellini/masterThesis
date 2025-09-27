@@ -1,68 +1,53 @@
 \begin{algorithm}
-\caption{Graph Neural Network Training}\label{alg:gnn_train}
+\caption{Experiment outline}\label{alg:exp}
 \SetKwInOut{Input}{Input}
 \SetKwInOut{Output}{Output}
 
 \Input{
-    $args$: Training arguments (epochs, eval\_freq, patience, etc.) \\
-    $train\_data$: Training graph data \\
-    $model$: GNN model to train
+    Graph $G = (V, E_{\text{train}}, E_{\text{val}}, E_{\text{test}})$ \\
+    Hyperparameters
 }
 \Output{
-    Best validation and test metrics
+    Node embeddings $Z$, metrics for each epoch $M$
 }
 
 \BlankLine
-\SetKwProg{Fn}{Procedure}{}{}
-\Fn{Train($args$)}{
-    $\text{prepare\_model}(args)$\;
-    $counter \gets 0$\;
-    $best\_val\_metrics, best\_test\_metrics \gets \text{None},\text{None}$\;
-    
-    Initialize $train\_loader$ with\;
-    \Indp $\text{num\_neighbors} \gets args.num\_neighbours$\;
-    $\text{shuffle} \gets \text{True}$\;
-    $\text{input\_nodes} \gets \text{torch.arange}(0, train\_data.num\_nodes)[::3]$\;
-    \Indm
-    
-    $model.\text{train}()$\;
-    \For{$epoch = 1$ \KwTo $args.epochs$}{
-        $total\_loss \gets 0$\;
-        \ForEach{$batch \in train\_loader$}{
-            $batch\_embeddings \gets model.\text{encode}(features, adj\_train)$\;
-            $train\_metrics \gets model.\text{compute\_metrics}(batch\_embeddings, data, \text{'train'})$\;
-            $\text{backpropagation}()$\;
-        }
-        
-        Initialize $inference\_loader$ with\;
-        \Indp $\text{num\_neighbors} \gets \text{all}$\;
-        $\text{shuffle} \gets \text{False}$\;
-        $\text{input\_nodes} \gets \text{carefully chosen order}$\;
+\SetKwProg{Fn}{Procedure}{}{end}
+\Fn{experiment($G$, hyperparameters)}{
+    Initialize HGCN model $HGCN(\cdot)$, optimizer, learning rate scheduler\;
+    $S \gets$ mini-batch neighbor sampler\;
+    $S_{\text{full}} \gets$ full-neighborhood sampler\;
 
-        \Indm
-        
-        $embeddings \gets \text{torch.zeros}((train\_data.num\_nodes, args.embedding\_dim))$\;
-        $model.\text{eval}()$\;
-        \ForEach{$batch \in inference\_loader$}{
-            $local\_embeddings \gets model.\text{encode}(features, adj\_train)$\;
-            $embeddings[seed\_indices] \gets local\_embeddings$\;
+    \ForEach{$\text{epoch}$}{
+        \tcp{Training}
+        \ForEach{seed-batch $B \subset V$ sampled by $S$}{
+            Extract subgraph $G_B$ induced by $B$\;
+            $Z_B \gets HGCN(\text{$G_B$})$ \tcp*[r]{Forward pass}
+            $E_{\text{train}_{\text{pos}}} \gets$ edges within $G_B$\;
+            $E_{\text{train}_{\text{neg}}} \gets$ negative samples\;
+            $M \gets M \cup \text{compute\_metrics}(Z_B, E_{\text{train}_{\text{pos}}}, E_{\text{train}_{\text{neg}}})$\;
+            Backpropagation on $HGCN(\cdot)$\;
         }
-        
-        \If{$(epoch + 1) \bmod args.eval\_freq = 0$}{
-            $val\_metrics \gets model.\text{compute\_metrics}(embeddings, data, \text{'valid'})$\;
-            \If{$model.\text{has\_improved}(best\_val\_metrics, val\_metrics)$}{
-                $best\_test\_metrics \gets model.\text{compute\_metrics}(embeddings, data, \text{'test'})$\;
-                $best\_val\_metrics \gets val\_metrics$\;
-                $counter \gets 0$\;
-            }
-            \Else{
-                $counter \gets counter + 1$\;
-                \If{$counter == args.patience$ \textbf{and} $epoch > args.min\_epochs$}{
-                    \textbf{break}\;
-                }
-            }
+        Learning rate scheduler step\; 
+        Log training metrics\;
+
+        \tcp{Periodic inference \& validation}
+        \If{$\text{epoch}$ is an evaluation step}{
+            Extract subgraph $G_{B_{\text{full}}}$ induced by $B_{\text{full}}$\;
+            \ForEach{inference batch $B_{\text{full}}\subset V$ sampled by $S_{\text{full}}$}{
+                $Z \gets Z \cup HGCN(B_{\text{full}})$\;
+               
+            } 
+            $E_{\text{val}_{\text{pos}}} \gets$  edges within $G_B$\;
+            $E_{\text{val}_{\text{neg}}} \gets$ negative samples\;
+            $M \gets M \cup \text{compute\_metrics}(Z, E_{\text{val}_{\text{pos}}}, E_{\text{val}_{\text{neg}}})$\;
         }
     }
-    \Return{$best\_val\_metrics$, $best\_test\_metrics$}\;
+
+    $E_{\text{test}_{\text{pos}}} \gets$ edges within $G_B$\;
+    $E_{\text{test}_{\text{neg}}} \gets$ negative samples\;
+    $M \gets M \cup \text{compute\_metrics}(Z_B, E_{\text{test}_{\text{pos}}}, E_{\text{test}_{\text{neg}}})$\;
+
+    \Return{$Z$, $M$}\;
 }
 \end{algorithm}
