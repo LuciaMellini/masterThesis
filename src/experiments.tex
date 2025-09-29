@@ -1,13 +1,12 @@
 \chapter{Experiments}
-We now engage in our contribution to tackling the issue of automatic differential diagnosis of Mendelian diseases. In this context, we have developed a customized knowledge graph (KG) integrated with patient data, which we detail in \Cref{sec:patientKG}. Furthermore, we outline the methodology by which we have reformulated our problem as a link prediction task, demonstrating the validity of our selection of hyperbolic graph representation learning techniques (\Cref{sec:linkPredictionDiffDiagnosis}).
+We now engage in our contribution to tackling the issue of automatic differential diagnosis of Mendelian diseases. In this context, we have developed a customized knowledge graph (KG) integrated with patient data, which we detail in \Cref{sec:patientKG}. Furthermore, in \Cref{sec:linkPredictionDiffDiagnosis} we outline the methodology by which we have reformulated our problem as a link prediction task, and how we have gone about the outlined approach in practice. We place an emphasis on demonstrating the validity of our selection of hyperbolic graph representation learning techniques (\Cref{sec:hypPatientKG}).
 
 \section{Patient KG}\label{sec:patientKG}
-In this section, we delineate the data selected for the purpose of differential diagnosis of Mendelian diseases. We proceed with an exploration of the underlying biomedical knowledge graph utilized and the patient data chosen. Additionally, we describe how these data sources have been integrated into a singular knowledge graph.
+In this section, we delineate the data selected for the purpose of differential diagnosis of Mendelian diseases. We proceed with an exploration of the underlying biomedical knowledge graph we have utilized and the chosen patient data. Additionally, we describe how these data sources have been integrated into a singular knowledge graph.
 
 \subsection{Underlying biomedical KG}\label{sec:underlyingKG}
-Initially, we considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge graph aimed at precision medicine analyses that aggregates 20 high-quality resources. Unfortunately, at the time of use, we encountered significant shortcomings regarding the representation of Mendelian diseases. Drawing inspiration from the entities represented in PrimeKG, we constructed a customized knowledge graph. We have resorted to \emph{PheKnowLator} (\emph{Phenotype Knowledge Translator})~\cite{callahan2020PheKnowlator}\footnote{The Python library is accessible at \url{https://github.com/callahantiff/PheKnowLator}}, a KG framework designed for optimized construction of semantically rich, large-scale biomedical KGs that accommodates various standardized terminologies or vocabularies. To build our heterogeneous graph, we selected various ontologies, taking into account our final objectives and memory constraints. The chosen ontologies, categorized by resulting node types, are outlined below.
+For what concerns the biomedical knowledge aspect, initially we considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge graph aimed at precision medicine analyses that aggregates 20 high-quality resources. Unfortunately, at the time of use, we encountered significant shortcomings regarding the representation of Mendelian diseases. Drawing inspiration from the entities represented in PrimeKG, we constructed a customized knowledge graph. We have resorted to \emph{PheKnowLator} (\emph{Phenotype Knowledge Translator})~\cite{callahan2020PheKnowlator}\footnote{The Python library is accessible at \url{https://github.com/callahantiff/PheKnowLator}}, a KG framework designed for optimized construction of semantically rich, large-scale biomedical KGs that accommodates various standardized terminologies or vocabularies. To build our heterogeneous graph, we selected various ontologies, taking into account our final objectives and memory constraints. The chosen ontologies, categorized by resulting node types, are outlined below.
 
-\begin{multicols}{2}
 
 \paragraph{Gene Ontology}
 \begin{itemize}
@@ -43,16 +42,16 @@ Initially, we considered PrimeKG \cite{chandak2023PrimeKG}, a knowledge graph ai
 \item Phenotype And Trait Ontology (PATO)
 \item uPheno Ontology (UPHENO)
 \end{itemize}
-\end{multicols}
+
+The relations between the entities and their predicates derive from the annotations specified in the ontologies.
+
 \input{figs/tabKGNodeTypes}
 \input{figs/tabKGEdgeDistrib}
 \input{figs/figKG_hypergraph}
-The relations between the entities and their predicates derive from the annotations specified in the ontologies.
-
-In terms of magnitude, the knowledge graph comprises a total of $2.34\cdot10^5$ heterogeneous nodes and $2.71\cdot10^7$ heterogeneous edges. The graph contains a total of six node types and 117 edge predicates. In \Cref{fig:kg_hypergraph}, we show the hypergraph representation of the knowledge graph obtained by aggregating the ontological data sources. To simplify the representation, we specified edge predicates with a minimum of $10^5$ occurrences across the entire knowledge graph. The number of nodes of each type is provided in \Cref{tab:nodetypes}, alongside the distribution of (the most frequent) edge predicates among the node types, as shown in \Cref{tab:edgedistrib}.
+In terms of magnitude, the knowledge graph comprises a total of $2.34\cdot10^5$ heterogeneous nodes and $2.71\cdot10^7$ heterogeneous edges. The graph contains a total of five node types and 117 edge predicates. In \Cref{fig:kg_hypergraph}, we show the hypergraph representation of the knowledge graph obtained by aggregating the ontological data sources. To simplify the representation, we specified edge predicates with a minimum of $10^5$ occurrences across the entire knowledge graph. The number of nodes of each type is provided in \Cref{tab:nodetypes}, alongside the distribution of (the most frequent) edge predicates among the node types, as shown in \Cref{tab:edgedistrib}.
 \input{figs/figSubclassofTree}
 \paragraph{Abstract Graph Structure}\label{sec:abstractGraphStructure}
-It is evident that the graph is connected, with certain edge predicates being mutually symmetric, e.g., \emph{has phenotype} and \emph{phenotype of}. For each of the node types, edges of the predicate \emph{Subclassof} denote hierarchical relationships between the entities. In \Cref{fig:SubclassofTree}, we illustrate a subtree representing one of these hierarchical components in the knowledge graph. For further examples, we suggest exploring the tree representations provided by the EMBL-EBI Ontology Lookup Service\footnote{Visit the EMBL-EBI Ontology Lookup Service at the link \url{https://www.ebi.ac.uk/ols4/}.}. One may visualize the knowledge graph as comprising ``vertical'' components, with one for each node type, akin to the example presented. In our discourse, we will refer to these subtrees as \term{hierarchical components}. These hierarchies are interconnected by ``horizontal'' links, which are indifferent to the hierarchical level of the nodes to which they pertain. This characteristic has led us to consider approaches based on hyperbolic geometry, as will be explored in \Cref{sec:hypPatientKG}.
+It is evident that the graph is connected, with certain edge predicates being mutually symmetric, e.g., \emph{Has phenotype} and \emph{Phenotype of}. For each of the node types, edges of the predicate \emph{Subclassof} denote hierarchical relationships between the entities. In \Cref{fig:SubclassofTree}, we illustrate a subtree representing one of these hierarchical components in the knowledge graph. For further examples, we suggest exploring the tree representations provided by the EMBL-EBI Ontology Lookup Service\footnote{Visit the EMBL-EBI Ontology Lookup Service at the link \url{https://www.ebi.ac.uk/ols4/}.}. One may visualize the knowledge graph as comprising ``vertical'' components, one for each node type, akin to the example presented. In our discourse, we will refer to these subtrees as \term{hierarchical components}. These hierarchies are interconnected by ``horizontal'' links, which are indifferent to the hierarchical level of the nodes to which they pertain. This characteristic has led us to consider approaches based on hyperbolic geometry, as will be explored in \Cref{sec:hypPatientKG}.
 
 \subsection{Patient data}
 We have selected the patient data from the Phenopacket Store compiled by~\cite{Danis2025Phenopackets}, which is accessible at the dedicated repository~\cite{Robinson2024PhenopacketStore}. Our analyses are based on the most recent release to date, dated 19 January 2025 (version 0.1.24)\footnote{The phenopackets can be downloaded at \url{https://github.com/monarch-initiative/phenopacket-store/releases/download/0.1.24/all_phenopackets.zip}}, comprising 7799 cohorts.
@@ -61,12 +60,12 @@ The cohorts that represent individuals with Mendelian diseases adhere to the GA4
 
 For the patients collected in the Phenopacket Store, the following attributes are available:
 \begin{itemize}
-  \item patient code
-  \item sex
-  \item age at last encounter
-  \item phenotypes, with optional specification of the year of onset
-  \item diagnosed disease, with optional specification of the year of onset and genomic interpretations
-  \item reference to the research article
+  \item patient code,
+  \item sex,
+  \item age at last encounter,
+  \item phenotypes, with optional specification of the year of onset,
+  \item diagnosed disease, with optional specification of the year of onset and genomic interpretations,
+  \item reference to the research article.
 \end{itemize}
 
 We opted to focus on features that are consistently present in all cohorts or described with a similar level of detail. Consequently, we excluded the year of onset for individual phenotypes and the onset of the disease. Furthermore, noting that genomic interpretations are not always included, this aspect will be addressed through the links in the underlying knowledge graph described in the preceding section. We also removed the age of last encounter of the patient, as it is frequently unrelated to the diagnosed disease.
@@ -81,14 +80,14 @@ We clarify the integration of the Phenopacket data with the underlying knowledge
 \input{figs/figpatientKG_hypergraph}
 
 \section{Link prediction for differential diagnosis}\label{sec:linkPredictionDiffDiagnosis}
-In this section, we describe how we have employed PatientKG to address the challenge of differential diagnosis. We first adapt the problem to the PatientKG at our disposal.
+In this section, we describe how we have employed PatientKG to address the challenge of differential diagnosis. After reframing our problem as to PatientKG, we discuss the experimental setup. In addition, we detail how we have managed working with a large graph. Most importantly we tie the methods analyzed in \Cref{grl,hyperbolic,hrl} to the specific characteristics of PatientKG.
 
 \subsection{Experimental setup}\label{sec:expsetup}
 Utilizing PatientKG, the problem of differential diagnosis is reframed as the link prediction task involving edges of type \emph{Has disease} connecting the \emph{Person} nodes representing patients to the corresponding \emph{Disease} node. Considering the techniques evaluated in \Cref{grl}, we have chosen an inductive approach, specifically Graph Neural Networks (GNNs), to enable the model to generalize to previously unseen patients. In particular, we have selected the HGCN model, according to the reasoning discussed in \Cref{sec:hypPatientKG}.
 
 To train the model for link prediction and evaluate its performance, the edges in PatientKG were partitioned into two sets: a test set composed of randomly selected \emph{Has disease} edges and a training set comprising the remaining \emph{Has disease} edges and all other edges in PatientKG. To regulate the learning process through early stopping, we also have extracted a validation set.
 
-The distribution of cohorts by disease, illustrated in \Cref{fig:disease-histogram}, indicates that approximately half of the diseases represented in the Phenopacket Store have fewer than 10 cohorts, and roughly one-third have at most 5 occurrences. Given the limited availability of annotated disease diagnoses we have including in the test set only diseases with at least 5 cohorts. In addition we opted not to include \emph{Has disease} edges within the validation set utilized to monitor the learning process.
+The distribution of cohorts by disease, illustrated in \Cref{fig:disease-histogram}, indicates that approximately half of the diseases represented in the Phenopacket Store have fewer than 10 cohorts, and roughly one-third have at most 5 occurrences. Given the limited availability of annotated disease diagnoses, the test set only comprises diseases with at least 5 cohorts. In addition, we opted to not include \emph{Has disease} edges within the validation set utilized to monitor the learning process.
 
 Since the test edges are derived from the relations provided by the Phenopacket Store, the model trained on the training set was evaluated on differential diagnoses exclusively among Mendelian diseases. This approach is logical as Mendelian diseases are often explored after all alternative common diagnoses have been ruled out. Preliminary experiments conducted using this data split revealed indications of potential overfitting. Since the articles typically pertain to specific diseases, the edges connecting patients to their corresponding articles of origin create a shortcut for inferring the patients' diseases. To prevent data leakage, we excluded all \emph{Has part} and \emph{Part of} edges linking the \emph{Person} nodes to the \emph{Article} nodes.
 
@@ -102,7 +101,6 @@ In \cref{tab:hyperparams} we list how the main hyperparameters have been set acr
   \item the number of attention heads $R$,
   \item the activation function $\sigma$.
 \end{itemize}
-
 The remaining values refer to the chosen optimizer and the training procedure.
 
 The parameters for the Fermi-Dirac decoder are set to \texttt{r}=2 and \texttt{t}=1 (refer to \Cref{sec:linkPredictionHGCN}). These values were established based on hyperparameters recommended in the code repository provided by Hazy Research, which encompasses implementations of HGCN and other Euclidean and hyperbolic GNN models\footnote{We have utilized the implementations offered by the Hazy Research group at \url{https://github.com/HazyResearch/hgcn}. In particular, we have relied on their code for the shallow Poincaré ball embeddings, GCN, GAT models, and, of course, HGCN.}. 
@@ -113,9 +111,9 @@ To make training more robust we applied negative sampling to generate pairs of n
 \subsubsection{Performance metrics}\label{sec:performanceMetrics}
 The evaluation of the predictions is expressed as the cross-entropy loss with negative sampling (\Cref{sec:crossEntropyLossNegSampling}). 
 
-We also report the area under the ROC (\emph{ROC\_AUC}), as a way of measuring how well a binary classifier can tell two classes apart. The ROC curve itself shows the trade-off between the true positive rate $\left(\frac{TN}{FP+TN}\right)$ and the false positive rate $\left(\frac{FP}{FP+TN}\right)$, as you vary the decision threshold. The area under this curve, sums up the model's overall ability to discriminate between classes. A score of 1.0 means perfect separation, while a score of 0.5 means the model is no better than random guessing. In general, the closer the value is to 1, the more effective the model is at distinguishing between the two categories.
+We also report the area under the ROC (\emph{ROC\_AUC}), as a way of measuring how well a binary classifier can tell two classes apart. The ROC curve itself shows the trade-off between the true positive rate $\left(\frac{TP}{TP+FN}\right)$ and the false positive rate $\left(\frac{FP}{FP+TN}\right)$, as you vary the decision threshold. The area under this curve sums up the model's overall ability to discriminate between classes. A score of 10 means perfect separation, while a score of 0.5 means the model is no better than random guessing. In general, the closer the value is to 1, the more effective the model is at distinguishing between the two categories.
 
-In addition, the average precision (\emph{AP}) score summarizes a precision-recall curve, that shows the trade-off between precision $\left(\frac{TP}{TP+FP}\right)$ and recall $\left(\frac{TP}{TP+FN}\right)$ for different thresholds. The average precision is computed as the weighted mean of precisions achieved at each threshold, with the increase in recall from the previous threshold used as the weight:
+Moreover, the average precision (\emph{AP}) score summarizes a precision-recall curve, that shows the trade-off between precision $\left(\frac{TP}{TP+FP}\right)$ and recall $\left(\frac{TP}{TP+FN}\right)$ for different thresholds. The average precision is computed as the weighted mean of precisions achieved at each threshold, with the increase in recall from the previous threshold used as the weight:
 \begin{equation*}
   \text{AP} = \sum_n (R_n - R_{n-1}) P_n
 \end{equation*} 
@@ -142,7 +140,6 @@ Despite these challenges, mini-batch training often converges faster in practice
 To implement the batching of PatientKG into subgraphs we have relied on the \texttt{torch-geometric} library~\cite{fey2019pytorchGeometric}. More specifically we have chosen to sample the subgraphs using the \texttt{NeighborSampler} class\footnote{Documentation found at \url{https://pytorch-geometric.readthedocs.io/en/latest/modules/sampler.html\#torch\_geometric.sampler.NeighborSampler}}. This class is designed to sample a fixed-size batch of so called seed nodes, and for each of these it samples their neighbourhood. For each seed node one can specify a list of integers $[n_1, n_2, \dots, n_k]$, such that $n_1$ of its neighbours are sampled, then from each of those 1-hop neighbours $n_2$ neighbours are sampled, and so on, until $n_k$ neighbours are sampled from the $k$-th hop neighbours. The sampling is performed in a breadth-first manner, meaning that all nodes at the first hop are sampled before moving to the second hop, and so on. This approach allows us to control the size and the of the subgraphs sampled, letting us determine the size of the input adjacency matrix a priori. This sampling strategy implies that all the nodes are seen at least once by the model when they are seed nodes of a given batch, and can be re-extracted if they are selected among the sampled neighbours of other nodes. 
 
 Like when batching in classical machine learning settings, on each local sample the forward and backward passes are performed independently, and the weights of the model are updated after each batch. The weights are updated according to the loss value computed on only the seed nodes in each batch. Empirically, we have found that computing the loss over all batch nodes to guide backpropagation causes overfitting. Focusing on seed nodes prevents the backpropagation signal from being diluted across thousands of neighbours. This choice allows the model to learn more effectively from the most relevant nodes in each batch, while still benefiting from the rich information provided by their neighbors.
-
 
 To assure the compatibility among batches it was necessary to set the curvature of the hyperbolic space to a fixed value, which we have set to $c=1$. This derives from the definition of the Poincaré ball model (\Cref{sec:poincareBall}).
 
@@ -182,7 +179,9 @@ We are aware of more advanced techniques than HGCN that are tailored to knowledg
 
 
 \section{Performance for differential diagnosis}
-We now dive into the performance of the HGCN model trained according to the experimental setup described in \Cref{sec:expsetup}. In \Cref{fig:results} we show how the metrics have evolved across training epochs, for both training and validation sets. We do not specify the performance on the test set, as it is in line with the results given on the validation set. Recall that in the case of the loss we are aiming for higher values, whilst for ROC-AUC and AP we are aiming for values close to 1. From all the graphs we see that the model is overfitting, as the performance on the training set is significantly better than that on the validation set. Also, across the epochs the performance remains stable on average, so we can conclude that the model is not learning from the data in PatientKG. The fact the ROC-AUC is close to 0.5 and the AP is close to 0, confirms that the model has failed completely to learn anything useful. One could argue that the predictions are worse than random, in teh sense that it is labeling almost everything as negative. This interpretation is supported buy the fact that the addition of negative samples makes the average precision score even lower. 
+We now dive into the performance of the HGCN model trained according to the experimental setup described in \Cref{sec:expsetup}. In \Cref{fig:results} we show how the metrics have evolved across training epochs, for both training and validation sets. 
+%% add test set results and change the considerations accordingly
+We do not specify the performance on the test set, as it is in line with the results given on the validation set. Recall that in the case of the loss we are aiming for higher values, whilst for ROC-AUC and AP we are aiming for values close to 1. From all the graphs we see that the model is overfitting, as the performance on the training set is significantly better than that on the validation set. Also, across the epochs the performance remains stable on average, so we can conclude that the model is not learning from the data in PatientKG. The fact the ROC-AUC is close to 0.5 and the AP is close to 0, confirms that the model has failed completely to learn anything useful. One could argue that the predictions are worse than random, in teh sense that it is labeling almost everything as negative. This interpretation is supported buy the fact that the addition of negative samples makes the average precision score even lower. 
 
 As an additional remark, in the case of the loss and ROC-AUC metrics, the evolution for both 20:1 and 50:1 negative sampling ratios is essentially identical. This is happening since the seed has been set to the same value across both experiments. Since the model is not learning from the data, it is not finding useful gradients from the data, so the training trajectory is dictated almost entirely by the optimizer dynamics. This explains why metrics simply follow the noise-level behaviour due to the steps brought out by the optimizer.
 
