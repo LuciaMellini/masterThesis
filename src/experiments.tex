@@ -94,6 +94,8 @@ Since the test edges are derived from the relations provided by the Phenopacket 
 \medskip
 
 \subsubsection{Hyperparameters}
+\input{figs/tabHyperparameters.tex}
+
 
 In \cref{tab:hyperparams} we list how the main hyperparameters have been set across all experiments. The first three are related to the HGCN model:
 \begin{itemize}
@@ -121,21 +123,19 @@ where $P_n$ and $R_n$ are the precision and recall at the $n$th threshold.
 This metric is useful since it is robust against class imbalance. In our case the positive class—actual edges connecting patients and diseases—is much smaller than the negative class.
 
 \subsection{Managing a large graph}
-As seen in the description of the HGCN architecture, the aggregation step (\Cref{sec:hgcnAggregation}) requires the model to access the neighbourhoods of each node. In the code implemented in the Hazy Research repository this information is provided in the form of an adjacency matrix of the whole input graph. However for large graphs like PatientKG, this approach is not feasible due to memory constraints, especially considering that the model is trained and evaluated on GPU.
+As seen in the description of the HGCN architecture, the aggregation step (\Cref{sec:hgcnAggregation}) requires the model to access the neighbourhoods of each node. In the code implemented by the Hazy Research group this information is provided in the form of an adjacency matrix of the whole input graph. However, for large graphs like PatientKG, this approach is not feasible due to memory constraints, especially considering that the model is trained and evaluated on GPU.
 Seen these limitations it was necessary to settle for the more general global version of the aggregation step. 
-To further overcome this issue we have initially attempted to reimplement the model using sparse matrices, keeping in mind the properties of PatientKG's adjacency matrix. Unfortunately we encountered various technical issues since the \texttt{PyTorch} library used to implement HGCN is ill equipped to handle sparse tensors. The attempted solution entailed specifying methods, among others, for sparse-sparse and sparse-dense matrix division, row-wise normalization, and various hyperbolic functions, such as the hyperbolic tangent. However, accounting for forward and backward passes, we were unable to achieve a working implementation considering the time constraints and scope of this thesis.
+To further overcome this issue we have initially attempted to reimplement the model using sparse matrices, keeping in mind the properties of PatientKG's adjacency matrix. Unfortunately we encountered various technical issues since the \texttt{PyTorch} library used to implement HGCN is ill equipped to handle sparse tensors. The attempted solution entailed specifying methods, among others, for sparse-sparse and sparse-dense matrix division, row-wise normalization, and various hyperbolic functions, such as the hyperbolic tangent. Nevertheless, accounting for forward and backward passes, we were unable to achieve a working implementation considering the time constraints and scope of this thesis.
 
 We then opted for a more straightforward solution, that is to use mini-batching of the graph. We now discuss the validity of this choice and how we have implemented this approach in our experiments.
 
 \subsubsection{Mini-batching}
 
-Training deep neural networks (DNNs) typically involves processing independent and identically distributed (i.i.d.) examples, whereas graph neural networks (GNNs) operate on interconnected vertices within a graph structure, introducing dependencies that complicate training. GNNs can be trained using either full-graph (full-batch) or mini-batch approaches~\cite{bajaj2024graph}.
+Training neural networks typically involves processing independent and identically distributed (i.i.d.) examples, whereas graph neural networks (GNNs) operate on interconnected vertices within a graph structure, introducing dependencies that complicate training. GNNs can be trained using either full-graph (full-batch) or mini-batch approaches~\cite{bajaj2024graph}. In full-graph training, message-passing is performed across the entire graph in each epoch, ensuring that all vertex dependencies are considered. However, this method becomes computationally expensive and memory-intensive for large graphs, requiring multi-GPU model parallelism where the graph is partitioned and hidden features are exchanged across GPUs. While full-graph training avoids information loss by processing the complete graph, its high per-epoch cost and communication overhead make scaling difficult.
 
-In full-graph training, message-passing is performed across the entire graph in each epoch, ensuring that all vertex dependencies are considered. However, this method becomes computationally expensive and memory-intensive for large graphs, requiring multi-GPU model parallelism where the graph is partitioned and hidden features are exchanged across GPUs. While full-graph training avoids information loss by processing the complete graph, its high per-epoch cost and communication overhead make scaling difficult.
+Mini-batch training, in contrast, splits the graph into smaller subgraphs (batches) and processes them iteratively, updating model parameters multiple times per epoch. Preparing these mini-batches is non-trivial because GNNs require $k$-hop neighbourhood aggregation. For a GNN with $L$ layers, each batch must include vertices up to $L$ hops away to ensure correct message-passing. This leads to the neighbourhood explosion problem, where the required subgraph grows exponentially with depth, making full neighbourhood aggregation impractical. To mitigate this, mini-batch systems use sampling techniques (e.g., Neighbourhood Sampling, ClusterGCN, GraphSAINT) to load only a subset of the $k$-hop neighbours, trading off some accuracy for efficiency. 
 
-Mini-batch training, in contrast, splits the graph into smaller subgraphs (batches) and processes them iteratively, updating model parameters multiple times per epoch. However, preparing these mini-batches is non-trivial because GNNs require $k$-hop neighbourhood aggregation—meaning that for a GNN with $L$ layers, each batch must include vertices up to $L$ hops away to ensure correct message-passing. This leads to the neighbourhood explosion problem, where the required subgraph grows exponentially with depth, making full neighbourhood aggregation impractical. To mitigate this, mini-batch systems use sampling techniques (e.g., Neighbourhood Sampling, ClusterGCN, GraphSAINT) to load only a subset of the k-hop neighbours, trading off some accuracy for efficiency. 
-
-Despite these challenges, mini-batch training often converges faster in practice because it performs multiple parameter updates per epoch, whereas full-graph training updates only once per epoch. Also the simple Neighbourhood Sampling method empirically shows a more stable behaviour.
+Despite these challenges, mini-batch training often converges faster in practice because it performs multiple parameter updates per epoch, whereas full-graph training updates only once per epoch. Besides, the simple Neighbourhood Sampling method empirically shows a more stable behaviour.
 
 To implement the batching of PatientKG into subgraphs we have relied on the \texttt{torch-geometric} library~\cite{fey2019pytorchGeometric}. More specifically we have chosen to sample the subgraphs using the \texttt{NeighborSampler} class\footnote{Documentation found at \url{https://pytorch-geometric.readthedocs.io/en/latest/modules/sampler.html\#torch\_geometric.sampler.NeighborSampler}}. This class is designed to sample a fixed-size batch of so called seed nodes, and for each of these it samples their neighbourhood. For each seed node one can specify a list of integers $[n_1, n_2, \dots, n_k]$, such that $n_1$ of its neighbours are sampled, then from each of those 1-hop neighbours $n_2$ neighbours are sampled, and so on, until $n_k$ neighbours are sampled from the $k$-th hop neighbours. The sampling is performed in a breadth-first manner, meaning that all nodes at the first hop are sampled before moving to the second hop, and so on. This approach allows us to control the size and the of the subgraphs sampled, letting us determine the size of the input adjacency matrix a priori. This sampling strategy implies that all the nodes are seen at least once by the model when they are seed nodes of a given batch, and can be re-extracted if they are selected among the sampled neighbours of other nodes. 
 
@@ -153,7 +153,7 @@ Recall from \Cref{sec:hgcnArchitecture} that the link prediction task requires t
 In \Cref{fig:neighDistr} we plot the distribution of the neighbourhood sizes among nodes in PatientKG. The distribution is highly skewed, as put in evidence by the knee point in the plot\footnote{The knee point has been located using the kneedle algorithm~\cite{satopaa2011KneePointDetection}}. This has allowed us to reduce the memory footprint during inference by creating batches mad up of few large neighbourhood nodes and a lot of small neighbourhood nodes. 
 
 \medskip
-To wrap things up, we summarize the experimental procedure in algorithm \ref{alg:exp}.
+We summarize the experimental procedure in Algorithm \ref{alg:exp}, as to comprise all the considerations discussed until now.
 \input{figs/algExp}
 
 
@@ -161,7 +161,6 @@ To wrap things up, we summarize the experimental procedure in algorithm \ref{alg
 
 \subsection{Why hyperbolic graph representation learning?}\label{sec:hypPatientKG}
 
-\input{figs/tabSubclassofPerfHyp.tex}
 Prior to delving into the run experiments, we would like to account for the selection of hyperbolic graph representation learning techniques, specifically HGCN. As discussed in \Cref{sec:hyperbolicAndTrees}, hyperbolic geometry is particularly suited to represent hierarchical structures, such as those nested within PatientKG (refer to \Cref{sec:abstractGraphStructure}). To empirically verify this, we embedded each hierarchical component into hyperbolic space. To emphasize the positioning of each node within the hierarchy, we have considered the transitive closure of each subtree. The transitive closure of a directed graph is derived by adding an edge between every pair of nodes that are connected by a directed path. For instance, \Cref{fig:diseasePoincare} depicts the embedded \emph{Disease} nodes arranged within a Poincaré ball. One notices that nodes with a more extensive neighbourhood, i.e. nodes situated higher in the ontological hierarchy, are positioned closer to the centre of the ball. This representation can be interpreted as a real-world instance of the structure schematized in \Cref{fig:radialTree}, in accordance with the considerations articulated in \Cref{sec:expGrowth}. 
 \input{figs/figDiseasePoincare.tex}
 
@@ -179,28 +178,18 @@ We are aware of more advanced techniques than HGCN that are tailored to knowledg
 
 
 \section{Performance for differential diagnosis}
+\input{figs/plotResults}
 We now dive into the performance of the HGCN model trained according to the experimental setup described in \Cref{sec:expsetup}. In \Cref{fig:results} we show how the metrics have evolved across training epochs, for both training and validation sets. 
 
-Recall that in the case of the loss we are aiming for higher values, whilst for ROC-AUC and AP we are aiming for values close to 1. From all the graphs we see that the model is overfitting, as the performance on the training set is significantly better than that on the validation set. Also, across the epochs the performance remains stable on average, so we can conclude that the model is not learning from the data in PatientKG. The fact the ROC-AUC is close to 0.5 and the AP is close to 0, confirms that the model has failed completely to learn anything useful. One could argue that the predictions are worse than random, in the sense that it is labeling almost everything as negative. This interpretation is supported buy the fact that the addition of negative samples makes the average precision score even lower. 
+Recall that in the case of the loss we are aiming for higher values, whilst for ROC-AUC and AP we are aiming for values close to 1. From all the graphs we see that the model is overfitting, as the performance on the training set is significantly better than that on the validation set. Also, across the epochs the performance remains stable on average, so we can conclude that the model is not learning from the data in PatientKG. The fact the ROC-AUC is close to 0.5 and the AP is close to 0, confirms that the model has failed completely to learn anything useful. One could argue that the predictions are worse than random, in the sense that it is labeling almost everything as negative. This interpretation is supported by the fact that the addition of negative samples makes the average precision score even lower. 
 
-As an additional remark, in the case of the loss and ROC-AUC metrics, the evolution for both 20:1 and 50:1 negative sampling ratios is essentially identical. This is happening since the seed has been set to the same value across both experiments. Since the model is not learning from the data, it is not finding useful gradients from the data, so the training trajectory is dictated almost entirely by the optimizer dynamics. This explains why metrics simply follow the noise-level behaviour due to the steps brought out by the optimizer.
+As an additional remark, in the case of the loss and ROC-AUC metrics, the evolution for both 20:1 and 50:1 negative sampling ratios is essentially identical. This is happening since the seed has been set to the same value across both experiments. Since the model is not learning from the data, it is not finding useful gradients, hence the training trajectory is dictated almost entirely by the optimizer dynamics. This explains why metrics simply follow the noise-level behaviour due to the steps brought out by the optimizer.
 
 \medskip
 
-Turning to the performance results when evaluating the model on the test set, we report the results in \Cref{tab:test_results}. Even tough we take into consideration only the \emph{Has disease} links, the results are consistent with those observed on various predicates during training and validation. The loss remains high, while both ROC-AUC and AP scores are close to random guessing. Also, the considerations on the effect of negative sampling hold true here as well.
+\input{figs/tabResultsTest}
 
-\begin{table}[ht]
-  \centering
-  \caption{Test set results}
-  \begin{tabular}{@{}r|ccc@{}}
-    \toprule
-    negative samples & \emph{Loss} & \emph{ROC-AUC} & \emph{AP score} \\ 
-    \midrule
-    20:1 & 1.5388 & 0.3812 & 0.0146 \\ 
-    50:1 & 1.5365 & 0.3820 & 0.0098 \\ 
-    \bottomrule
-  \end{tabular}
-  \label{tab:test_results}
-\end{table}
+Turning to the performance results when evaluating the model on the test set, we report the results in \Cref{tab:test_results}. Even tough we take into consideration only the \emph{Has disease} links, the results are consistent with those observed with varied predicates during training and validation. The loss remains high, while both ROC-AUC and AP scores are close to random guessing. Also, the considerations on the effect of negative sampling hold true here as well.
 
-\input{figs/results}
+
+
