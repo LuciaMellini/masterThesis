@@ -111,7 +111,7 @@ To make training more robust we applied negative sampling to generate pairs of n
 \subsubsection{Performance metrics}\label{sec:performanceMetrics}
 The evaluation of the predictions is expressed as the cross-entropy loss with negative sampling (\Cref{sec:crossEntropyLossNegSampling}). 
 
-We also report the area under the ROC (\emph{ROC\_AUC}), as a way of measuring how well a binary classifier can tell two classes apart. The ROC curve itself shows the trade-off between the true positive rate $\left(\frac{TP}{TP+FN}\right)$ and the false positive rate $\left(\frac{FP}{FP+TN}\right)$, as you vary the decision threshold. The area under this curve sums up the model's overall ability to discriminate between classes. A score of 10 means perfect separation, while a score of 0.5 means the model is no better than random guessing. In general, the closer the value is to 1, the more effective the model is at distinguishing between the two categories.
+We also report the area under the ROC (\emph{ROC-AUC}), as a way of measuring how well a binary classifier can tell two classes apart. The ROC curve itself shows the trade-off between the true positive rate $\left(\frac{TP}{TP+FN}\right)$ and the false positive rate $\left(\frac{FP}{FP+TN}\right)$, as you vary the decision threshold. The area under this curve sums up the model's overall ability to discriminate between classes. A score of 10 means perfect separation, while a score of 0.5 means the model is no better than random guessing. In general, the closer the value is to 1, the more effective the model is at distinguishing between the two categories.
 
 Moreover, the average precision (\emph{AP}) score summarizes a precision-recall curve, that shows the trade-off between precision $\left(\frac{TP}{TP+FP}\right)$ and recall $\left(\frac{TP}{TP+FN}\right)$ for different thresholds. The average precision is computed as the weighted mean of precisions achieved at each threshold, with the increase in recall from the previous threshold used as the weight:
 \begin{equation*}
@@ -180,9 +180,27 @@ We are aware of more advanced techniques than HGCN that are tailored to knowledg
 
 \section{Performance for differential diagnosis}
 We now dive into the performance of the HGCN model trained according to the experimental setup described in \Cref{sec:expsetup}. In \Cref{fig:results} we show how the metrics have evolved across training epochs, for both training and validation sets. 
-%% add test set results and change the considerations accordingly
-We do not specify the performance on the test set, as it is in line with the results given on the validation set. Recall that in the case of the loss we are aiming for higher values, whilst for ROC-AUC and AP we are aiming for values close to 1. From all the graphs we see that the model is overfitting, as the performance on the training set is significantly better than that on the validation set. Also, across the epochs the performance remains stable on average, so we can conclude that the model is not learning from the data in PatientKG. The fact the ROC-AUC is close to 0.5 and the AP is close to 0, confirms that the model has failed completely to learn anything useful. One could argue that the predictions are worse than random, in teh sense that it is labeling almost everything as negative. This interpretation is supported buy the fact that the addition of negative samples makes the average precision score even lower. 
+
+Recall that in the case of the loss we are aiming for higher values, whilst for ROC-AUC and AP we are aiming for values close to 1. From all the graphs we see that the model is overfitting, as the performance on the training set is significantly better than that on the validation set. Also, across the epochs the performance remains stable on average, so we can conclude that the model is not learning from the data in PatientKG. The fact the ROC-AUC is close to 0.5 and the AP is close to 0, confirms that the model has failed completely to learn anything useful. One could argue that the predictions are worse than random, in the sense that it is labeling almost everything as negative. This interpretation is supported buy the fact that the addition of negative samples makes the average precision score even lower. 
 
 As an additional remark, in the case of the loss and ROC-AUC metrics, the evolution for both 20:1 and 50:1 negative sampling ratios is essentially identical. This is happening since the seed has been set to the same value across both experiments. Since the model is not learning from the data, it is not finding useful gradients from the data, so the training trajectory is dictated almost entirely by the optimizer dynamics. This explains why metrics simply follow the noise-level behaviour due to the steps brought out by the optimizer.
+
+\medskip
+
+Turning to the performance results when evaluating the model on the test set, we report the results in \Cref{tab:test_results}. Even tough we take into consideration only the \emph{Has disease} links, the results are consistent with those observed on various predicates during training and validation. The loss remains high, while both ROC-AUC and AP scores are close to random guessing. Also, the considerations on the effect of negative sampling hold true here as well.
+
+\begin{table}[ht]
+  \centering
+  \caption{Test set results}
+  \begin{tabular}{@{}r|ccc@{}}
+    \toprule
+    negative samples & \emph{Loss} & \emph{ROC-AUC} & \emph{AP score} \\ 
+    \midrule
+    20:1 & 1.5388 & 0.3812 & 0.0146 \\ 
+    50:1 & 1.5365 & 0.3820 & 0.0098 \\ 
+    \bottomrule
+  \end{tabular}
+  \label{tab:test_results}
+\end{table}
 
 \input{figs/results}
